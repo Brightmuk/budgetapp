@@ -23,6 +23,7 @@ dev_dependencies:
 
   flutter_lints: ^1.0.0
   percent_indicator: ^3.4.0
+  pdf: ^3.7.4
 
 
 
@@ -32,6 +33,7 @@ flutter:
 
   assets:
     - assets/icons/
+    - assets/images/
 
   # fonts:
   #   - family: Schyler

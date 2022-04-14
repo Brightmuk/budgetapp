@@ -30,8 +30,8 @@ class ItemType extends StatelessWidget {
                     height: 10,
                     width: 10),
               ),
-              title: const Text('Project'),
-              subtitle: const Text('Budget plan'),
+              title: const Text('Budget Plan'),
+              subtitle: const Text('A plan to spend an amount of money'),
               onTap: () {
                 Navigator.pop(context);
                 showModalBottomSheet(
@@ -39,7 +39,7 @@ class ItemType extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                     context: context,
-                    builder: (context) => const AddProject());
+                    builder: (context) => const AddBudgetPlan());
               },
             ),
             ListTile(
@@ -131,7 +131,10 @@ class _AddWishState extends State<AddWish> {
                         decoration: InputDecoration(
                           label: const Padding(
                             padding: EdgeInsets.only(left: 8.0),
-                            child: Text('Expense name'),
+                            child: Text(
+                              'Name',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -175,7 +178,8 @@ class _AddWishState extends State<AddWish> {
                           decoration: InputDecoration(
                             label: const Padding(
                               padding: EdgeInsets.only(left: 8.0),
-                              child: Text('Price'),
+                              child: Text('Price',
+                                  style: TextStyle(color: Colors.white)),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -282,27 +286,31 @@ class _AddWishState extends State<AddWish> {
   }
 }
 
-class AddProject extends StatefulWidget {
-  const AddProject({
+class AddBudgetPlan extends StatefulWidget {
+  const AddBudgetPlan({
     Key? key,
   }) : super(key: key);
 
   @override
-  _AddProjectState createState() => _AddProjectState();
+  _AddBudgetPlanState createState() => _AddBudgetPlanState();
 }
 
-class _AddProjectState extends State<AddProject> {
+class _AddBudgetPlanState extends State<AddBudgetPlan> {
   final DateFormat dayDate = DateFormat('EEE dd, yyy');
   final TextEditingController _titleC = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   late DateTime _selectedDate = DateTime.now();
   late bool remider = true;
+  late bool save = true;
+  bool exportAsPdf = true;
+
+  List<Item> items = [];
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.7,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Stack(
@@ -312,7 +320,7 @@ class _AddProjectState extends State<AddProject> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Add a new Project',
+                    'Add a new Budget plan',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
@@ -334,7 +342,7 @@ class _AddProjectState extends State<AddProject> {
                     label: const Padding(
                       padding: EdgeInsets.only(left: 8.0),
                       child: Text(
-                        'Project Title',
+                        'Title',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -371,6 +379,25 @@ class _AddProjectState extends State<AddProject> {
                 height: 20,
               ),
               ListTile(
+                title: const Text('Edit list'),
+                subtitle: Text('${items.length} item(s) in list'),
+                trailing: const Text(
+                  'Ksh.23,000',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                onTap: () async {
+                  var result =
+                      await Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => BudgetLists(
+                                title: _titleC.value.text,
+                              )));
+                  setState(() {
+                    items = result;
+                  });
+                },
+              ),
+              Divider(),
+              ListTile(
                 leading: const Icon(Icons.calendar_month_outlined),
                 title: const Text('Select date'),
                 trailing: Text(dayDate.format(_selectedDate)),
@@ -384,8 +411,10 @@ class _AddProjectState extends State<AddProject> {
                       return Theme(
                         data: Theme.of(context).copyWith(
                           colorScheme: const ColorScheme.light(
-                            primary: Color.fromRGBO(
-                                72, 191, 132, 1), // header background color
+                            onSurface: Color.fromRGBO(72, 191, 132, 1),
+
+                            primary: Color.fromRGBO(72, 191, 132, 1),
+                            // header background color
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
@@ -404,16 +433,41 @@ class _AddProjectState extends State<AddProject> {
                   }
                 },
               ),
-              Divider(),
               CheckboxListTile(
                   activeColor: Colors.greenAccent,
                   value: remider,
                   title: const Text('Set reminder on'),
+                  subtitle: const Text(
+                      'You will be reminded to fullfil the budget list'),
                   onChanged: (val) {
                     setState(() {
                       remider = val!;
                     });
-                  })
+                  }),
+              CheckboxListTile(
+                  activeColor: Colors.greenAccent,
+                  value: save,
+                  title: const Text('Export'),
+                  subtitle: Text(
+                      'Export list as ${exportAsPdf ? 'PDF' : 'Image'}  after saving'),
+                  onChanged: (val) async {
+                    setState(() {
+                      save = val!;
+                    });
+                    if(val!){
+                    var result = await showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        context: context,
+                        builder: (context) => const ExportType());
+                    if (result != null) {
+                      setState(() {
+                         exportAsPdf = result;
+                      });
+                    }
+                    }
+
+                  }),
             ]),
             Positioned(
               bottom: 10,
@@ -424,12 +478,14 @@ class _AddProjectState extends State<AddProject> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50)),
                   child: const Text(
-                    'Next',
+                    'Save',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BudgetLists(title: _titleC.value.text,)));
+                        builder: (context) => BudgetLists(
+                              title: _titleC.value.text,
+                            )));
                   }),
             ),
           ],
