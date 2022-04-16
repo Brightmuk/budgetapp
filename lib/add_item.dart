@@ -1,3 +1,4 @@
+import 'package:budgetapp/export_view.dart';
 import 'package:budgetapp/item_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -277,7 +278,9 @@ class _AddWishState extends State<AddWish> {
                     'Save',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onPressed: () {}),
+                  onPressed: () {
+
+                  }),
             ),
           ],
         ),
@@ -482,10 +485,9 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {
+                     Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BudgetLists(
-                              title: _titleC.value.text,
-                            )));
+                        builder: (context) => const ExportPage(items: [])));
                   }),
             ),
           ],

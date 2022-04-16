@@ -29,7 +29,13 @@ class _HomeTabsState extends State<HomeTabs> {
                           ),
                           key: Key(index.toString()),
                           child: ListTile(
-              
+                              onTap: (){
+                                    showModalBottomSheet(
+                                      isScrollControlled: true,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  context: context,
+                                  builder: (context) => const AddBudgetPlan());
+                              },
                               leading: indexEven
                                   ? const Icon(
                                       Icons.construction,
