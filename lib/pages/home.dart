@@ -1,7 +1,8 @@
-import 'package:budgetapp/add_item.dart';
-import 'package:budgetapp/home_tabs.dart';
-import 'package:budgetapp/item_list.dart';
-import 'package:budgetapp/settings.dart';
+import 'package:budgetapp/pages/add_budget_plan.dart';
+import 'package:budgetapp/pages/home_tabs.dart';
+import 'package:budgetapp/pages/create_list.dart';
+import 'package:budgetapp/pages/settings.dart';
+import 'package:budgetapp/widgets/expense_type.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -20,7 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
     showModalBottomSheet(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         context: context,
-        builder: (context) => const ItemType());
+        builder: (context) => const ExpenseType());
   }
 
   @override
@@ -198,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   showModalBottomSheet(
                       isScrollControlled: true,
                       context: context,
-                      builder: (context) => const BudgetLists());
+                      builder: (context) => const CreateList());
                   // Navigator.of(context).push(MaterialPageRoute(
                   //     builder: (context) => const BudgetLists())
                   //     );

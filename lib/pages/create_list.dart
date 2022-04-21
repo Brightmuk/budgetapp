@@ -1,67 +1,17 @@
+import 'package:budgetapp/models/expense.dart';
+import 'package:budgetapp/widgets/share_type.dart';
 import 'package:flutter/material.dart';
 
-class ExportType extends StatelessWidget {
-  const ExportType({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: SizedBox(
-        height: 200,
-        child: ListView(
-          children: [
-            const Text(
-              'Select export type',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.receipt),
-              title: const Text('PDF'),
-              subtitle: const Text('Export as a document'),
-              onTap: () {
-                Navigator.pop(context,true);
-              },
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.image_outlined),
-              title: const Text('Image'),
-              subtitle: const Text('Export this list as an image'),
-              onTap: () {
-                 Navigator.pop(context,false);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Item {
-  final String name;
-  final int index;
-  final int quantity;
-  final int price;
-
-  const Item(
-      {required this.quantity,
-      required this.index,
-      required this.name,
-      required this.price});
-}
-
-class BudgetLists extends StatefulWidget {
+class CreateList extends StatefulWidget {
   final String? title;
-  const BudgetLists({Key? key, this.title}) : super(key: key);
+  const CreateList({Key? key, this.title}) : super(key: key);
 
   @override
-  _BudgetListsState createState() => _BudgetListsState();
+  _CreateListState createState() => _CreateListState();
 }
 
-class _BudgetListsState extends State<BudgetLists> {
+class _CreateListState extends State<CreateList> {
   final TextEditingController _nameC = TextEditingController();
   final TextEditingController _quantityC = TextEditingController();
   final TextEditingController _priceC = TextEditingController();
@@ -69,7 +19,7 @@ class _BudgetListsState extends State<BudgetLists> {
 
   final _formKey = GlobalKey<FormState>();
 
-  List<Item> expenses = [];
+  List<Expense> expenses = [];
 
   @override
   void initState() {
@@ -79,7 +29,7 @@ class _BudgetListsState extends State<BudgetLists> {
 
   String get total {
     int sum = 0;
-    for (Item val in expenses) {
+    for (Expense val in expenses) {
       sum += val.quantity * val.price;
     }
     return sum.toString();
@@ -179,7 +129,7 @@ class _BudgetListsState extends State<BudgetLists> {
                     controller: _priceC,
                     onFieldSubmitted: (val) {
                       if (_formKey.currentState!.validate()) {
-                        Item exp = Item(
+                        Expense exp = Expense(
                             price: int.parse(val),
                             index: 0,
                             quantity: int.parse(_quantityC.value.text),
@@ -352,7 +302,7 @@ class _BudgetListsState extends State<BudgetLists> {
           ]),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          heroTag: 'Export',
+          heroTag: 'Share',
           backgroundColor: const Color.fromRGBO(
             72,
             191,
@@ -367,12 +317,12 @@ class _BudgetListsState extends State<BudgetLists> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                   context: context,
-                  builder: (context) => const ExportType());
+                  builder: (context) => const ShareType());
             }
           },
-          tooltip: 'Export',
+          tooltip: 'Share',
           label: Text(
-            widget.title != null ? 'Save' : 'Export',
+            widget.title != null ? 'Save' : 'Share',
             style: const TextStyle(color: Colors.white),
           ),
           icon: widget.title != null

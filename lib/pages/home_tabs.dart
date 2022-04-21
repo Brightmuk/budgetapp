@@ -1,4 +1,5 @@
-import 'package:budgetapp/add_item.dart';
+import 'package:budgetapp/pages/add_budget_plan.dart';
+import 'package:budgetapp/pages/add_wish.dart';
 import 'package:flutter/material.dart';
 
 

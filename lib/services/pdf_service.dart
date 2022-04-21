@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart' as pp;
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,12 +13,15 @@ class PDFService {
     String dir = (await pp.getTemporaryDirectory()).path;
     File file = File('$dir/$name');
 
+final logo = await imageFromAssetBundle('assets/images/logo.png');
+
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
           return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
+                
                 pw.SizedBox(
                   width: 200,
                   child: pw.Text('Site construction Budget',
