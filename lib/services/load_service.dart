@@ -5,9 +5,9 @@ class LoadService {
   final BuildContext context;
   LoadService({required this.context});
 
-  static const dataLoader = CircularProgressIndicator(
+  static const dataLoader = Center(child:CircularProgressIndicator(
     color: AppColors.themeColor,
-  );
+  ));
 
   void showLoader() {
     showDialog(

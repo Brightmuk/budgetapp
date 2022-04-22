@@ -1,5 +1,6 @@
 
 import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/pages/create_list.dart';
@@ -9,6 +10,7 @@ import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 class AddBudgetPlan extends StatefulWidget {
@@ -44,15 +46,15 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Add a new Budget plan',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 40.sp, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: const Icon(Icons.clear_outlined))
+                      icon: Icon(Icons.clear_outlined,size: AppSizes.iconSize.sp,))
                 ],
               ),
               const SizedBox(
@@ -77,9 +79,9 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               ListTile(
                 title: const Text('Edit list'),
                 subtitle: Text('${items.length} item(s) in list'),
-                trailing: const Text(
+                trailing: Text(
                   'Ksh.23,000',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold,fontSize: 35.sp),
                 ),
                 onTap: () async {
                   var result =
@@ -95,8 +97,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.calendar_month_outlined),
-                title: const Text('Select date'),
-                trailing: Text(dayDate.format(_selectedDate)),
+                title: Text('Select date',style: TextStyle(fontSize: 35.sp),),
+                trailing: Text(dayDate.format(_selectedDate),style: TextStyle(fontSize: 35.sp)),
                 onTap: () async {
                   final result = await showDatePicker(
                     context: context,
@@ -132,9 +134,9 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               CheckboxListTile(
                   activeColor: Colors.greenAccent,
                   value: remider,
-                  title: const Text('Set reminder on'),
-                  subtitle: const Text(
-                      'You will be reminded to fullfil the budget list'),
+                  title: Text('Set reminder on',style: TextStyle(fontSize: 35.sp)),
+                  subtitle: Text(
+                      'You will be reminded to fullfil the budget list',style: TextStyle(fontSize: 35.sp)),
                   onChanged: (val) {
                     setState(() {
                       remider = val!;

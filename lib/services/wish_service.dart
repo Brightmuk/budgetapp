@@ -24,15 +24,26 @@ class WishService {
         Navigator.pop(context);
         LoadService(context: context).hideLoader();
   }
-
-  ///Get wish list
-  Stream<List<Wish>> get budgetPlansStream {
-    return db.collection(wishCollection).stream.map(budgetPlanList);
+    ///Get single wish
+  Future<Wish> singleWish(String budgetPlanId) async {
+    return await db
+        .collection(wishCollection)
+        .doc(budgetPlanId)
+        .get()
+        .then((value) => Wish.fromMap(value!));
   }
 
-  List<Wish> budgetPlanList(Map<String, dynamic> query) {
-    print(query.entries);
-    return [];
+  ///Get wish list
+  Stream<List<Wish>> get wishStream {
+    return db.collection(wishCollection).stream.map(wishList);
+  }
+
+ final List<Wish> _items = [];
+  ///Yield the list from stream
+  List<Wish> wishList(Map<String, dynamic> query) {
+    final item = Wish.fromMap(query);
+    _items.add(item);
+    return _items;
   }
 
   ///Delete a wish

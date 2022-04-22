@@ -4,12 +4,12 @@ class Wish {
   final String id;
   final String name;
   final DateTime date;
-  final bool remider;
+  final bool reminder;
   Wish({
     required this.id,
     required this.name,
     required this.date,
-    required this.remider,
+    required this.reminder,
   });
 
   Wish copyWith({
@@ -22,7 +22,7 @@ class Wish {
       id: id ?? this.id,
       name: name ?? this.name,
       date: date ?? this.date,
-      remider: remider ?? this.remider,
+      reminder: remider ?? this.reminder,
     );
   }
 
@@ -31,7 +31,7 @@ class Wish {
       'id': id,
       'name': name,
       'date': date.millisecondsSinceEpoch,
-      'remider': remider,
+      'reminder': reminder,
     };
   }
 
@@ -40,7 +40,7 @@ class Wish {
       id: map['id'] ?? '',
       name: map['name'] ?? '',
       date: DateTime.fromMillisecondsSinceEpoch(map['date']),
-      remider: map['remider'] ?? false,
+      reminder: map['reminder'] ?? false,
     );
   }
 
@@ -50,7 +50,7 @@ class Wish {
 
   @override
   String toString() {
-    return 'Wish(id: $id, name: $name, date: $date, remider: $remider)';
+    return 'Wish(id: $id, name: $name, date: $date, remider: $reminder)';
   }
 
   @override
@@ -61,7 +61,7 @@ class Wish {
       other.id == id &&
       other.name == name &&
       other.date == date &&
-      other.remider == remider;
+      other.reminder == reminder;
   }
 
   @override
@@ -69,6 +69,6 @@ class Wish {
     return id.hashCode ^
       name.hashCode ^
       date.hashCode ^
-      remider.hashCode;
+      reminder.hashCode;
   }
 }

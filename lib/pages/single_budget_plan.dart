@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
@@ -11,6 +10,7 @@ import 'package:budgetapp/services/pdf_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SingleBudgetPlan extends StatefulWidget {
   final String budgetPlanId;
@@ -22,15 +22,8 @@ class SingleBudgetPlan extends StatefulWidget {
 }
 
 class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
-  void initState() {
-    super.initState();
-  }
 
   final DateFormat dayDate = DateFormat('EEE dd, yyy');
-  final TextEditingController _titleC = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-
-  late DateTime _selectedDate = DateTime.now();
   late bool remider = true;
   late bool save = true;
   bool exportAsPdf = true;
@@ -62,13 +55,13 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Budget plan',
                       style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: AppSizes.titleFont.sp, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.clear_outlined),
+                      icon: Icon(Icons.clear_outlined,size: AppSizes.iconSize.sp,),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -99,8 +92,8 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                     ),
                     Text(
                       plan!.title,
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.bold),
+                      style:TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
                       height: 20,
@@ -108,17 +101,21 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                     const Divider(),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.calendar_month_outlined),
-                      title: const Text('Date'),
-                      trailing: Text(dayDate.format(plan.date)),
+                      leading: Icon(Icons.calendar_month_outlined,size: AppSizes.iconSize.sp,),
+                      title: Text('Date',style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,),),
+                      trailing: Text(dayDate.format(plan.date),style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,),),
                     ),
                     CheckboxListTile(
                         contentPadding: EdgeInsets.zero,
                         activeColor: Colors.greenAccent,
                         value: plan.reminder,
-                        title: const Text('Reminder '),
-                        subtitle: const Text(
-                            'You will be reminded to fullfil the budget list'),
+                        title: Text('Reminder ',style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,),),
+                        subtitle: Text(
+                            'You will be reminded to fullfil the budget list',style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,),),
                         onChanged: (val) {
                           // setState(() {
                           //   remider = val!;
@@ -126,7 +123,9 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                         }),
                     const Divider(),
                     Expanded(child:
-                        ListView.builder(itemBuilder: (context, index) {
+                      ListView.builder(
+                        itemCount: plan.items.length,
+                        itemBuilder: (context, index) {
                       return Dismissible(
                         dismissThresholds: const {
                           DismissDirection.startToEnd: 0.7,
@@ -136,8 +135,8 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                           padding: const EdgeInsets.all(10),
                           color: Colors.redAccent,
                           child: Row(
-                            children: const [
-                              Icon(Icons.delete_outline),
+                            children: [
+                              Icon(Icons.delete_outline,size: AppSizes.iconSize.sp,),
                             ],
                           ),
                         ),
@@ -156,14 +155,15 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                           subtitle: Text(
                               plan.items[index].quantity.toString() +
                                   ' unit(s) @ ksh.' +
-                                  plan.items[index].price.toString()),
+                                  plan.items[index].price.toString(),style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,),),
                           trailing: Text(
                             'ksh.' +
                                 (plan.items[index].quantity *
                                         plan.items[index].price)
                                     .toString(),
                             style:
-                                const TextStyle(fontWeight: FontWeight.bold),
+                                TextStyle(fontWeight: FontWeight.bold,fontSize: AppSizes.normalFontSize.sp),
                           ),
                         ),
                       );
@@ -182,11 +182,11 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
               const SizedBox(),
               FloatingActionButton.extended(
                 heroTag: 'print',
-                label: const Text(
+                label: Text(
                   'Print',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white,fontSize: AppSizes.normalFontSize.sp),
                 ),
-                icon: const Icon(Icons.print_outlined, color: Colors.white),
+                icon: Icon(Icons.print_outlined, color: Colors.white,size: AppSizes.iconSize.sp,),
                 onPressed: () async {
                   File pdf = await PDFService.createPdf('new');
                   await Printing.layoutPdf(
@@ -197,11 +197,11 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
               ),
               FloatingActionButton.extended(
                 heroTag: 'share',
-                label: const Text(
+                label: Text(
                   'Share',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white,fontSize: AppSizes.normalFontSize.sp),
                 ),
-                icon: const Icon(Icons.share_outlined, color: Colors.white),
+                icon: Icon(Icons.share_outlined, color: Colors.white,size: AppSizes.iconSize.sp,),
                 onPressed: () async {
                   File pdf = await PDFService.createPdf('new');
                   await Printing.sharePdf(

@@ -1,7 +1,7 @@
 import 'package:budgetapp/pages/add_budget_plan.dart';
 import 'package:budgetapp/pages/add_wish.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ExpenseType extends StatelessWidget {
   const ExpenseType({Key? key}) : super(key: key);
@@ -14,14 +14,14 @@ class ExpenseType extends StatelessWidget {
         height: 200,
         child: ListView(
           children: [
-            const Text(
+            Text(
               'Select type',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 35.sp, fontWeight: FontWeight.bold),
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
+                padding: EdgeInsets.only(top: 8.0.sp),
                 child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
@@ -30,8 +30,8 @@ class ExpenseType extends StatelessWidget {
                     height: 10,
                     width: 10),
               ),
-              title: const Text('Budget Plan'),
-              subtitle: const Text('A plan to spend an amount of money'),
+              title: Text('Budget Plan',style: TextStyle(fontSize: 35.sp),),
+              subtitle: Text('A plan to spend an amount of money',style: TextStyle(fontSize: 35.sp),),
               onTap: () {
                 Navigator.pop(context);
                 showModalBottomSheet(
@@ -54,9 +54,9 @@ class ExpenseType extends StatelessWidget {
                     height: 10,
                     width: 10),
               ),
-              title: const Text('Wish'),
-              subtitle: const Text(
-                  'Something that you plan to buy, will be added to your wishlist'),
+              title: Text('Wish',style: TextStyle(fontSize: 35.sp),),
+              subtitle: Text(
+                  'Something that you plan to buy, will be added to your wishlist',style: TextStyle(fontSize: 35.sp),),
               onTap: () {
                 Navigator.pop(context);
                 showModalBottomSheet(

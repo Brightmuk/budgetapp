@@ -24,11 +24,11 @@ class BudgetPlanService {
         .set(budgetPlan.toMap())
         .then((value) {
       LoadService(context: context).hideLoader();
-      ToastServcie.showToast('Budget plan saved!');
+      // ToastServcie.showToast('Budget plan saved!');
       returnValue = true;
     }).catchError((e) {
       LoadService(context: context).hideLoader();
-      ToastServcie.showToast('An error occurred!');
+      // ToastServcie.showToast('An error occurred!');
       returnValue = false;
     });
     return returnValue;
@@ -36,7 +36,6 @@ class BudgetPlanService {
 
   ///Get single budget plan
   Future<BudgetPlan> singleBudgetPlan(String budgetPlanId) async {
-
     return await db
         .collection(budgetPlanCollection)
         .doc(budgetPlanId)
@@ -49,9 +48,18 @@ class BudgetPlanService {
     return db.collection(budgetPlanCollection).stream.map(budgetPlanList);
   }
 
+  final List<BudgetPlan> _items = [];
+
+  ///Yield the list from stream
   List<BudgetPlan> budgetPlanList(Map<String, dynamic> query) {
-    print(query.entries);
-    return [];
+    final item = BudgetPlan.fromMap(query);
+    bool alreadyInList =
+        _items.where((val) => val.id == item.id).isNotEmpty;
+      if(!alreadyInList){
+      _items.add(item);
+      }
+
+    return _items;
   }
 
   ///Delete a budget plan

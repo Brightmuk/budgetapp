@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
+import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/widgets/share_type.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CreateList extends StatefulWidget {
   final String? title;
@@ -53,36 +55,7 @@ class _CreateListState extends State<CreateList> {
                   focusNode: _focusNode,
                   controller: _nameC,
                   cursorColor: AppColors.themeColor,
-                  decoration: InputDecoration(
-                    label: const Padding(
-                      padding: EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        'Item name',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: AppColors.themeColor, width: 1.5),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(217, 4, 41, 1), width: 1.5),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(217, 4, 41, 1), width: 1.5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: AppColors.themeColor, width: 1.5),
-                    ),
-                    hintText: 'Food',
-                  ),
+                  decoration: AppStyles().textFieldDecoration(label: 'Name',hintText: 'Food'),
                   validator: (val) {
                     if (val!.isEmpty) {
                       return 'The name is required';
@@ -96,35 +69,7 @@ class _CreateListState extends State<CreateList> {
                   keyboardType: TextInputType.number,
                   controller: _quantityC,
                   cursorColor: AppColors.themeColor,
-                  decoration: InputDecoration(
-                    label: const Padding(
-                      padding: EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        'Quantity',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: AppColors.themeColor, width: 1.5),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(217, 4, 41, 1), width: 1.5),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(217, 4, 41, 1), width: 1.5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: AppColors.themeColor, width: 1.5),
-                    ),
-                  ),
+                  decoration: AppStyles().textFieldDecoration(label: 'Quantity',),
                 ),
               ),
               SizedBox(
@@ -149,36 +94,7 @@ class _CreateListState extends State<CreateList> {
                       }
                     },
                     cursorColor: AppColors.themeColor,
-                    decoration: InputDecoration(
-                      label: const Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          'Price',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: AppColors.themeColor, width: 1.5),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: Color.fromRGBO(217, 4, 41, 1), width: 1.5),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: Color.fromRGBO(217, 4, 41, 1), width: 1.5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: AppColors.themeColor, width: 1.5),
-                      ),
-                      hintText: '300.00',
-                    ),
+                    decoration: AppStyles().textFieldDecoration(label: 'Price',hintText: '300'),
                     validator: (val) {
                       if (val!.isEmpty) {
                         return 'The price is required';
@@ -217,8 +133,8 @@ class _CreateListState extends State<CreateList> {
                   children: [
                     Text(
                       widget.title ?? 'Quick Budget',
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 40.sp, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
                       icon: const Icon(Icons.clear_outlined),
@@ -231,18 +147,18 @@ class _CreateListState extends State<CreateList> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Total',
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 40.sp,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'ksh.' + total,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 40.sp,
                           fontWeight: FontWeight.bold),
                     )
                   ],
@@ -339,13 +255,14 @@ class _CreateListState extends State<CreateList> {
           tooltip: 'Share',
           label: Text(
             widget.title != null ? 'Save' : 'Share',
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white,fontSize: 35.sp),
           ),
           icon: widget.title != null
               ? null
-              : const Icon(
+              : Icon(
                   Icons.receipt_outlined,
                   color: Colors.white,
+                  size: 50.sp,
                 ),
         ),
       ),

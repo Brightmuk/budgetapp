@@ -1,109 +1,155 @@
+import 'dart:async';
+import 'package:budgetapp/constants/sizes.dart';
+import 'package:budgetapp/models/budget_plan.dart';
+import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/add_budget_plan.dart';
 import 'package:budgetapp/pages/add_wish.dart';
+import 'package:budgetapp/pages/single_budget_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
+import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/load_service.dart';
+import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
-class HomeTabs extends StatefulWidget {
-  const HomeTabs({ Key? key }) : super(key: key);
+class BudgetListTab extends StatefulWidget {
+  const BudgetListTab({Key? key}) : super(key: key);
 
   @override
-  _HomeTabsState createState() => _HomeTabsState();
+  _BudgetListTabState createState() => _BudgetListTabState();
 }
 
-class _HomeTabsState extends State<HomeTabs> {
-    final ScrollController _controller = ScrollController();
-      bool hasItems = false;
+class _BudgetListTabState extends State<BudgetListTab> {
+  final ScrollController _controller = ScrollController();
+  final DateFormat dayDate = DateFormat('EEE dd, yyy');
+  bool hasItems = false;
+
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-                  controller: _controller,
-                  itemCount: 2,
-                  itemBuilder: (context, index) {
-                    bool indexEven = index % 2 == 0;
-                    if(hasItems){
-                    return InkWell(
-                      child: Ink(
-                        child: Dismissible(
-                          background: Container(
-                            color: Colors.greenAccent.withOpacity(0.2),
-                          ),
-                          key: Key(index.toString()),
-                          child: ListTile(
-                              onTap: (){
-                              Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const SingleWish()));
-                              },
-                              leading: indexEven
-                                  ? const Icon(
-                                      Icons.money,
-                                      size: 20,
-                                      color: Colors.pinkAccent,
-                                    )
-                                  : const Icon(
-                                      Icons.shopping_cart_outlined,
-                                      size: 20,
-                                      color: Colors.orangeAccent,
-                                    ),
-                              title: const Text(
-                                'Fuel',
-                              ),
-                              subtitle: Text('${index + 20} may 2022'),
-                              trailing: const Text(
-                                'Ksh.30k',
-                              )),
+    return StreamBuilder<List<BudgetPlan>>(
+        stream: BudgetPlanService(context: context).budgetPlansStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+          // if(snapshot.connectionState==ConnectionState.waiting){
+          //    return LoadService.dataLoader;
+          // }
+          if (snapshot.hasData) {
+            List<BudgetPlan>? plans = snapshot.data;
+            return ListView.builder(
+                controller: _controller,
+                itemCount: plans!.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    child: Ink(
+                      child: Dismissible(
+                        background: Container(
+                          color: Colors.greenAccent.withOpacity(0.2),
                         ),
-                      ),
-                    );
-                    }else{
-                    return InkWell(
-                      child: Ink(
-                        child: indexEven
-                                ? ListTile(
-                     onTap: () {
-                            showModalBottomSheet(
-                                isScrollControlled: true,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
-                                context: context,
-                                builder: (context) => const AddBudgetPlan());
-                          },
-                            leading: const Icon(
-                                    Icons.construction,
-                                    size: 20,
-                                    color: Colors.pinkAccent,
-                                  ),
-                                
-                            title: const Text(
-                              'You have no budget plans, create one',
-                            ),
-                           
-                            trailing: Icon(Icons.arrow_forward_ios,size: 15,)):
-                            ListTile(
+                        key: Key(index.toString()),
+                        child: ListTile(
                             onTap: () {
-                              showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  context: context,
-                                  builder: (context) => const AddWish());
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SingleBudgetPlan(budgetPlanId: plans[index].id,)));
                             },
-                            leading: const Icon(
-                                    Icons.shopping_cart_outlined,
-                                    size: 20,
-                                    color: Colors.orangeAccent,
-                                  ),
-                                
-                            title: const Text(
-                              'You have no wishes, create one',
+                            leading: Icon(
+                              Icons.money,
+                              size: AppSizes.iconSize.sp,
+                              color: Colors.pinkAccent,
                             ),
-                            
-                            trailing: const Icon(Icons.arrow_forward_ios,size: 15,)),
+                            title: Text(
+                              plans[index].title,
+                              
+                              style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                            ),
+                            subtitle: Text(dayDate.format(plans[index].date,
+                             
+                             ),style:TextStyle(fontSize: AppSizes.normalFontSize.sp)),
+                            trailing:Text(
+                              'Ksh.30k',
+                              style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                            )),
                       ),
-                    );
-                    }
-              
-                  });
+                    ),
+                  );
+                });
+          } else {
+            return Container();
+          }
+        });
+  }
+}
+
+class WishListTab extends StatefulWidget {
+  const WishListTab({Key? key}) : super(key: key);
+
+  @override
+  _WishListTabState createState() => _WishListTabState();
+}
+
+class _WishListTabState extends State<WishListTab> {
+  final ScrollController _controller = ScrollController();
+  final DateFormat dayDate = DateFormat('EEE dd, yyy');
+  bool hasItems = false;
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<Wish>>(
+        stream: WishService(context: context).wishStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+          // if(snapshot.connectionState==ConnectionState.waiting){
+          //    return LoadService.dataLoader;
+          // }
+          if (snapshot.hasData) {
+            List<Wish>? plans = snapshot.data;
+            return ListView.builder(
+                controller: _controller,
+                itemCount: plans!.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    child: Ink(
+                      child: Dismissible(
+                        background: Container(
+                          color: Colors.greenAccent.withOpacity(0.2),
+                        ),
+                        key: Key(index.toString()),
+                        child: ListTile(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SingleWish(wishId: '',)));
+                            },
+                            leading: Icon(
+                              Icons.shopping_cart_outlined,
+                              size: AppSizes.iconSize.sp,
+                              color: Colors.orangeAccent,
+                            ),
+                            title: Text(
+                              plans[index].name,
+                              style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                            ),
+                            subtitle: Text(dayDate.format(plans[index].date),style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
+                            trailing:Text(
+                              'Ksh.30k',
+                              style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                            )),
+                      ),
+                    ),
+                  );
+                });
+          } else {
+            return Container();
+          }
+        });
   }
 }

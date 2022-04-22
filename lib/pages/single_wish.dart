@@ -1,29 +1,31 @@
 import 'dart:io';
-
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
+import 'package:budgetapp/models/budget_plan.dart';
+import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
+import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/pdf_service.dart';
+import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SingleWish extends StatefulWidget {
-  const SingleWish({
-    Key? key,
-  }) : super(key: key);
+  final String wishId;
+  const SingleWish({Key? key, required this.wishId})
+      : super(key: key);
 
   @override
   _SingleWishState createState() => _SingleWishState();
 }
 
 class _SingleWishState extends State<SingleWish> {
-  final DateFormat dayDate = DateFormat('EEE dd, yyy');
-  final TextEditingController _titleC = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
 
-  late DateTime _selectedDate = DateTime.now();
+  final DateFormat dayDate = DateFormat('EEE dd, yyy');
   late bool remider = true;
   late bool save = true;
   bool exportAsPdf = true;
@@ -55,13 +57,13 @@ class _SingleWishState extends State<SingleWish> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Air Jordans 4 retro',
+                    Text(
+                      'Wish',
                       style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: AppSizes.titleFont.sp, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.clear_outlined),
+                      icon: Icon(Icons.clear_outlined,size: AppSizes.iconSize.sp,),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -72,142 +74,100 @@ class _SingleWishState extends State<SingleWish> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(children: <Widget>[
-              const SizedBox(
-                height: 20,
-              ),
-              Form(
-                key: _formKey,
-                child: TextFormField(
-                  controller: _titleC,
-                  cursorColor: const Color.fromRGBO(72, 191, 132, 1),
-                  decoration: InputDecoration(
-                    label: const Padding(
-                      padding: EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        'Title',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(72, 191, 132, 1), width: 1.5),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(217, 4, 41, 1), width: 1.5),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(217, 4, 41, 1), width: 1.5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(72, 191, 132, 1), width: 1.5),
-                    ),
-                    hintText: "John's Birthday",
-                  ),
-                  validator: (val) {
-                    if (val!.isEmpty) {
-                      return 'The title is required';
-                    }
-                  },
-                ),
-              ),
-              const SizedBox(height: 20,),
-              const Divider(),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.calendar_month_outlined),
-                title: const Text('Select date'),
-                trailing: Text(dayDate.format(_selectedDate)),
-                onTap: () async {
-                  final result = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 10)),
-                    builder: (context, child) {
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                            onSurface: Color.fromRGBO(72, 191, 132, 1),
+        body: FutureBuilder<Wish>(
+            future: WishService(context: context)
+                .singleWish(widget.wishId),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(snapshot.error.toString()),
+                );
+              }
+              if (snapshot.hasData) {
+                Wish? wish = snapshot.data;
 
-                            primary: Color.fromRGBO(72, 191, 132, 1),
-                            // header background color
-                          ),
-                          textButtonTheme: TextButtonThemeData(
-                            style: TextButton.styleFrom(
-                              primary: AppColors.themeColor,
-                            ),
-                          ),
-                        ),
-                        child: child!,
-                      );
-                    },
-                  );
-                  if (result != null) {
-                    setState(() {
-                      _selectedDate = result;
-                    });
-                  }
-                },
-              ),
-              CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                  activeColor: Colors.greenAccent,
-                  value: remider,
-                  title: const Text('Set reminder on'),
-                  subtitle: const Text(
-                      'You will be reminded to fullfil the budget list'),
-                  onChanged: (val) {
-                    setState(() {
-                      remider = val!;
-                    });
-                  }),
-            ]),
-          ),
-        ),
+                return Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(children: <Widget>[
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      wish!.name,
+                      style:TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(Icons.calendar_month_outlined,size: AppSizes.iconSize.sp,),
+                      title: Text('Date',style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,),),
+                      trailing: Text(dayDate.format(wish.date),style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,),),
+                    ),
+                    CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        activeColor: Colors.greenAccent,
+                        value: wish.reminder,
+                        title: Text('Reminder ',style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,),),
+                        subtitle: Text(
+                            'You will be reminded to fullfil the budget list',style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,),),
+                        onChanged: (val) {
+                          // setState(() {
+                          //   remider = val!;
+                          // });
+                        }),
+                    const Divider(),
+
+                  ]),
+                );
+              } else {
+                return LoadService.dataLoader;
+              }
+            }),
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(left: 25),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
+              const SizedBox(),
               FloatingActionButton.extended(
                 heroTag: 'print',
-                label: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.white),
+                label: Text(
+                  'Print',
+                  style: TextStyle(color: Colors.white,fontSize: AppSizes.normalFontSize.sp),
                 ),
-                icon: const Icon(Icons.delete_outline,color: Colors.white),
-                onPressed: ()async {
-
+                icon: Icon(Icons.print_outlined, color: Colors.white,size: AppSizes.iconSize.sp,),
+                onPressed: () async {
+                  File pdf = await PDFService.createPdf('new');
+                  await Printing.layoutPdf(
+                      name: 'mydocument.pdf',
+                      onLayout: (format) async => pdf.readAsBytes());
                 },
                 backgroundColor: AppColors.themeColor,
               ),
-              // FloatingActionButton.extended(
-              //   heroTag: 'share',
-              //   label: const Text(
-              //     'Share',
-              //     style: TextStyle(color: Colors.white),
-              //   ),
-              //   icon: const Icon(Icons.share_outlined, color: Colors.white),
-              //   onPressed: () async {
-              //     File pdf = await PDFService.createPdf('new');
-              //     await Printing.sharePdf(
-              //         bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
-              //   },
-              //   backgroundColor: const Color.fromRGBO(72, 191, 132, 1),
-              // ),
-              // const SizedBox(),
+              FloatingActionButton.extended(
+                heroTag: 'share',
+                label: Text(
+                  'Share',
+                  style: TextStyle(color: Colors.white,fontSize: AppSizes.normalFontSize.sp),
+                ),
+                icon: Icon(Icons.share_outlined, color: Colors.white,size: AppSizes.iconSize.sp,),
+                onPressed: () async {
+                  File pdf = await PDFService.createPdf('new');
+                  await Printing.sharePdf(
+                      bytes: pdf.readAsBytesSync(),
+                      filename: 'my-document.pdf');
+                },
+                backgroundColor: AppColors.themeColor,
+              ),
+              const SizedBox(),
             ],
           ),
         ),

@@ -1,14 +1,15 @@
 import 'package:budgetapp/constants/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppStyles {
   InputDecoration textFieldDecoration({String? label, String? hintText}) =>
       InputDecoration(
         label: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding:EdgeInsets.only(left: 8.0.sp),
           child: Text(
             label!,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white,fontSize: 35.sp),
           ),
         ),
         enabledBorder: OutlineInputBorder(
@@ -31,5 +32,6 @@ class AppStyles {
           borderSide: const BorderSide(color: AppColors.themeColor, width: 1.5),
         ),
         hintText: hintText,
+        hintStyle: TextStyle(fontSize: 35.sp),
       );
 }

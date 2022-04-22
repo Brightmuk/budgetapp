@@ -1,9 +1,11 @@
 
 import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/sizes.dart';
+import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/pages/single_wish.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 class AddWish extends StatefulWidget {
@@ -29,22 +31,22 @@ class _AddWishState extends State<AddWish> {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.5,
       child: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: EdgeInsets.all(AppSizes.pagePading.sp),
         child: Stack(
           children: [
             Column(children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Add a new Wish',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: AppSizes.titleFont.sp, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: const Icon(Icons.clear_outlined))
+                                          icon: Icon(Icons.clear_outlined,size: AppSizes.iconSize.sp,))
                 ],
               ),
               const SizedBox(
@@ -60,40 +62,7 @@ class _AddWishState extends State<AddWish> {
                       child: TextFormField(
                         controller: _nameC,
                         cursorColor: AppColors.themeColor,
-                        decoration: InputDecoration(
-                          label: const Padding(
-                            padding: EdgeInsets.only(left: 8.0),
-                            child: Text(
-                              'Name',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: AppColors.themeColor,
-                                width: 1.5),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromRGBO(217, 4, 41, 1),
-                                width: 1.5),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromRGBO(217, 4, 41, 1),
-                                width: 1.5),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: AppColors.themeColor,
-                                width: 1.5),
-                          ),
-                          hintText: 'Food',
-                        ),
+                        decoration: AppStyles().textFieldDecoration(label: 'Name',hintText: 'Air Jordans'),
                         validator: (val) {
                           if (val!.isEmpty) {
                             return 'The name is required';
@@ -107,38 +76,7 @@ class _AddWishState extends State<AddWish> {
                           keyboardType: TextInputType.number,
                           controller: _priceC,
                           cursorColor: AppColors.themeColor,
-                          decoration: InputDecoration(
-                            label: const Padding(
-                              padding: EdgeInsets.only(left: 8.0),
-                              child: Text('Price',
-                                  style: TextStyle(color: Colors.white)),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: AppColors.themeColor,
-                                  width: 1.5),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: Color.fromRGBO(217, 4, 41, 1),
-                                  width: 1.5),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: Color.fromRGBO(217, 4, 41, 1),
-                                  width: 1.5),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: AppColors.themeColor,
-                                  width: 1.5),
-                            ),
-                            hintText: '300.00',
-                          ),
+                          decoration: AppStyles().textFieldDecoration(label: 'Price',hintText: '300'),
                           validator: (val) {
                             if (val!.isEmpty) {
                               return 'The price is required';
@@ -153,9 +91,9 @@ class _AddWishState extends State<AddWish> {
                 height: 20,
               ),
               ListTile(
-                leading: const Icon(Icons.calendar_month_outlined),
-                title: const Text('Select date'),
-                trailing: Text(dayDate.format(_selectedDate)),
+                leading: Icon(Icons.calendar_month_outlined,size: AppSizes.iconSize.sp,),
+                title: Text('Select date',style: TextStyle(fontSize: AppSizes.normalFontSize.sp),),
+                trailing: Text(dayDate.format(_selectedDate),style: TextStyle(fontSize: AppSizes.normalFontSize.sp),),
                 onTap: () async {
                   final result = await showDatePicker(
                     context: context,
@@ -189,7 +127,7 @@ class _AddWishState extends State<AddWish> {
               CheckboxListTile(
                   activeColor: AppColors.themeColor,
                   value: remider,
-                  title: const Text('Set reminder on'),
+                  title: Text('Set reminder on',style: TextStyle(fontSize: AppSizes.normalFontSize.sp),),
                   onChanged: (val) {
                     setState(() {
                       remider = val!;
@@ -211,7 +149,7 @@ class _AddWishState extends State<AddWish> {
                   onPressed: () {
                      Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const SingleWish()));
+                        builder: (context) => const SingleWish(wishId: '',)));
                   }),
             ),
           ],

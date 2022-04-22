@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ShareType extends StatelessWidget {
   const ShareType({Key? key}) : super(key: key);

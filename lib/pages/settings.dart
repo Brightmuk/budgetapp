@@ -2,6 +2,7 @@ import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
@@ -32,16 +33,16 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(
-                  height: 20,
+                SizedBox(
+                  height: 20.sp,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Settings',
                       style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: AppSizes.titleFont.sp, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
                       icon: const Icon(Icons.clear_outlined),
@@ -61,18 +62,18 @@ class _SettingsPageState extends State<SettingsPage> {
               height: 20,
             ),
             ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('About Us'),
+              leading: Icon(Icons.info_outline,size: AppSizes.iconSize.sp),
+              title: Text('About Us',style: TextStyle(fontSize: AppSizes.normalFontSize.sp),),
               onTap: () {},
             ),
             ListTile(
-              leading: const Icon(Icons.help_center_outlined),
-              title: const Text('Help'),
+              leading: Icon(Icons.help_center_outlined,size: AppSizes.iconSize.sp),
+              title: Text('Help',style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
               onTap: () {},
             ),
             ListTile(
-              leading: const Icon(Icons.rate_review_outlined),
-              title: const Text('Rate Us'),
+              leading:Icon(Icons.rate_review_outlined,size: AppSizes.iconSize.sp),
+              title: Text('Rate Us',style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
               onTap: () {},
             ),
             SizedBox(
@@ -85,9 +86,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     String version = snapshot.data!.version;
                     return Text(
                       'VERSION $version',
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: AppColors.themeColor,
-                          fontSize: 15,
+                          fontSize: AppSizes.normalFontSize.sp,
                           fontWeight: FontWeight.w300),
                     );
                   } else {

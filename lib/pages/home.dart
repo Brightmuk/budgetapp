@@ -6,7 +6,7 @@ import 'package:budgetapp/pages/settings.dart';
 import 'package:budgetapp/widgets/expense_type.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:toast/toast.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -20,7 +20,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initState() {
     super.initState();
-   
   }
 
   void newItem() {
@@ -50,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const SizedBox(),
+                SizedBox(height: 10.sp,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -58,11 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.all(20),
                       child: Image.asset(
                         'assets/images/logo.png',
-                        width: 40,
+                        width: 80.sp,
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: EdgeInsets.all(10.sp),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.1),
                         border: Border.all(color: Colors.white, width: 0.5),
@@ -76,9 +75,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             context: context,
                             builder: (context) => const SettingsPage());
                       },
-                      child: const Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Icon(Icons.settings_outlined),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Icon(Icons.settings_outlined,size: AppSizes.iconSize.sp,),
                       ),
                     )
                   ],
@@ -87,12 +86,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: const [
+                    children: [
                       Text(
                         'Wed 13 Apr',
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 35,
+                            fontSize: 70.sp,
                             fontWeight: FontWeight.w300),
                       ),
                     ],
@@ -104,11 +103,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 const Divider(
                   height: 0,
                 ),
-                const Text(
+                Text(
                   'COMPLETION',
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
+                      fontSize: 35.sp,
                       fontWeight: FontWeight.w300),
                 ),
                 const Divider(
@@ -118,56 +117,56 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       CircularPercentIndicator(
-                        radius: 50.0,
-                        lineWidth: 4.0,
+                        radius: 150.0.sp,
+                        lineWidth: 10.0.sp,
                         percent: 0.5,
                         backgroundColor: AppColors.themeColor,
-                        center: const Text(
+                        center: Text(
                           '50%',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 30.sp,
                           ),
                         ),
                         progressColor: Colors.blueAccent,
                       ),
                       CircularPercentIndicator(
-                        radius: 50.0,
-                        lineWidth: 4.0,
+                        radius: 150.0.sp,
+                        lineWidth: 10.0.sp,
                         percent: 0.7,
                         backgroundColor: AppColors.themeColor,
-                        center: const Text(
+                        center: Text(
                           '70%',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 30.sp,
                           ),
                         ),
                         progressColor: Colors.pinkAccent,
                       ),
                       CircularPercentIndicator(
-                        radius: 50.0,
-                        lineWidth: 4.0,
+                        radius: 150.0.sp,
+                        lineWidth: 10.0.sp,
                         percent: 0.2,
                         backgroundColor: AppColors.themeColor,
-                        center: const Text(
+                        center: Text(
                           '20%',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 30.sp,
                           ),
                         ),
                         progressColor: Colors.orangeAccent,
                       ),
                     ]),
-                const TabBar(
+                TabBar(
                     indicatorSize: TabBarIndicatorSize.label,
                     indicatorColor: Colors.white,
                     labelStyle: TextStyle(
                         color: Colors.white,
-                        fontSize: 15,
+                        fontSize: 30.sp,
                         fontWeight: FontWeight.w300),
-                    tabs: [
+                    tabs: const [
                       Tab(
                         text: 'ALL',
                       ),
@@ -183,10 +182,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        body: const Padding(
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 50),
+        body:  Padding(
+          padding: const EdgeInsets.fromLTRB(0, 10, 0, 50),
           child: TabBarView(
-            children: [HomeTabs(), HomeTabs(), HomeTabs()],
+            children: [Container(),const BudgetListTab(), const WishListTab()],
           ),
         ),
         floatingActionButton: Padding(
@@ -195,11 +194,11 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               FloatingActionButton.extended(
-                label: const Text(
+                label: Text(
                   'Quick List',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white,fontSize: 35.sp),
                 ),
-                icon: const Icon(Icons.edit, color: Colors.white),
+                icon: Icon(Icons.edit, color: Colors.white,size: AppSizes.iconSize.sp,),
                 onPressed: () {
                   showModalBottomSheet(
                       isScrollControlled: true,
@@ -216,9 +215,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 backgroundColor: AppColors.themeColor,
                 onPressed: newItem,
                 tooltip: 'New item',
-                child: const Icon(
+                child: Icon(
                   Icons.add,
                   color: Colors.white,
+                  size: AppSizes.iconSize.sp,
                 ),
               )
             ],
