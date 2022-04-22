@@ -29,6 +29,8 @@ dev_dependencies:
   permission_handler: ^9.2.0
   flutter_native_splash: ^2.1.6
   package_info_plus: ^1.4.2
+  localstore: ^1.2.3
+  toast: ^0.2.9
 
 
 

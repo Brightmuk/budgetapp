@@ -177,6 +177,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  localstore:
+    dependency: "direct dev"
+    description:
+      name: localstore
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.3"
   matcher:
     dependency: transitive
     description:
@@ -441,6 +448,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.8"
+  toast:
+    dependency: "direct dev"
+    description:
+      name: toast
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.9"
   typed_data:
     dependency: transitive
     description:

@@ -1,7 +1,11 @@
 
+import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/style.dart';
+import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/pages/single_budget_plan.dart';
+import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -58,37 +62,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 key: _formKey,
                 child: TextFormField(
                   controller: _titleC,
-                  cursorColor: const Color.fromRGBO(72, 191, 132, 1),
-                  decoration: InputDecoration(
-                    label: const Padding(
-                      padding: EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        'Title',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(72, 191, 132, 1), width: 1.5),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(217, 4, 41, 1), width: 1.5),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(217, 4, 41, 1), width: 1.5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(72, 191, 132, 1), width: 1.5),
-                    ),
-                    hintText: "John's Birthday",
-                  ),
+                  cursorColor: AppColors.themeColor,
+                  decoration: AppStyles().textFieldDecoration(label:'Title',hintText: "John's Birthday"),
                   validator: (val) {
                     if (val!.isEmpty) {
                       return 'The title is required';
@@ -117,7 +92,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                   });
                 },
               ),
-              Divider(),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.calendar_month_outlined),
                 title: const Text('Select date'),
@@ -132,9 +107,9 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       return Theme(
                         data: Theme.of(context).copyWith(
                           colorScheme: const ColorScheme.light(
-                            onSurface: Color.fromRGBO(72, 191, 132, 1),
+                            onSurface: AppColors.themeColor,
 
-                            primary: Color.fromRGBO(72, 191, 132, 1),
+                            primary: AppColors.themeColor,
                             // header background color
                           ),
                           textButtonTheme: TextButtonThemeData(
@@ -172,17 +147,29 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               child: MaterialButton(
                   padding: const EdgeInsets.all(20),
                   minWidth: MediaQuery.of(context).size.width * 0.9,
-                  color: const Color.fromRGBO(72, 191, 132, 1),
+                  color: AppColors.themeColor,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50)),
                   child: const Text(
                     'Save',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onPressed: () {
-                     Navigator.pop(context);
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const SingleBudgetPlan()));
+                  onPressed: ()async {
+                    String id = DateTime.now().millisecondsSinceEpoch.toString();
+                    BudgetPlan plan = BudgetPlan(
+                      id: id,
+                      date: _selectedDate,
+                      title: _titleC.value.text,
+                      reminder: remider,
+                      items: [],
+                    );
+                    await BudgetPlanService(context: context).newBudgetPlan(budgetPlan: plan)
+                    .then((value){
+                      if(value){
+                        Navigator.pop(context);
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SingleBudgetPlan(budgetPlanId: id)));
+                      }
+                    });
                   }),
             ),
           ],

@@ -1,11 +1,12 @@
-import 'package:budgetapp/pages/add_budget_plan.dart';
+import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/pages/home_tabs.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/pages/settings.dart';
 import 'package:budgetapp/widgets/expense_type.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:toast/toast.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -16,6 +17,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void initState() {
+    super.initState();
+   
+  }
 
   void newItem() {
     showModalBottomSheet(
@@ -33,13 +39,13 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: Container(),
-          toolbarHeight: 300,
+          toolbarHeight: AppSizes.maxToolBarHeight,
           flexibleSpace: AnimatedContainer(
             duration: const Duration(seconds: 2),
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: AppSizes(context: context).screenHeight * 0.4,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Color.fromRGBO(72, 191, 132, 1),
+              color: AppColors.themeColor,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -66,10 +72,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     GestureDetector(
                       onTap: () {
                         showModalBottomSheet(
-                          isScrollControlled: true,
+                            isScrollControlled: true,
                             context: context,
                             builder: (context) => const SettingsPage());
-
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(20),
@@ -116,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         radius: 50.0,
                         lineWidth: 4.0,
                         percent: 0.5,
-                        backgroundColor: const Color.fromRGBO(72, 185, 130, 1),
+                        backgroundColor: AppColors.themeColor,
                         center: const Text(
                           '50%',
                           style: TextStyle(
@@ -130,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         radius: 50.0,
                         lineWidth: 4.0,
                         percent: 0.7,
-                        backgroundColor: const Color.fromRGBO(72, 185, 130, 1),
+                        backgroundColor: AppColors.themeColor,
                         center: const Text(
                           '70%',
                           style: TextStyle(
@@ -144,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         radius: 50.0,
                         lineWidth: 4.0,
                         percent: 0.2,
-                        backgroundColor: const Color.fromRGBO(72, 185, 130, 1),
+                        backgroundColor: AppColors.themeColor,
                         center: const Text(
                           '20%',
                           style: TextStyle(
@@ -204,11 +209,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   //     builder: (context) => const BudgetLists())
                   //     );
                 },
-                backgroundColor: const Color.fromRGBO(72, 191, 132, 1),
+                backgroundColor: AppColors.themeColor,
               ),
               FloatingActionButton(
                 heroTag: 'New',
-                backgroundColor: const Color.fromRGBO(72, 191, 132, 1),
+                backgroundColor: AppColors.themeColor,
                 onPressed: newItem,
                 tooltip: 'New item',
                 child: const Icon(

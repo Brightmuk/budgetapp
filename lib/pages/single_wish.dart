@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/services/pdf_service.dart';
@@ -36,13 +38,13 @@ class _SingleWishState extends State<SingleWish> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: Container(),
-          toolbarHeight: 120,
+          toolbarHeight: AppSizes.minToolBarHeight,
           flexibleSpace: AnimatedContainer(
             padding: const EdgeInsets.all(15),
             duration: const Duration(seconds: 2),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Color.fromRGBO(72, 191, 132, 1),
+              color: AppColors.themeColor,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,8 +121,8 @@ class _SingleWishState extends State<SingleWish> {
                   },
                 ),
               ),
-              SizedBox(height: 20,),
-              Divider(),
+              const SizedBox(height: 20,),
+              const Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.calendar_month_outlined),
@@ -143,7 +145,7 @@ class _SingleWishState extends State<SingleWish> {
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
-                              primary: const Color.fromRGBO(72, 191, 132, 1),
+                              primary: AppColors.themeColor,
                             ),
                           ),
                         ),
@@ -189,7 +191,7 @@ class _SingleWishState extends State<SingleWish> {
                 onPressed: ()async {
 
                 },
-                backgroundColor: const Color.fromRGBO(72, 191, 132, 1),
+                backgroundColor: AppColors.themeColor,
               ),
               // FloatingActionButton.extended(
               //   heroTag: 'share',

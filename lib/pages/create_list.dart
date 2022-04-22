@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/widgets/share_type.dart';
@@ -50,7 +52,7 @@ class _CreateListState extends State<CreateList> {
                 child: TextFormField(
                   focusNode: _focusNode,
                   controller: _nameC,
-                  cursorColor: const Color.fromRGBO(72, 191, 132, 1),
+                  cursorColor: AppColors.themeColor,
                   decoration: InputDecoration(
                     label: const Padding(
                       padding: EdgeInsets.only(left: 8.0),
@@ -62,7 +64,7 @@ class _CreateListState extends State<CreateList> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(
-                          color: Color.fromRGBO(72, 191, 132, 1), width: 1.5),
+                          color: AppColors.themeColor, width: 1.5),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -77,7 +79,7 @@ class _CreateListState extends State<CreateList> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(
-                          color: Color.fromRGBO(72, 191, 132, 1), width: 1.5),
+                          color: AppColors.themeColor, width: 1.5),
                     ),
                     hintText: 'Food',
                   ),
@@ -93,7 +95,7 @@ class _CreateListState extends State<CreateList> {
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   controller: _quantityC,
-                  cursorColor: const Color.fromRGBO(72, 191, 132, 1),
+                  cursorColor: AppColors.themeColor,
                   decoration: InputDecoration(
                     label: const Padding(
                       padding: EdgeInsets.only(left: 8.0),
@@ -105,7 +107,7 @@ class _CreateListState extends State<CreateList> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(
-                          color: Color.fromRGBO(72, 191, 132, 1), width: 1.5),
+                          color: AppColors.themeColor, width: 1.5),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -120,7 +122,7 @@ class _CreateListState extends State<CreateList> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(
-                          color: Color.fromRGBO(72, 191, 132, 1), width: 1.5),
+                          color: AppColors.themeColor, width: 1.5),
                     ),
                   ),
                 ),
@@ -146,7 +148,7 @@ class _CreateListState extends State<CreateList> {
                         _focusNode.requestFocus();
                       }
                     },
-                    cursorColor: const Color.fromRGBO(72, 191, 132, 1),
+                    cursorColor: AppColors.themeColor,
                     decoration: InputDecoration(
                       label: const Padding(
                         padding: EdgeInsets.only(left: 8.0),
@@ -158,7 +160,7 @@ class _CreateListState extends State<CreateList> {
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                            color: Color.fromRGBO(72, 191, 132, 1), width: 1.5),
+                            color: AppColors.themeColor, width: 1.5),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -173,7 +175,7 @@ class _CreateListState extends State<CreateList> {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(
-                            color: Color.fromRGBO(72, 191, 132, 1), width: 1.5),
+                            color: AppColors.themeColor, width: 1.5),
                       ),
                       hintText: '300.00',
                     ),
@@ -196,13 +198,13 @@ class _CreateListState extends State<CreateList> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: Container(),
-          toolbarHeight: 140,
+          toolbarHeight: AppSizes.midToolBarHeight,
           flexibleSpace: AnimatedContainer(
             padding: const EdgeInsets.all(15),
             duration: const Duration(seconds: 2),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Color.fromRGBO(72, 191, 132, 1),
+              color: AppColors.themeColor,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -306,12 +308,7 @@ class _CreateListState extends State<CreateList> {
         ),
         floatingActionButton: FloatingActionButton.extended(
           heroTag: 'Share',
-          backgroundColor: const Color.fromRGBO(
-            72,
-            191,
-            132,
-            1,
-          ),
+          backgroundColor: AppColors.themeColor,
           onPressed: () async {
             if (widget.title != null) {
               Navigator.pop(context, expenses);

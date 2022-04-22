@@ -1,3 +1,5 @@
+import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -19,13 +21,13 @@ class _SettingsPageState extends State<SettingsPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: Container(),
-          toolbarHeight: 120,
+          toolbarHeight: AppSizes.minToolBarHeight,
           flexibleSpace: AnimatedContainer(
             padding: const EdgeInsets.all(15),
             duration: const Duration(seconds: 2),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Color.fromRGBO(72, 191, 132, 1),
+              color: AppColors.themeColor,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,7 +86,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     return Text(
                       'VERSION $version',
                       style: const TextStyle(
-                          color: Color.fromRGBO(72, 191, 132, 1),
+                          color: AppColors.themeColor,
                           fontSize: 15,
                           fontWeight: FontWeight.w300),
                     );

@@ -1,4 +1,5 @@
 
+import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/pages/single_wish.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -58,7 +59,7 @@ class _AddWishState extends State<AddWish> {
                       width: MediaQuery.of(context).size.width * 0.6,
                       child: TextFormField(
                         controller: _nameC,
-                        cursorColor: const Color.fromRGBO(72, 191, 132, 1),
+                        cursorColor: AppColors.themeColor,
                         decoration: InputDecoration(
                           label: const Padding(
                             padding: EdgeInsets.only(left: 8.0),
@@ -70,7 +71,7 @@ class _AddWishState extends State<AddWish> {
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: const BorderSide(
-                                color: Color.fromRGBO(72, 191, 132, 1),
+                                color: AppColors.themeColor,
                                 width: 1.5),
                           ),
                           errorBorder: OutlineInputBorder(
@@ -88,7 +89,7 @@ class _AddWishState extends State<AddWish> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: const BorderSide(
-                                color: Color.fromRGBO(72, 191, 132, 1),
+                                color: AppColors.themeColor,
                                 width: 1.5),
                           ),
                           hintText: 'Food',
@@ -105,7 +106,7 @@ class _AddWishState extends State<AddWish> {
                       child: TextFormField(
                           keyboardType: TextInputType.number,
                           controller: _priceC,
-                          cursorColor: const Color.fromRGBO(72, 191, 132, 1),
+                          cursorColor: AppColors.themeColor,
                           decoration: InputDecoration(
                             label: const Padding(
                               padding: EdgeInsets.only(left: 8.0),
@@ -115,7 +116,7 @@ class _AddWishState extends State<AddWish> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: const BorderSide(
-                                  color: Color.fromRGBO(72, 191, 132, 1),
+                                  color: AppColors.themeColor,
                                   width: 1.5),
                             ),
                             focusedErrorBorder: OutlineInputBorder(
@@ -133,7 +134,7 @@ class _AddWishState extends State<AddWish> {
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: const BorderSide(
-                                  color: Color.fromRGBO(72, 191, 132, 1),
+                                  color: AppColors.themeColor,
                                   width: 1.5),
                             ),
                             hintText: '300.00',
@@ -165,12 +166,11 @@ class _AddWishState extends State<AddWish> {
                       return Theme(
                         data: Theme.of(context).copyWith(
                           colorScheme: const ColorScheme.light(
-                            primary: Color.fromRGBO(
-                                72, 191, 132, 1), // header background color
+                            primary: AppColors.themeColor, // header background color
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
-                              primary: const Color.fromRGBO(72, 191, 132, 1),
+                              primary: AppColors.themeColor,
                             ),
                           ),
                         ),
@@ -187,7 +187,7 @@ class _AddWishState extends State<AddWish> {
               ),
               const Divider(),
               CheckboxListTile(
-                  activeColor: const Color.fromRGBO(72, 191, 132, 1),
+                  activeColor: AppColors.themeColor,
                   value: remider,
                   title: const Text('Set reminder on'),
                   onChanged: (val) {
@@ -201,7 +201,7 @@ class _AddWishState extends State<AddWish> {
               child: MaterialButton(
                   padding: const EdgeInsets.all(20),
                   minWidth: MediaQuery.of(context).size.width * 0.9,
-                  color: const Color.fromRGBO(72, 191, 132, 1),
+                  color: AppColors.themeColor,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50)),
                   child: const Text(

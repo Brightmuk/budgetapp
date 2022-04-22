@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PDFService {
+  
+  ///Create  a pdf for sharing or printing
   static Future<File> createPdf(String name) async {
     final pdf = pw.Document();
     String dir = (await pp.getTemporaryDirectory()).path;
