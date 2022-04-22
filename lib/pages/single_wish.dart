@@ -7,16 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 
-class SingleBudgetPlan extends StatefulWidget {
-  const SingleBudgetPlan({
+class SingleWish extends StatefulWidget {
+  const SingleWish({
     Key? key,
   }) : super(key: key);
 
   @override
-  _SingleBudgetPlanState createState() => _SingleBudgetPlanState();
+  _SingleWishState createState() => _SingleWishState();
 }
 
-class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
+class _SingleWishState extends State<SingleWish> {
   final DateFormat dayDate = DateFormat('EEE dd, yyy');
   final TextEditingController _titleC = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -54,7 +54,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Rurashio budget plan',
+                      'Air Jordans 4 retro',
                       style:
                           TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     ),
@@ -73,8 +73,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: Column(
-              children: <Widget>[
+            child: Column(children: <Widget>[
               const SizedBox(
                 height: 20,
               ),
@@ -120,27 +119,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                   },
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Edit list'),
-                subtitle: Text('${items.length} item(s) in list'),
-                trailing: const Text(
-                  'Ksh.23,000',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                onTap: () async {
-                  var result = await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => CreateList(
-                            title: _titleC.value.text,
-                          )));
-                  setState(() {
-                    items = result;
-                  });
-                },
-              ),
+              SizedBox(height: 20,),
               Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -158,7 +137,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                         data: Theme.of(context).copyWith(
                           colorScheme: const ColorScheme.light(
                             onSurface: Color.fromRGBO(72, 191, 132, 1),
-          
+
                             primary: Color.fromRGBO(72, 191, 132, 1),
                             // header background color
                           ),
@@ -197,37 +176,36 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(left: 25),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(),
+
               FloatingActionButton.extended(
                 heroTag: 'print',
                 label: const Text(
-                  'Print',
+                  'Delete',
                   style: TextStyle(color: Colors.white),
                 ),
-                icon: const Icon(Icons.print_outlined, color: Colors.white),
+                icon: const Icon(Icons.delete_outline,color: Colors.white),
                 onPressed: ()async {
-                  File pdf = await PDFService.createPdf('new');
-                  await Printing.layoutPdf(name: 'mydocument.pdf', onLayout: (format) async => pdf.readAsBytes());
+
                 },
                 backgroundColor: const Color.fromRGBO(72, 191, 132, 1),
               ),
-              FloatingActionButton.extended(
-                heroTag: 'share',
-                label: const Text(
-                  'Share',
-                  style: TextStyle(color: Colors.white),
-                ),
-                icon: const Icon(Icons.share_outlined, color: Colors.white),
-                onPressed: () async {
-                  File pdf = await PDFService.createPdf('new');
-                  await Printing.sharePdf(
-                      bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
-                },
-                backgroundColor: const Color.fromRGBO(72, 191, 132, 1),
-              ),
-              const SizedBox(),
+              // FloatingActionButton.extended(
+              //   heroTag: 'share',
+              //   label: const Text(
+              //     'Share',
+              //     style: TextStyle(color: Colors.white),
+              //   ),
+              //   icon: const Icon(Icons.share_outlined, color: Colors.white),
+              //   onPressed: () async {
+              //     File pdf = await PDFService.createPdf('new');
+              //     await Printing.sharePdf(
+              //         bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
+              //   },
+              //   backgroundColor: const Color.fromRGBO(72, 191, 132, 1),
+              // ),
+              // const SizedBox(),
             ],
           ),
         ),

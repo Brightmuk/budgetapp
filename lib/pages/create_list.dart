@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:budgetapp/models/expense.dart';
+import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/widgets/share_type.dart';
 import 'package:flutter/material.dart';
-
+import 'package:printing/printing.dart';
 
 class CreateList extends StatefulWidget {
   final String? title;
@@ -309,15 +312,31 @@ class _CreateListState extends State<CreateList> {
             132,
             1,
           ),
-          onPressed: () {
+          onPressed: () async {
             if (widget.title != null) {
               Navigator.pop(context, expenses);
             } else {
-              showModalBottomSheet(
+              bool asPdf = await showModalBottomSheet(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                   context: context,
                   builder: (context) => const ShareType());
+              if (asPdf) {
+                File pdf = await PDFService.createPdf('new');
+                await Printing.sharePdf(
+                    bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
+              }
+              // } else {
+              //   File pdf = await PDFService.createPdf('new');
+              //   await for (var page in Printing.raster(pdf.readAsBytesSync(),
+              //       pages: [0, 1], dpi: 72)) {
+              //     final image = await page.toImage();
+              //     image.toByteData();
+              //   }
+
+              //   await Printing.sharePdf(
+              //       bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
+              // }
             }
           },
           tooltip: 'Share',

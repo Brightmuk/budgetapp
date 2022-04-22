@@ -1,16 +1,16 @@
-
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsPage extends StatefulWidget {
-
-  const SettingsPage({Key? key,}) : super(key: key);
+  const SettingsPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -30,14 +30,16 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-
                     const Text(
                       'Settings',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
                       icon: const Icon(Icons.clear_outlined),
@@ -47,47 +49,51 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
-
               ],
             ),
           ),
         ),
         body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
+          child: Column(children: <Widget>[
             const SizedBox(
               height: 20,
             ),
             ListTile(
-             
               leading: const Icon(Icons.info_outline),
               title: const Text('About Us'),
               onTap: () {},
             ),
             ListTile(
-             
               leading: const Icon(Icons.help_center_outlined),
               title: const Text('Help'),
               onTap: () {},
             ),
             ListTile(
-              
               leading: const Icon(Icons.rate_review_outlined),
               title: const Text('Rate Us'),
               onTap: () {},
             ),
-
             SizedBox(
-              height: MediaQuery.of(context).size.height*0.6,
+              height: MediaQuery.of(context).size.height * 0.6,
             ),
-            const Text('VERSION 1.2.0',style: TextStyle(
-                        color: Color.fromRGBO(72, 191, 132, 1),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w300),)
-
+            FutureBuilder<PackageInfo>(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    String version = snapshot.data!.version;
+                    return Text(
+                      'VERSION $version',
+                      style: const TextStyle(
+                          color: Color.fromRGBO(72, 191, 132, 1),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300),
+                    );
+                  } else {
+                    return Container();
+                  }
+                })
           ]),
         ),
-
       ),
     );
   }

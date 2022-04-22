@@ -1,5 +1,6 @@
 import 'package:budgetapp/pages/add_budget_plan.dart';
 import 'package:budgetapp/pages/add_wish.dart';
+import 'package:budgetapp/pages/single_wish.dart';
 import 'package:flutter/material.dart';
 
 
@@ -12,7 +13,7 @@ class HomeTabs extends StatefulWidget {
 
 class _HomeTabsState extends State<HomeTabs> {
     final ScrollController _controller = ScrollController();
-      bool hasItems = true;
+      bool hasItems = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +32,12 @@ class _HomeTabsState extends State<HomeTabs> {
                           key: Key(index.toString()),
                           child: ListTile(
                               onTap: (){
-                                    showModalBottomSheet(
-                                      isScrollControlled: true,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                  context: context,
-                                  builder: (context) => const AddBudgetPlan());
+                              Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const SingleWish()));
                               },
                               leading: indexEven
                                   ? const Icon(
-                                      Icons.construction,
+                                      Icons.money,
                                       size: 20,
                                       color: Colors.pinkAccent,
                                     )
