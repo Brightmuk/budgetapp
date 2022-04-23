@@ -9,6 +9,8 @@ import 'package:budgetapp/pages/single_wish.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
+import 'package:budgetapp/widgets/action_dialogue.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,7 +26,6 @@ class _BudgetListTabState extends State<BudgetListTab> {
   final ScrollController _controller = ScrollController();
   final DateFormat dayDate = DateFormat('EEE dd, yyy');
   bool hasItems = false;
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,34 +48,34 @@ class _BudgetListTabState extends State<BudgetListTab> {
                 itemBuilder: (context, index) {
                   return InkWell(
                     child: Ink(
-                      child: Dismissible(
-                        background: Container(
-                          color: Colors.greenAccent.withOpacity(0.2),
-                        ),
-                        key: Key(index.toString()),
-                        child: ListTile(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SingleBudgetPlan(budgetPlanId: plans[index].id,)));
-                            },
-                            leading: Icon(
-                              Icons.money,
-                              size: AppSizes.iconSize.sp,
-                              color: Colors.pinkAccent,
-                            ),
-                            title: Text(
-                              plans[index].title,
-                              
-                              style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                            ),
-                            subtitle: Text(dayDate.format(plans[index].date,
-                             
-                             ),style:TextStyle(fontSize: AppSizes.normalFontSize.sp)),
-                            trailing:Text(
-                              'Ksh.30k',
-                              style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                            )),
-                      ),
+                      child: ListTile(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SingleBudgetPlan(
+                                      budgetPlanId: plans[index].id,
+                                    )));
+                          },
+                          leading: Icon(
+                            Icons.money,
+                            size: AppSizes.iconSize.sp,
+                            color: Colors.pinkAccent,
+                          ),
+                          title: Text(
+                            plans[index].title,
+                            style:
+                                TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                          ),
+                          subtitle: Text(
+                              dayDate.format(
+                                plans[index].date,
+                              ),
+                              style: TextStyle(
+                                  fontSize: AppSizes.normalFontSize.sp)),
+                          trailing: Text(
+                            'Ksh.${plans[index].total}',
+                            style:
+                                TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                          )),
                     ),
                   );
                 });
@@ -96,7 +97,6 @@ class _WishListTabState extends State<WishListTab> {
   final ScrollController _controller = ScrollController();
   final DateFormat dayDate = DateFormat('EEE dd, yyy');
   bool hasItems = false;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -119,31 +119,31 @@ class _WishListTabState extends State<WishListTab> {
                 itemBuilder: (context, index) {
                   return InkWell(
                     child: Ink(
-                      child: Dismissible(
-                        background: Container(
-                          color: Colors.greenAccent.withOpacity(0.2),
-                        ),
-                        key: Key(index.toString()),
-                        child: ListTile(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SingleWish(wishId: '',)));
-                            },
-                            leading: Icon(
-                              Icons.shopping_cart_outlined,
-                              size: AppSizes.iconSize.sp,
-                              color: Colors.orangeAccent,
-                            ),
-                            title: Text(
-                              plans[index].name,
-                              style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                            ),
-                            subtitle: Text(dayDate.format(plans[index].date),style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
-                            trailing:Text(
-                              'Ksh.30k',
-                              style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                            )),
-                      ),
+                      child: ListTile(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SingleWish(
+                                      wishId: plans[index].id,
+                                    )));
+                          },
+                          leading: Icon(
+                            Icons.shopping_cart_outlined,
+                            size: AppSizes.iconSize.sp,
+                            color: Colors.orangeAccent,
+                          ),
+                          title: Text(
+                            plans[index].name,
+                            style:
+                                TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                          ),
+                          subtitle: Text(dayDate.format(plans[index].date),
+                              style: TextStyle(
+                                  fontSize: AppSizes.normalFontSize.sp)),
+                          trailing: Text(
+                            'Ksh.${plans[index].price}',
+                            style:
+                                TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                          )),
                     ),
                   );
                 });

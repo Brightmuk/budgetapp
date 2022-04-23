@@ -1,17 +1,16 @@
-
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
+import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/single_wish.dart';
+import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class AddWish extends StatefulWidget {
-  const AddWish({
-    Key? key,
-  }) : super(key: key);
+  final Wish? wish;
+  const AddWish({Key? key, this.wish}) : super(key: key);
 
   @override
   _AddWishState createState() => _AddWishState();
@@ -25,6 +24,14 @@ class _AddWishState extends State<AddWish> {
 
   late DateTime _selectedDate = DateTime.now();
   late bool remider = true;
+  @override
+  void initState() {
+    super.initState();
+    remider = widget.wish!.reminder;
+    _selectedDate = widget.wish!.date;
+    _nameC.text = widget.wish!.name;
+    _priceC.text = widget.wish!.price.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +46,21 @@ class _AddWishState extends State<AddWish> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
+                    widget.wish!=null?
+                    'Edt wish':
                     'Add a new Wish',
-                    style: TextStyle(fontSize: AppSizes.titleFont.sp, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: AppSizes.titleFont.sp,
+                        fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                                          icon: Icon(Icons.clear_outlined,size: AppSizes.iconSize.sp,))
+                      icon: Icon(
+                        Icons.clear_outlined,
+                        size: AppSizes.iconSize.sp,
+                      ))
                 ],
               ),
               const SizedBox(
@@ -62,10 +76,11 @@ class _AddWishState extends State<AddWish> {
                       child: TextFormField(
                         controller: _nameC,
                         cursorColor: AppColors.themeColor,
-                        decoration: AppStyles().textFieldDecoration(label: 'Name',hintText: 'Air Jordans'),
+                        decoration: AppStyles().textFieldDecoration(
+                            label: 'Name', hintText: 'Air Jordans'),
                         validator: (val) {
                           if (val!.isEmpty) {
-                            return 'The name is required';
+                            return 'Name is required';
                           }
                         },
                       ),
@@ -76,10 +91,11 @@ class _AddWishState extends State<AddWish> {
                           keyboardType: TextInputType.number,
                           controller: _priceC,
                           cursorColor: AppColors.themeColor,
-                          decoration: AppStyles().textFieldDecoration(label: 'Price',hintText: '300'),
+                          decoration: AppStyles().textFieldDecoration(
+                              label: 'Price', hintText: '300'),
                           validator: (val) {
                             if (val!.isEmpty) {
-                              return 'The price is required';
+                              return 'Price is required';
                             }
                             return null;
                           }),
@@ -91,9 +107,18 @@ class _AddWishState extends State<AddWish> {
                 height: 20,
               ),
               ListTile(
-                leading: Icon(Icons.calendar_month_outlined,size: AppSizes.iconSize.sp,),
-                title: Text('Select date',style: TextStyle(fontSize: AppSizes.normalFontSize.sp),),
-                trailing: Text(dayDate.format(_selectedDate),style: TextStyle(fontSize: AppSizes.normalFontSize.sp),),
+                leading: Icon(
+                  Icons.calendar_month_outlined,
+                  size: AppSizes.iconSize.sp,
+                ),
+                title: Text(
+                  'Select date',
+                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                ),
+                trailing: Text(
+                  dayDate.format(_selectedDate),
+                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                ),
                 onTap: () async {
                   final result = await showDatePicker(
                     context: context,
@@ -104,11 +129,14 @@ class _AddWishState extends State<AddWish> {
                       return Theme(
                         data: Theme.of(context).copyWith(
                           colorScheme: const ColorScheme.light(
-                            primary: AppColors.themeColor, // header background color
+                            onSurface: AppColors.themeColor,
+
+                            primary: AppColors.themeColor,
+                            // header background color
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
-                              primary: AppColors.themeColor,
+                              primary: const Color.fromRGBO(72, 191, 132, 1),
                             ),
                           ),
                         ),
@@ -127,7 +155,10 @@ class _AddWishState extends State<AddWish> {
               CheckboxListTile(
                   activeColor: AppColors.themeColor,
                   value: remider,
-                  title: Text('Set reminder on',style: TextStyle(fontSize: AppSizes.normalFontSize.sp),),
+                  title: Text(
+                    'Set reminder on',
+                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                  ),
                   onChanged: (val) {
                     setState(() {
                       remider = val!;
@@ -146,10 +177,32 @@ class _AddWishState extends State<AddWish> {
                     'Save',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onPressed: () {
-                     Navigator.pop(context);
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const SingleWish(wishId: '',)));
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      String id =
+                          DateTime.now().millisecondsSinceEpoch.toString();
+                      Wish wish = Wish(
+
+                        ////If in edit mode use the items id and not new one 
+                        id: widget.wish!=null? widget.wish!.id: id,
+                        price: int.parse(_priceC.value.text),
+                        date: _selectedDate,
+                        name: _nameC.value.text,
+                        reminder: remider,
+                      );
+                      await WishService(context: context)
+                          .saveWish(wish: wish)
+                          .then((value) {
+                        if (value) {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => 
+                              ////If in edit mode use the items id and not new one 
+                              SingleWish(wishId: widget.wish!=null? widget.wish!.id: id,)));
+                        }
+                      });
+                    }
                   }),
             ),
           ],

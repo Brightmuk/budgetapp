@@ -31,7 +31,7 @@ class ExpenseType extends StatelessWidget {
                     width: 10),
               ),
               title: Text('Budget Plan',style: TextStyle(fontSize: 35.sp),),
-              subtitle: Text('A plan to spend an amount of money',style: TextStyle(fontSize: 35.sp),),
+              subtitle: Text('A plan to spend an amount of money',style: TextStyle(fontSize: 30.sp),),
               onTap: () {
                 Navigator.pop(context);
                 showModalBottomSheet(
@@ -56,7 +56,7 @@ class ExpenseType extends StatelessWidget {
               ),
               title: Text('Wish',style: TextStyle(fontSize: 35.sp),),
               subtitle: Text(
-                  'Something that you plan to buy, will be added to your wishlist',style: TextStyle(fontSize: 35.sp),),
+                  'Something that you plan to buy, will be added to your wishlist',style: TextStyle(fontSize: 30.sp),),
               onTap: () {
                 Navigator.pop(context);
                 showModalBottomSheet(

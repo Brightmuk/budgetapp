@@ -1,8 +1,9 @@
-import 'package:budgetapp/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:toast/toast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:toast/toast.dart';
+
+import 'package:budgetapp/pages/home.dart';
 
 void main() async{
  WidgetsFlutterBinding.ensureInitialized();

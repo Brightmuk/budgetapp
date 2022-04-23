@@ -6,20 +6,25 @@ import 'package:budgetapp/models/expense.dart';
 
 class BudgetPlan {
   final String id;
+  final int total;
   final String title;
   final DateTime date;
   final bool reminder;
-  final List<Expense> items;
+  final List<Expense> expenses;
   BudgetPlan({
     required this.id,
+    required this.total,
     required this.title,
     required this.date,
     required this.reminder,
-    required this.items,
+    required this.expenses,
   });
+
+
 
   BudgetPlan copyWith({
     String? id,
+    int? total,
     String? title,
     DateTime? date,
     bool? reminder,
@@ -27,30 +32,33 @@ class BudgetPlan {
   }) {
     return BudgetPlan(
       id: id ?? this.id,
+      total: total ?? this.total,
       title: title ?? this.title,
       date: date ?? this.date,
       reminder: reminder ?? this.reminder,
-      items: items ?? this.items,
+      expenses: items ?? this.expenses,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'total': total,
       'title': title,
       'date': date.millisecondsSinceEpoch,
       'reminder': reminder,
-      'items': items.map((x) => x.toMap()).toList(),
+      'expenses': expenses.map((ex) => ex.toMap()).toList(),
     };
   }
 
   factory BudgetPlan.fromMap(Map<String, dynamic> map) {
     return BudgetPlan(
       id: map['id'] ?? '',
+      total: map['total']?.toInt() ?? 0,
       title: map['title'] ?? '',
       date: DateTime.fromMillisecondsSinceEpoch(map['date']),
       reminder: map['reminder'] ?? false,
-      items: List<Expense>.from(map['items']?.map((x) => Expense.fromMap(x))),
+      expenses: List<Expense>.from(map['expenses']?.map((x) => Expense.fromMap(x))),
     );
   }
 
@@ -60,7 +68,7 @@ class BudgetPlan {
 
   @override
   String toString() {
-    return 'BudgetPlan(id: $id, title: $title, date: $date, reminder: $reminder, items: $items)';
+    return 'BudgetPlan(id: $id, total: $total, title: $title, date: $date, reminder: $reminder, items: $expenses)';
   }
 
   @override
@@ -69,18 +77,20 @@ class BudgetPlan {
   
     return other is BudgetPlan &&
       other.id == id &&
+      other.total == total &&
       other.title == title &&
       other.date == date &&
       other.reminder == reminder &&
-      listEquals(other.items, items);
+      listEquals(other.expenses, expenses);
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
+      total.hashCode ^
       title.hashCode ^
       date.hashCode ^
       reminder.hashCode ^
-      items.hashCode;
+      expenses.hashCode;
   }
 }

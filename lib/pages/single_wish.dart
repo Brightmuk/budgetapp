@@ -3,12 +3,15 @@ import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
+import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
+import 'package:budgetapp/widgets/action_dialogue.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
@@ -16,15 +19,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SingleWish extends StatefulWidget {
   final String wishId;
-  const SingleWish({Key? key, required this.wishId})
-      : super(key: key);
+  const SingleWish({Key? key, required this.wishId}) : super(key: key);
 
   @override
   _SingleWishState createState() => _SingleWishState();
 }
 
 class _SingleWishState extends State<SingleWish> {
-
   final DateFormat dayDate = DateFormat('EEE dd, yyy');
   late bool remider = true;
   late bool save = true;
@@ -59,11 +60,15 @@ class _SingleWishState extends State<SingleWish> {
                   children: [
                     Text(
                       'Wish',
-                      style:
-                          TextStyle(fontSize: AppSizes.titleFont.sp, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: AppSizes.titleFont.sp,
+                          fontWeight: FontWeight.bold),
                     ),
                     IconButton(
-                      icon: Icon(Icons.clear_outlined,size: AppSizes.iconSize.sp,),
+                      icon: Icon(
+                        Icons.clear_outlined,
+                        size: AppSizes.iconSize.sp,
+                      ),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -75,12 +80,11 @@ class _SingleWishState extends State<SingleWish> {
           ),
         ),
         body: FutureBuilder<Wish>(
-            future: WishService(context: context)
-                .singleWish(widget.wishId),
+            future: WishService(context: context).singleWish(widget.wishId),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return Center(
-                  child: Text(snapshot.error.toString()),
+                return const Center(
+                  child: Text('An error occurred'),
                 );
               }
               if (snapshot.hasData) {
@@ -94,8 +98,9 @@ class _SingleWishState extends State<SingleWish> {
                     ),
                     Text(
                       wish!.name,
-                      style:TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,
+                          fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
                       height: 20,
@@ -103,28 +108,65 @@ class _SingleWishState extends State<SingleWish> {
                     const Divider(),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: Icon(Icons.calendar_month_outlined,size: AppSizes.iconSize.sp,),
-                      title: Text('Date',style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,),),
-                      trailing: Text(dayDate.format(wish.date),style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,),),
+                      leading: Icon(
+                        Icons.calendar_month_outlined,
+                        size: AppSizes.iconSize.sp,
+                      ),
+                      title: Text(
+                        'Date',
+                        style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,
+                        ),
+                      ),
+                      trailing: Text(
+                        dayDate.format(wish.date),
+                        style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(
+                        Icons.monetization_on_outlined,
+                        size: AppSizes.iconSize.sp,
+                      ),
+                      title: Text(
+                        'Price',
+                        style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,
+                        ),
+                      ),
+                      trailing: Text(
+                        'ksh.'+wish.price.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: AppSizes.normalFontSize.sp,
+                        ),
+                      ),
                     ),
                     CheckboxListTile(
                         contentPadding: EdgeInsets.zero,
                         activeColor: Colors.greenAccent,
                         value: wish.reminder,
-                        title: Text('Reminder ',style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,),),
+                        title: Text(
+                          'Reminder ',
+                          style: TextStyle(
+                            fontSize: AppSizes.normalFontSize.sp,
+                          ),
+                        ),
                         subtitle: Text(
-                            'You will be reminded to fullfil the budget list',style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,),),
+                          'You will be reminded to fullfil the budget list',
+                          style: TextStyle(
+                            fontSize: AppSizes.normalFontSize.sp,
+                          ),
+                        ),
                         onChanged: (val) {
                           // setState(() {
                           //   remider = val!;
                           // });
                         }),
                     const Divider(),
-
                   ]),
                 );
               } else {
@@ -137,33 +179,49 @@ class _SingleWishState extends State<SingleWish> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(),
-              FloatingActionButton.extended(
-                heroTag: 'print',
+               FloatingActionButton.extended(
+                heroTag: 'edit',
                 label: Text(
-                  'Print',
+                  'Edit',
                   style: TextStyle(color: Colors.white,fontSize: AppSizes.normalFontSize.sp),
                 ),
-                icon: Icon(Icons.print_outlined, color: Colors.white,size: AppSizes.iconSize.sp,),
+                icon: Icon(Icons.edit_outlined,
+                color: Colors.white,size: AppSizes.iconSize.sp,),
                 onPressed: () async {
-                  File pdf = await PDFService.createPdf('new');
-                  await Printing.layoutPdf(
-                      name: 'mydocument.pdf',
-                      onLayout: (format) async => pdf.readAsBytes());
+                  Wish _wish = await WishService(context: context).singleWish(widget.wishId);
+                  showModalBottomSheet(
+                    isScrollControlled: true,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    context: context,
+                    builder: (context) =>AddWish(wish: _wish));
                 },
                 backgroundColor: AppColors.themeColor,
               ),
               FloatingActionButton.extended(
-                heroTag: 'share',
+                heroTag: 'Delete',
                 label: Text(
-                  'Share',
-                  style: TextStyle(color: Colors.white,fontSize: AppSizes.normalFontSize.sp),
+                  'delete',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: AppSizes.normalFontSize.sp),
                 ),
-                icon: Icon(Icons.share_outlined, color: Colors.white,size: AppSizes.iconSize.sp,),
+                icon: Icon(
+                  Icons.delete_outline,
+                  color: Colors.white,
+                  size: AppSizes.iconSize.sp,
+                ),
                 onPressed: () async {
-                  File pdf = await PDFService.createPdf('new');
-                  await Printing.sharePdf(
-                      bytes: pdf.readAsBytesSync(),
-                      filename: 'my-document.pdf');
+                  showModalBottomSheet(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      context: context,
+                      builder: (context) => ActionDialogue(
+                            infoText:
+                                'Are you sure you want to delete this wish?',
+                            action: () {},
+                            actionBtnText: 'Delete',
+                          ));
                 },
                 backgroundColor: AppColors.themeColor,
               ),

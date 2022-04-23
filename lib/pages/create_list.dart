@@ -10,15 +10,19 @@ import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+
 class CreateList extends StatefulWidget {
   final String? title;
-  const CreateList({Key? key, this.title}) : super(key: key);
+  final List<Expense>? expenses;
+  const CreateList({Key? key, this.title, this.expenses}) : super(key: key);
 
   @override
   _CreateListState createState() => _CreateListState();
 }
 
 class _CreateListState extends State<CreateList> {
+
+
   final TextEditingController _nameC = TextEditingController();
   final TextEditingController _quantityC = TextEditingController();
   final TextEditingController _priceC = TextEditingController();
@@ -31,15 +35,16 @@ class _CreateListState extends State<CreateList> {
   @override
   void initState() {
     super.initState();
+      expenses.addAll(widget.expenses!);
     _quantityC.text = '1';
   }
 
-  String get total {
+  int get _total {
     int sum = 0;
     for (Expense val in expenses) {
       sum += val.quantity * val.price;
     }
-    return sum.toString();
+    return sum;
   }
 
   Widget expense() => Padding(
@@ -55,7 +60,8 @@ class _CreateListState extends State<CreateList> {
                   focusNode: _focusNode,
                   controller: _nameC,
                   cursorColor: AppColors.themeColor,
-                  decoration: AppStyles().textFieldDecoration(label: 'Name',hintText: 'Food'),
+                  decoration: AppStyles()
+                      .textFieldDecoration(label: 'Name', hintText: 'Food'),
                   validator: (val) {
                     if (val!.isEmpty) {
                       return 'The name is required';
@@ -69,7 +75,9 @@ class _CreateListState extends State<CreateList> {
                   keyboardType: TextInputType.number,
                   controller: _quantityC,
                   cursorColor: AppColors.themeColor,
-                  decoration: AppStyles().textFieldDecoration(label: 'Quantity',),
+                  decoration: AppStyles().textFieldDecoration(
+                    label: 'Quantity',
+                  ),
                 ),
               ),
               SizedBox(
@@ -94,7 +102,8 @@ class _CreateListState extends State<CreateList> {
                       }
                     },
                     cursorColor: AppColors.themeColor,
-                    decoration: AppStyles().textFieldDecoration(label: 'Price',hintText: '300'),
+                    decoration: AppStyles().textFieldDecoration(
+                        label: 'Unit Price', hintText: '300'),
                     validator: (val) {
                       if (val!.isEmpty) {
                         return 'The price is required';
@@ -155,7 +164,7 @@ class _CreateListState extends State<CreateList> {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      'ksh.' + total,
+                      'ksh.' + _total.toString(),
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 40.sp,
@@ -192,7 +201,7 @@ class _CreateListState extends State<CreateList> {
                           ],
                         ),
                       ),
-                      key: Key(index.toString()),
+                      key: UniqueKey(),
                       onDismissed: (val) {
                         setState(() {
                           expenses.removeAt(index);
@@ -217,8 +226,8 @@ class _CreateListState extends State<CreateList> {
                   }),
             ),
             expense(),
-            const SizedBox(
-              height: 30,
+            SizedBox(
+              height: 150.sp,
             ),
           ]),
         ),
@@ -227,7 +236,7 @@ class _CreateListState extends State<CreateList> {
           backgroundColor: AppColors.themeColor,
           onPressed: () async {
             if (widget.title != null) {
-              Navigator.pop(context, expenses);
+              Navigator.pop(context, {'expenses': expenses, 'total': _total});
             } else {
               bool asPdf = await showModalBottomSheet(
                   shape: RoundedRectangleBorder(
@@ -255,10 +264,14 @@ class _CreateListState extends State<CreateList> {
           tooltip: 'Share',
           label: Text(
             widget.title != null ? 'Save' : 'Share',
-            style: TextStyle(color: Colors.white,fontSize: 35.sp),
+            style: TextStyle(color: Colors.white, fontSize: 35.sp),
           ),
           icon: widget.title != null
-              ? null
+              ? Icon(
+                  Icons.save,
+                  color: Colors.white,
+                  size: 50.sp,
+                )
               : Icon(
                   Icons.receipt_outlined,
                   color: Colors.white,

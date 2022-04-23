@@ -14,7 +14,8 @@ class BudgetPlanService {
   final db = Localstore.instance;
 
   ///Create a new budget plan
-  Future<bool> newBudgetPlan({required BudgetPlan budgetPlan}) async {
+  ///or edit a budget plan
+  Future<bool> saveBudgetPlan({required BudgetPlan budgetPlan}) async {
     bool returnValue = true;
     LoadService(context: context).showLoader();
 
@@ -42,6 +43,7 @@ class BudgetPlanService {
         .get()
         .then((value) => BudgetPlan.fromMap(value!));
   }
+
 
   ///Get budget plans
   Stream<List<BudgetPlan>> get budgetPlansStream {

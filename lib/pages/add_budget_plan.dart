@@ -1,4 +1,3 @@
-
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
@@ -12,11 +11,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class AddBudgetPlan extends StatefulWidget {
-  const AddBudgetPlan({
-    Key? key,
-  }) : super(key: key);
+
+  ///This is parsed when in edit mode
+  ///If not null then it means its an edit operation
+  final BudgetPlan? plan;
+  const AddBudgetPlan({Key? key, this.plan}) : super(key: key);
 
   @override
   _AddBudgetPlanState createState() => _AddBudgetPlanState();
@@ -29,10 +29,21 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
 
   late DateTime _selectedDate = DateTime.now();
   late bool remider = true;
-  late bool save = true;
   bool exportAsPdf = true;
+  int total = 0;
 
-  List<Expense> items = [];
+  List<Expense> _expenses = [];
+
+  void initState() {
+    super.initState();
+    if (widget.plan != null) {
+      _expenses = widget.plan!.expenses;
+      total = widget.plan!.total;
+      remider = widget.plan!.reminder;
+      _selectedDate = widget.plan!.date;
+      _titleC.text = widget.plan!.title;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,14 +58,20 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
+                    widget.plan!=null?
+                    'Edit Budget Plan':
                     'Add a new Budget plan',
-                    style: TextStyle(fontSize: 40.sp, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 40.sp, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: Icon(Icons.clear_outlined,size: AppSizes.iconSize.sp,))
+                      icon: Icon(
+                        Icons.clear_outlined,
+                        size: AppSizes.iconSize.sp,
+                      ))
                 ],
               ),
               const SizedBox(
@@ -65,10 +82,11 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 child: TextFormField(
                   controller: _titleC,
                   cursorColor: AppColors.themeColor,
-                  decoration: AppStyles().textFieldDecoration(label:'Title',hintText: "John's Birthday"),
+                  decoration: AppStyles().textFieldDecoration(
+                      label: 'Title', hintText: "John's Birthday"),
                   validator: (val) {
                     if (val!.isEmpty) {
-                      return 'The title is required';
+                      return 'Title is required';
                     }
                   },
                 ),
@@ -78,27 +96,36 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               ),
               ListTile(
                 title: const Text('Edit list'),
-                subtitle: Text('${items.length} item(s) in list'),
+                subtitle: Text('${_expenses.length} expense(s) in list'),
                 trailing: Text(
-                  'Ksh.23,000',
-                  style: TextStyle(fontWeight: FontWeight.bold,fontSize: 35.sp),
+                  'Ksh.$total',
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 35.sp),
                 ),
                 onTap: () async {
                   var result =
                       await Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => CreateList(
                                 title: _titleC.value.text,
+                                expenses: _expenses,
                               )));
-                  setState(() {
-                    items = result;
-                  });
+                  if (result != null) {
+                    setState(() {
+                      _expenses = result['expenses'];
+                      total = result['total'];
+                    });
+                  }
                 },
               ),
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.calendar_month_outlined),
-                title: Text('Select date',style: TextStyle(fontSize: 35.sp),),
-                trailing: Text(dayDate.format(_selectedDate),style: TextStyle(fontSize: 35.sp)),
+                title: Text(
+                  'Select date',
+                  style: TextStyle(fontSize: 35.sp),
+                ),
+                trailing: Text(dayDate.format(_selectedDate),
+                    style: TextStyle(fontSize: 35.sp)),
                 onTap: () async {
                   final result = await showDatePicker(
                     context: context,
@@ -134,15 +161,16 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               CheckboxListTile(
                   activeColor: Colors.greenAccent,
                   value: remider,
-                  title: Text('Set reminder on',style: TextStyle(fontSize: 35.sp)),
+                  title: Text('Set reminder on',
+                      style: TextStyle(fontSize: 35.sp)),
                   subtitle: Text(
-                      'You will be reminded to fullfil the budget list',style: TextStyle(fontSize: 35.sp)),
+                      'You will be reminded to fullfil the budget list',
+                      style: TextStyle(fontSize: 35.sp)),
                   onChanged: (val) {
                     setState(() {
                       remider = val!;
                     });
                   }),
-
             ]),
             Positioned(
               bottom: 10,
@@ -156,22 +184,34 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                     'Save',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onPressed: ()async {
-                    String id = DateTime.now().millisecondsSinceEpoch.toString();
-                    BudgetPlan plan = BudgetPlan(
-                      id: id,
-                      date: _selectedDate,
-                      title: _titleC.value.text,
-                      reminder: remider,
-                      items: [],
-                    );
-                    await BudgetPlanService(context: context).newBudgetPlan(budgetPlan: plan)
-                    .then((value){
-                      if(value){
-                        Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SingleBudgetPlan(budgetPlanId: id)));
-                      }
-                    });
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      String id =
+                          DateTime.now().millisecondsSinceEpoch.toString();
+                      BudgetPlan plan = BudgetPlan(
+
+                        ///If in edit mode use the items id and not new one 
+                        id: widget.plan!=null? widget.plan!.id: id,
+                        total: total,
+                        date: _selectedDate,
+                        title: _titleC.value.text,
+                        reminder: remider,
+                        expenses: _expenses,
+                      );
+
+                      await BudgetPlanService(context: context)
+                          .saveBudgetPlan(budgetPlan: plan)
+                          .then((value) {
+                        if (value) {
+                          Navigator.pop(context);
+                           Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                              ///If in edit mode use the items id and not new one 
+                                  SingleBudgetPlan(budgetPlanId: widget.plan!=null? widget.plan!.id: id,)));
+                        }
+                      });
+                    }
                   }),
             ),
           ],

@@ -12,23 +12,30 @@ class WishService {
   final db = Localstore.instance;
 
   ///Create a new wish
-  Future<void> newWish({required Wish wish}) async {
-     LoadService(context: context).showLoader();
-    String id = DateTime.now().millisecondsSinceEpoch.toString();
+  ///or edit a wish
+  Future<bool> saveWish({required Wish wish}) async {
+    bool returnValue = true;
+    LoadService(context: context).showLoader();
     await db
         .collection(wishCollection)
-        .doc(id)
+        .doc(wish.id)
         .set(wish.toMap())
-        .then((value) => ToastServcie.showToast('Wish saved!'))
-        .catchError((e) => ToastServcie.showToast('An error occurred!'));
-        Navigator.pop(context);
-        LoadService(context: context).hideLoader();
+        .then((value) {
+      // ToastServcie.showToast('Wish saved!');
+      returnValue = true;
+    }).catchError((e) {
+      // ToastServcie.showToast('An error occurred!');
+      returnValue = false;
+    });
+    LoadService(context: context).hideLoader();
+    return returnValue;
   }
-    ///Get single wish
-  Future<Wish> singleWish(String budgetPlanId) async {
+
+  ///Get single wish
+  Future<Wish> singleWish(String wishId) async {
     return await db
         .collection(wishCollection)
-        .doc(budgetPlanId)
+        .doc(wishId)
         .get()
         .then((value) => Wish.fromMap(value!));
   }
@@ -38,17 +45,21 @@ class WishService {
     return db.collection(wishCollection).stream.map(wishList);
   }
 
- final List<Wish> _items = [];
+  final List<Wish> _items = [];
+
   ///Yield the list from stream
   List<Wish> wishList(Map<String, dynamic> query) {
     final item = Wish.fromMap(query);
-    _items.add(item);
+    bool alreadyInList = _items.where((val) => val.id == item.id).isNotEmpty;
+    if (!alreadyInList) {
+      _items.add(item);
+    }
     return _items;
   }
 
   ///Delete a wish
   Future<void> deleteWish({required String wishId}) async {
-     LoadService(context: context).showLoader();
+    LoadService(context: context).showLoader();
     String id = DateTime.now().millisecondsSinceEpoch.toString();
     await db
         .collection(wishCollection)
@@ -56,7 +67,7 @@ class WishService {
         .delete()
         .then((value) => ToastServcie.showToast('Wish deleted!'))
         .catchError((e) => ToastServcie.showToast('An error occurred!'));
-         LoadService(context: context).hideLoader();
+    LoadService(context: context).hideLoader();
   }
 
   ///Edit a wish
@@ -64,13 +75,13 @@ class WishService {
       {required String field,
       required dynamic value,
       required String wishId}) async {
-         LoadService(context: context).showLoader();
+    LoadService(context: context).showLoader();
     await db
         .collection(wishCollection)
         .doc(wishId)
         .set({field: value}, SetOptions(merge: true))
         .then((value) => ToastServcie.showToast('Wish edited!'))
         .catchError((e) => ToastServcie.showToast('An error occurred!'));
-         LoadService(context: context).hideLoader();
+    LoadService(context: context).hideLoader();
   }
 }
