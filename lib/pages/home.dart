@@ -203,10 +203,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   showModalBottomSheet(
                       isScrollControlled: true,
                       context: context,
-                      builder: (context) => const CreateList());
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => const BudgetLists())
-                  //     );
+                      builder: (context) => const CreateList(expenses: [],));
+
                 },
                 backgroundColor: AppColors.themeColor,
               ),

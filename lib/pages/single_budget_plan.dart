@@ -166,10 +166,16 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20,),
-                    Text('Expenses',style: TextStyle(
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Expenses',
+                      style: TextStyle(
                           fontSize: AppSizes.normalFontSize.sp,
-                          fontWeight: FontWeight.bold),),
+                          fontWeight: FontWeight.bold),
+                    ),
+                    
                     const SizedBox(
                       height: 20,
                     ),
@@ -228,7 +234,9 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                                 ),
                               );
                             })),
-                            SizedBox(height: 150.sp,),
+                    SizedBox(
+                      height: 150.sp,
+                    ),
                   ]),
                 );
               } else {
@@ -265,6 +273,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                 },
                 backgroundColor: AppColors.themeColor,
               ),
+              
               FloatingActionButton.extended(
                 heroTag: 'Delete',
                 label: Text(
@@ -306,9 +315,11 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                   size: AppSizes.iconSize.sp,
                 ),
                 onPressed: () async {
-                  File pdf = await PDFService.createPdf('new');
+                  BudgetPlan plan = await BudgetPlanService(context: context)
+                      .singleBudgetPlan(widget.budgetPlanId);
+                  File pdf = await PDFService.createPdf(plan);
                   await Printing.layoutPdf(
-                      name: 'mydocument.pdf',
+                      name: '${plan.title}.pdf',
                       onLayout: (format) async => pdf.readAsBytes());
                 },
                 backgroundColor: AppColors.themeColor,
@@ -327,10 +338,12 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                   size: AppSizes.iconSize.sp,
                 ),
                 onPressed: () async {
-                  File pdf = await PDFService.createPdf('new');
+                  BudgetPlan plan = await BudgetPlanService(context: context)
+                      .singleBudgetPlan(widget.budgetPlanId);
+                  File pdf = await PDFService.createPdf(plan);
                   await Printing.sharePdf(
                       bytes: pdf.readAsBytesSync(),
-                      filename: 'my-document.pdf');
+                      filename: '${plan.title}.pdf');
                 },
                 backgroundColor: AppColors.themeColor,
               ),

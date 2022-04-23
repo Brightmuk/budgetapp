@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:budgetapp/models/budget_plan.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -9,13 +11,14 @@ import 'package:permission_handler/permission_handler.dart';
 
 class PDFService {
   
-  ///Create  a pdf for sharing or printing
-  static Future<File> createPdf(String name) async {
+  ///Create a pdf from for sharing or printing
+  static Future<File> createPdf(BudgetPlan plan) async {
+     final DateFormat dayDate = DateFormat('EEE dd, yyy');
     final pdf = pw.Document();
     String dir = (await pp.getTemporaryDirectory()).path;
-    File file = File('$dir/$name');
+    File file = File('$dir/${plan.title}');
 
-final logo = await imageFromAssetBundle('assets/images/logo.png');
+final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
 
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -23,15 +26,20 @@ final logo = await imageFromAssetBundle('assets/images/logo.png');
           return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
+                pw.Row(children: [
+                  pw.Image(logo,height: 50),
+                ]),
+                pw.SizedBox(height: 10,),
                 
                 pw.SizedBox(
                   width: 200,
-                  child: pw.Text('Site construction Budget',
+                  height: 50,
+                  child: pw.Text(plan.title,
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold, fontSize: 25)),
                 ),
                 pw.SizedBox(height: 20),
-                pw.Text('21 May 2022', style: pw.TextStyle()),
+                pw.Text(dayDate.format( plan.date), style: pw.TextStyle()),
                 pw.SizedBox(height: 30),
                 pw.Table(tableWidth: pw.TableWidth.max, children: [
                   pw.TableRow(children: [
@@ -44,34 +52,22 @@ final logo = await imageFromAssetBundle('assets/images/logo.png');
                     pw.Text('Subtotal',
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                   ]),
-                  pw.TableRow(children: [pw.SizedBox(height: 10)]),
-                  pw.TableRow(children: [
-                    pw.Text('Water', style: pw.TextStyle()),
-                    pw.Text('1', style: pw.TextStyle()),
-                    pw.Text('120', style: pw.TextStyle()),
-                    pw.Text('120', style: pw.TextStyle()),
+                  pw.TableRow(children: [pw.SizedBox(height: 20)]),
+
+                  for(var el in plan.expenses)
+                  
+                  pw.TableRow(
+                   
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.only(bottom: 10),
+                        child: pw.Text(el.name),),
+                    
+                    pw.Text(el.quantity.toString()),
+                    pw.Text(el.price.toString()),
+                    pw.Text((el.price*el.quantity).toString()),
                   ]),
-                  pw.TableRow(children: [pw.SizedBox(height: 10)]),
-                  pw.TableRow(children: [
-                    pw.Text('Flour', style: pw.TextStyle()),
-                    pw.Text('3', style: pw.TextStyle()),
-                    pw.Text('150', style: pw.TextStyle()),
-                    pw.Text('450', style: pw.TextStyle()),
-                  ]),
-                  pw.TableRow(children: [pw.SizedBox(height: 10)]),
-                  pw.TableRow(children: [
-                    pw.Text('Milk', style: pw.TextStyle()),
-                    pw.Text('6', style: pw.TextStyle()),
-                    pw.Text('50', style: pw.TextStyle()),
-                    pw.Text('300', style: pw.TextStyle()),
-                  ]),
-                  pw.TableRow(children: [pw.SizedBox(height: 10)]),
-                  pw.TableRow(children: [
-                    pw.Text('Bread', style: pw.TextStyle()),
-                    pw.Text('2', style: pw.TextStyle()),
-                    pw.Text('50', style: pw.TextStyle()),
-                    pw.Text('100', style: pw.TextStyle()),
-                  ]),
+
                   pw.TableRow(children: [pw.SizedBox(height: 50)]),
                   pw.TableRow(children: [
                     pw.Text('Total',
@@ -79,7 +75,7 @@ final logo = await imageFromAssetBundle('assets/images/logo.png');
                             fontWeight: pw.FontWeight.bold, fontSize: 15)),
                     pw.Text(''),
                     pw.Text(''),
-                    pw.Text('ksh.1200',
+                    pw.Text('ksh.${plan.total}',
                         style: pw.TextStyle(
                             fontWeight: pw.FontWeight.bold, fontSize: 15)),
                   ]),

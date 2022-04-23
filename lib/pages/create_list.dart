@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
+import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/widgets/share_type.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 class CreateList extends StatefulWidget {
   final String? title;
@@ -21,8 +21,6 @@ class CreateList extends StatefulWidget {
 }
 
 class _CreateListState extends State<CreateList> {
-
-
   final TextEditingController _nameC = TextEditingController();
   final TextEditingController _quantityC = TextEditingController();
   final TextEditingController _priceC = TextEditingController();
@@ -35,7 +33,8 @@ class _CreateListState extends State<CreateList> {
   @override
   void initState() {
     super.initState();
-      expenses.addAll(widget.expenses!);
+    expenses.addAll(widget.expenses!);
+
     _quantityC.text = '1';
   }
 
@@ -238,15 +237,26 @@ class _CreateListState extends State<CreateList> {
             if (widget.title != null) {
               Navigator.pop(context, {'expenses': expenses, 'total': _total});
             } else {
+              if (expenses.isEmpty) {
+                return;
+              }
               bool asPdf = await showModalBottomSheet(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                   context: context,
                   builder: (context) => const ShareType());
               if (asPdf) {
-                File pdf = await PDFService.createPdf('new');
+                BudgetPlan plan = BudgetPlan(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    total: _total,
+                    title: 'Quick Budget List',
+                    date: DateTime.now(),
+                    reminder: false,
+                    expenses: expenses);
+                File pdf =
+                    await PDFService.createPdf(plan);
                 await Printing.sharePdf(
-                    bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
+                    bytes: pdf.readAsBytesSync(), filename: '${plan.title}.pdf');
               }
               // } else {
               //   File pdf = await PDFService.createPdf('new');

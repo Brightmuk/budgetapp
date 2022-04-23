@@ -12,7 +12,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddBudgetPlan extends StatefulWidget {
-
   ///This is parsed when in edit mode
   ///If not null then it means its an edit operation
   final BudgetPlan? plan;
@@ -31,6 +30,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
   late bool remider = true;
   bool exportAsPdf = true;
   int total = 0;
+  bool expenseError = false;
 
   List<Expense> _expenses = [];
 
@@ -58,9 +58,9 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.plan!=null?
-                    'Edit Budget Plan':
-                    'Add a new Budget plan',
+                    widget.plan != null
+                        ? 'Edit Budget Plan'
+                        : 'Add a new Budget plan',
                     style:
                         TextStyle(fontSize: 40.sp, fontWeight: FontWeight.bold),
                   ),
@@ -117,6 +117,19 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                   }
                 },
               ),
+              Visibility(
+                  visible: expenseError,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Add at least one expense',
+                          style: TextStyle(color: Colors.redAccent, fontSize: 25.sp),
+                        ),
+                      ],
+                    ),
+                  )),
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.calendar_month_outlined),
@@ -129,7 +142,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 onTap: () async {
                   final result = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
+                    initialDate: _selectedDate,
                     firstDate: DateTime.now(),
                     lastDate: DateTime.now().add(const Duration(days: 10)),
                     builder: (context, child) {
@@ -185,13 +198,18 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onPressed: () async {
+                    if (_expenses.isEmpty) {
+                      setState(() {
+                        expenseError = true;
+                      });
+                      return;
+                    }
                     if (_formKey.currentState!.validate()) {
                       String id =
                           DateTime.now().millisecondsSinceEpoch.toString();
                       BudgetPlan plan = BudgetPlan(
-
-                        ///If in edit mode use the items id and not new one 
-                        id: widget.plan!=null? widget.plan!.id: id,
+                        ///If in edit mode use the items id and not new one
+                        id: widget.plan != null ? widget.plan!.id : id,
                         total: total,
                         date: _selectedDate,
                         title: _titleC.value.text,
@@ -204,11 +222,16 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                           .then((value) {
                         if (value) {
                           Navigator.pop(context);
-                           Navigator.pop(context);
+                          Navigator.pop(context);
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
-                              ///If in edit mode use the items id and not new one 
-                                  SingleBudgetPlan(budgetPlanId: widget.plan!=null? widget.plan!.id: id,)));
+
+                                  ///If in edit mode use the items id and not new one
+                                  SingleBudgetPlan(
+                                    budgetPlanId: widget.plan != null
+                                        ? widget.plan!.id
+                                        : id,
+                                  )));
                         }
                       });
                     }
