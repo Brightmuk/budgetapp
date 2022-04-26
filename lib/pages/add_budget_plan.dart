@@ -31,11 +31,13 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
   bool exportAsPdf = true;
   int total = 0;
   bool expenseError = false;
+  bool editMode = false;
 
   List<Expense> _expenses = [];
 
   void initState() {
     super.initState();
+    editMode = widget.plan != null;
     if (widget.plan != null) {
       _expenses = widget.plan!.expenses;
       total = widget.plan!.total;
@@ -58,7 +60,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.plan != null
+                    editMode
                         ? 'Edit Budget Plan'
                         : 'Add a new Budget plan',
                     style:
@@ -125,7 +127,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       children: [
                         Text(
                           'Add at least one expense',
-                          style: TextStyle(color: Colors.redAccent, fontSize: 25.sp),
+                          style: TextStyle(
+                              color: Colors.redAccent, fontSize: 25.sp),
                         ),
                       ],
                     ),
@@ -209,7 +212,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                           DateTime.now().millisecondsSinceEpoch.toString();
                       BudgetPlan plan = BudgetPlan(
                         ///If in edit mode use the items id and not new one
-                        id: widget.plan != null ? widget.plan!.id : id,
+                        id: editMode? widget.plan!.id : id,
                         total: total,
                         date: _selectedDate,
                         title: _titleC.value.text,
@@ -221,14 +224,17 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                           .saveBudgetPlan(budgetPlan: plan)
                           .then((value) {
                         if (value) {
-                          Navigator.pop(context);
+                          ///If in edit mode pop twice
+                          if (editMode) {
+                            Navigator.pop(context);
+                          }
                           Navigator.pop(context);
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
 
                                   ///If in edit mode use the items id and not new one
                                   SingleBudgetPlan(
-                                    budgetPlanId: widget.plan != null
+                                    budgetPlanId: editMode
                                         ? widget.plan!.id
                                         : id,
                                   )));

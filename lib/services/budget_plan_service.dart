@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/services/load_service.dart';
@@ -44,23 +46,27 @@ class BudgetPlanService {
         .then((value) => BudgetPlan.fromMap(value!));
   }
 
-
   ///Get budget plans
   Stream<List<BudgetPlan>> get budgetPlansStream {
     return db.collection(budgetPlanCollection).stream.map(budgetPlanList);
   }
+
+
 
   final List<BudgetPlan> _items = [];
 
   ///Yield the list from stream
   List<BudgetPlan> budgetPlanList(Map<String, dynamic> query) {
     final item = BudgetPlan.fromMap(query);
-    bool alreadyInList =
-        _items.where((val) => val.id == item.id).isNotEmpty;
-      if(!alreadyInList){
-      _items.add(item);
-      }
 
+    //Get the item in a list first before we can add it to stream result
+    Iterable<BudgetPlan> plan = _items.where((val) => val.id == item.id);
+    if (!plan.isNotEmpty) {
+      _items.add(item);
+    } else {
+      _items.remove(plan.first);
+      _items.add(item);
+    }
     return _items;
   }
 

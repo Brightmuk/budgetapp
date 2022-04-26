@@ -21,16 +21,20 @@ class _AddWishState extends State<AddWish> {
   final TextEditingController _nameC = TextEditingController();
   final TextEditingController _priceC = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool editMode = false;
 
   late DateTime _selectedDate = DateTime.now();
   late bool remider = true;
   @override
   void initState() {
     super.initState();
-    remider = widget.wish!.reminder;
-    _selectedDate = widget.wish!.date;
-    _nameC.text = widget.wish!.name;
-    _priceC.text = widget.wish!.price.toString();
+    editMode = widget.wish != null;
+    if (widget.wish != null) {
+      remider = widget.wish!.reminder;
+      _selectedDate = widget.wish!.date;
+      _nameC.text = widget.wish!.name;
+      _priceC.text = widget.wish!.price.toString();
+    }
   }
 
   @override
@@ -46,9 +50,7 @@ class _AddWishState extends State<AddWish> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.wish!=null?
-                    'Edt wish':
-                    'Add a new Wish',
+                    editMode? 'Edt wish' : 'Add a new Wish',
                     style: TextStyle(
                         fontSize: AppSizes.titleFont.sp,
                         fontWeight: FontWeight.bold),
@@ -182,9 +184,8 @@ class _AddWishState extends State<AddWish> {
                       String id =
                           DateTime.now().millisecondsSinceEpoch.toString();
                       Wish wish = Wish(
-
-                        ////If in edit mode use the items id and not new one 
-                        id: widget.wish!=null? widget.wish!.id: id,
+                        ////If in edit mode use the items id and not new one
+                        id: editMode? widget.wish!.id : id,
                         price: int.parse(_priceC.value.text),
                         date: _selectedDate,
                         name: _nameC.value.text,
@@ -194,12 +195,20 @@ class _AddWishState extends State<AddWish> {
                           .saveWish(wish: wish)
                           .then((value) {
                         if (value) {
-                          Navigator.pop(context);
+                          ////If in edit mode pop twice
+                          if (editMode) {
+                            Navigator.pop(context);
+                          }
+
                           Navigator.pop(context);
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => 
-                              ////If in edit mode use the items id and not new one 
-                              SingleWish(wishId: widget.wish!=null? widget.wish!.id: id,)));
+                              builder: (context) =>
+                                  ////If in edit mode use the items id and not new one
+                                  SingleWish(
+                                    wishId: editMode
+                                        ? widget.wish!.id
+                                        : id,
+                                  )));
                         }
                       });
                     }

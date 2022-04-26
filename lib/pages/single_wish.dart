@@ -199,9 +199,9 @@ class _SingleWishState extends State<SingleWish> {
                 backgroundColor: AppColors.themeColor,
               ),
               FloatingActionButton.extended(
-                heroTag: 'Delete',
+                heroTag: 'delete',
                 label: Text(
-                  'delete',
+                  'Delete',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: AppSizes.normalFontSize.sp),

@@ -1,10 +1,15 @@
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
+import 'package:budgetapp/models/budget_plan.dart';
+import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/home_tabs.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/pages/settings.dart';
+import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/widgets/expense_type.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -17,9 +22,27 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final DateFormat dayDate = DateFormat('EEE dd, yyy');
 
   void initState() {
     super.initState();
+  }
+
+  String bPTotal(List<BudgetPlan> plans) {
+    int total = 0;
+    for (var plan in plans) {
+      total += plan.total;
+    }
+    return total.toString();
+  }
+
+  String wishTotal(List<Wish> wishes) {
+    int total = 0;
+    for (var wish in wishes) {
+      total += wish.price;
+    }
+
+    return total.toString();
   }
 
   void newItem() {
@@ -32,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -49,7 +72,9 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                SizedBox(height: 10.sp,),
+                SizedBox(
+                  height: 10.sp,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -70,14 +95,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        showModalBottomSheet(
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) => const SettingsPage());
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const SettingsPage()));
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(20),
-                        child: Icon(Icons.settings_outlined,size: AppSizes.iconSize.sp,),
+                        child: Icon(
+                          Icons.settings_outlined,
+                          size: AppSizes.iconSize.sp,
+                        ),
                       ),
                     )
                   ],
@@ -88,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Wed 13 Apr',
+                        dayDate.format(DateTime.now()),
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 70.sp,
@@ -104,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 0,
                 ),
                 Text(
-                  'COMPLETION',
+                  'PROGRESS',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 35.sp,
@@ -116,48 +141,48 @@ class _MyHomePageState extends State<MyHomePage> {
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      CircularPercentIndicator(
-                        radius: 150.0.sp,
-                        lineWidth: 10.0.sp,
-                        percent: 0.5,
-                        backgroundColor: AppColors.themeColor,
-                        center: Text(
-                          '50%',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30.sp,
-                          ),
-                        ),
-                        progressColor: Colors.blueAccent,
-                      ),
-                      CircularPercentIndicator(
-                        radius: 150.0.sp,
-                        lineWidth: 10.0.sp,
-                        percent: 0.7,
-                        backgroundColor: AppColors.themeColor,
-                        center: Text(
-                          '70%',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30.sp,
-                          ),
-                        ),
-                        progressColor: Colors.pinkAccent,
-                      ),
-                      CircularPercentIndicator(
-                        radius: 150.0.sp,
-                        lineWidth: 10.0.sp,
-                        percent: 0.2,
-                        backgroundColor: AppColors.themeColor,
-                        center: Text(
-                          '20%',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30.sp,
-                          ),
-                        ),
-                        progressColor: Colors.orangeAccent,
-                      ),
+                      StreamBuilder<List<BudgetPlan>>(
+                          stream: BudgetPlanService(context: context)
+                              .budgetPlansStream,
+                          builder: (context, snapshot) {
+                           
+                            return CircularPercentIndicator(
+                              animation: true,
+                              radius: 150.0.sp,
+                              lineWidth: 15.0.sp,
+                              percent: 0.7,
+                              backgroundColor: Colors.white.withOpacity(0.1),
+                              center: Text(
+                                snapshot.hasData? bPTotal(snapshot.data!):'0',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25.sp,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              progressColor: Colors.pinkAccent,
+                            );
+                          }),
+                      StreamBuilder<List<Wish>>(
+                          stream: WishService(context: context)
+                              .wishStream,
+                          builder: (context, snapshot) {
+                          
+                            return CircularPercentIndicator(
+                              animation: true,
+                              radius: 150.0.sp,
+                              lineWidth: 15.0.sp,
+                              percent: 0.2,
+                              backgroundColor: Colors.white.withOpacity(0.1),
+                              center: Text(
+                                snapshot.hasData? wishTotal(snapshot.data!):'0',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25.sp,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              progressColor: Colors.orangeAccent,
+                            );
+                          }),
                     ]),
                 TabBar(
                     indicatorSize: TabBarIndicatorSize.label,
@@ -167,11 +192,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontSize: 30.sp,
                         fontWeight: FontWeight.w300),
                     tabs: const [
+                      // Tab(
+                      //   text: 'OVERVIEW',
+                      // ),
                       Tab(
-                        text: 'ALL',
-                      ),
-                      Tab(
-                        text: 'BUDGET PLANS',
+                        text: 'SPENDING PLANS',
                       ),
                       Tab(
                         text: 'WISHLIST',
@@ -182,10 +207,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        body:  Padding(
-          padding: const EdgeInsets.fromLTRB(0, 10, 0, 50),
+        body: const Padding(
+          padding: EdgeInsets.fromLTRB(0, 10, 0, 50),
           child: TabBarView(
-            children: [Container(),const BudgetListTab(), const WishListTab()],
+            children: [BudgetListTab(), WishListTab()],
           ),
         ),
         floatingActionButton: Padding(
@@ -196,15 +221,20 @@ class _MyHomePageState extends State<MyHomePage> {
               FloatingActionButton.extended(
                 label: Text(
                   'Quick List',
-                  style: TextStyle(color: Colors.white,fontSize: 35.sp),
+                  style: TextStyle(color: Colors.white, fontSize: 35.sp),
                 ),
-                icon: Icon(Icons.edit, color: Colors.white,size: AppSizes.iconSize.sp,),
+                icon: Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                  size: AppSizes.iconSize.sp,
+                ),
                 onPressed: () {
                   showModalBottomSheet(
                       isScrollControlled: true,
                       context: context,
-                      builder: (context) => const CreateList(expenses: [],));
-
+                      builder: (context) => const CreateList(
+                            expenses: [],
+                          ));
                 },
                 backgroundColor: AppColors.themeColor,
               ),

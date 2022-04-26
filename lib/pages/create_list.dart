@@ -59,11 +59,27 @@ class _CreateListState extends State<CreateList> {
                   focusNode: _focusNode,
                   controller: _nameC,
                   cursorColor: AppColors.themeColor,
+                  onFieldSubmitted: (val) {
+                     if (_formKey.currentState!.validate()) {
+                        Expense exp = Expense(
+                            price: int.parse(_priceC.value.text),
+                            index: 0,
+                            quantity: int.parse(_quantityC.value.text),
+                            name: _nameC.value.text);
+                        setState(() {
+                          expenses.add(exp);
+                        });
+                        _nameC.clear();
+                        _quantityC.text = '1';
+                        _priceC.clear();
+                        _focusNode.requestFocus();
+                      }
+                  },
                   decoration: AppStyles()
                       .textFieldDecoration(label: 'Name', hintText: 'Food'),
                   validator: (val) {
                     if (val!.isEmpty) {
-                      return 'The name is required';
+                      return 'Name is required';
                     }
                   },
                 ),
@@ -73,6 +89,22 @@ class _CreateListState extends State<CreateList> {
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   controller: _quantityC,
+                  onFieldSubmitted: (val) {
+                     if (_formKey.currentState!.validate()) {
+                        Expense exp = Expense(
+                            price: int.parse(val),
+                            index: 0,
+                            quantity: int.parse(_quantityC.value.text),
+                            name: _nameC.value.text);
+                        setState(() {
+                          expenses.add(exp);
+                        });
+                        _nameC.clear();
+                        _quantityC.text = '1';
+                        _priceC.clear();
+                        _focusNode.requestFocus();
+                      }
+                  },
                   cursorColor: AppColors.themeColor,
                   decoration: AppStyles().textFieldDecoration(
                     label: 'Quantity',
@@ -105,7 +137,7 @@ class _CreateListState extends State<CreateList> {
                         label: 'Unit Price', hintText: '300'),
                     validator: (val) {
                       if (val!.isEmpty) {
-                        return 'The price is required';
+                        return 'Price is required';
                       }
                       return null;
                     }),
@@ -228,6 +260,11 @@ class _CreateListState extends State<CreateList> {
             SizedBox(
               height: 150.sp,
             ),
+            Text('Hit enter to save item',
+                style: TextStyle(fontSize: 13, color: Colors.grey[500])),
+            SizedBox(
+              height: 150.sp,
+            ),
           ]),
         ),
         floatingActionButton: FloatingActionButton.extended(
@@ -253,10 +290,10 @@ class _CreateListState extends State<CreateList> {
                     date: DateTime.now(),
                     reminder: false,
                     expenses: expenses);
-                File pdf =
-                    await PDFService.createPdf(plan);
+                File pdf = await PDFService.createPdf(plan);
                 await Printing.sharePdf(
-                    bytes: pdf.readAsBytesSync(), filename: '${plan.title}.pdf');
+                    bytes: pdf.readAsBytesSync(),
+                    filename: '${plan.title}.pdf');
               }
               // } else {
               //   File pdf = await PDFService.createPdf('new');
@@ -273,12 +310,12 @@ class _CreateListState extends State<CreateList> {
           },
           tooltip: 'Share',
           label: Text(
-            widget.title != null ? 'Save' : 'Share',
+            widget.title != null ? 'Done' : 'Share',
             style: TextStyle(color: Colors.white, fontSize: 35.sp),
           ),
           icon: widget.title != null
               ? Icon(
-                  Icons.save,
+                  Icons.done,
                   color: Colors.white,
                   size: 50.sp,
                 )

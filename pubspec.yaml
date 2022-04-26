@@ -16,6 +16,8 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   intl: ^0.17.0
+  flutter_local_notifications: ^9.4.1
+  flutter_email_sender: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -32,6 +34,9 @@ dev_dependencies:
   localstore: ^1.2.3
   toast: ^0.2.9
   flutter_screenutil: ^5.4.0+1
+  url_launcher: ^6.1.0
+  carousel_slider: ^4.1.1
+  shared_preferences: ^2.0.13
 
 
 

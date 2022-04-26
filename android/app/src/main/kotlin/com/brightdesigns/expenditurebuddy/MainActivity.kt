@@ -1,4 +1,4 @@
-package com.brightdesigns.budgetbuddy
+package com.brightdesigns.expenditurebuddy
 
 import io.flutter.embedding.android.FlutterActivity
 

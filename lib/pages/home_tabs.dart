@@ -56,7 +56,7 @@ class _BudgetListTabState extends State<BudgetListTab> {
                                     )));
                           },
                           leading: Icon(
-                            Icons.money,
+                            Icons.receipt_long_outlined,
                             size: AppSizes.iconSize.sp,
                             color: Colors.pinkAccent,
                           ),
