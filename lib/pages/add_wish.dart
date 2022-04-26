@@ -3,10 +3,12 @@ import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/single_wish.dart';
+import 'package:budgetapp/services/date_services.dart';
+import 'package:budgetapp/services/notification_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class AddWish extends StatefulWidget {
   final Wish? wish;
@@ -17,10 +19,11 @@ class AddWish extends StatefulWidget {
 }
 
 class _AddWishState extends State<AddWish> {
-  final DateFormat dayDate = DateFormat('EEE dd, yyy');
   final TextEditingController _nameC = TextEditingController();
   final TextEditingController _priceC = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final FocusNode _focusNode = FocusNode();
+    final FocusNode _focusNode2 = FocusNode();
   bool editMode = false;
 
   late DateTime _selectedDate = DateTime.now();
@@ -31,7 +34,7 @@ class _AddWishState extends State<AddWish> {
     editMode = widget.wish != null;
     if (widget.wish != null) {
       remider = widget.wish!.reminder;
-      _selectedDate = widget.wish!.date;
+      _selectedDate = widget.wish!.reminderDate;
       _nameC.text = widget.wish!.name;
       _priceC.text = widget.wish!.price.toString();
     }
@@ -50,7 +53,7 @@ class _AddWishState extends State<AddWish> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    editMode? 'Edt wish' : 'Add a new Wish',
+                    editMode ? 'Edt wish' : 'Add a new Wish',
                     style: TextStyle(
                         fontSize: AppSizes.titleFont.sp,
                         fontWeight: FontWeight.bold),
@@ -76,6 +79,7 @@ class _AddWishState extends State<AddWish> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.6,
                       child: TextFormField(
+                        focusNode: _focusNode,
                         controller: _nameC,
                         cursorColor: AppColors.themeColor,
                         decoration: AppStyles().textFieldDecoration(
@@ -90,6 +94,7 @@ class _AddWishState extends State<AddWish> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.25,
                       child: TextFormField(
+                        focusNode: _focusNode2,
                           keyboardType: TextInputType.number,
                           controller: _priceC,
                           cursorColor: AppColors.themeColor,
@@ -114,58 +119,38 @@ class _AddWishState extends State<AddWish> {
                   size: AppSizes.iconSize.sp,
                 ),
                 title: Text(
-                  'Select date',
+                  'Reminder date',
                   style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
                 ),
-                trailing: Text(
-                  dayDate.format(_selectedDate),
-                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                ),
+                trailing: DateServices(context: context).dayDateTimeText(_selectedDate),
                 onTap: () async {
-                  final result = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 10)),
-                    builder: (context, child) {
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                            onSurface: AppColors.themeColor,
-
-                            primary: AppColors.themeColor,
-                            // header background color
-                          ),
-                          textButtonTheme: TextButtonThemeData(
-                            style: TextButton.styleFrom(
-                              primary: const Color.fromRGBO(72, 191, 132, 1),
-                            ),
-                          ),
-                        ),
-                        child: child!,
-                      );
-                    },
-                  );
-                  if (result != null) {
+                  _focusNode.unfocus();
+                   _focusNode2.unfocus();
+                  final dateResult = await DateServices(context: context)
+                      .getDateAndTime(_selectedDate);
+                  if (dateResult != null) {
                     setState(() {
-                      _selectedDate = result;
+                      _selectedDate = dateResult;
                     });
                   }
                 },
               ),
               const Divider(),
               CheckboxListTile(
-                  activeColor: AppColors.themeColor,
+                  activeColor: Colors.greenAccent,
                   value: remider,
-                  title: Text(
-                    'Set reminder on',
-                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                  ),
+                  title: Text('Set reminder on',
+                      style: TextStyle(fontSize: 35.sp)),
+                  subtitle: Text(
+                      'You will be reminded to fullfil the wish',
+                      style: TextStyle(fontSize: 35.sp)),
                   onChanged: (val) {
+                    _focusNode.unfocus();
+                    _focusNode2.unfocus();
                     setState(() {
                       remider = val!;
                     });
-                  })
+                  }),
             ]),
             Positioned(
               bottom: 10,
@@ -185,16 +170,24 @@ class _AddWishState extends State<AddWish> {
                           DateTime.now().millisecondsSinceEpoch.toString();
                       Wish wish = Wish(
                         ////If in edit mode use the items id and not new one
-                        id: editMode? widget.wish!.id : id,
+                        id: editMode ? widget.wish!.id : id,
                         price: int.parse(_priceC.value.text),
-                        date: _selectedDate,
+                        reminderDate: _selectedDate,
+                        creationDate: DateTime.now(),
                         name: _nameC.value.text,
                         reminder: remider,
                       );
                       await WishService(context: context)
                           .saveWish(wish: wish)
-                          .then((value) {
+                          .then((value) async{
                         if (value) {
+                            await NotificationService().zonedScheduleNotification(
+                            id: int.parse(wish.id),
+                             payload: '{"id":$id,"type":"spendingPlan"}',
+                            title: 'Wish fulfilment',
+                            description: 'Remember to fulfil your wish Buddy!',
+                            scheduling: tz.TZDateTime.fromMillisecondsSinceEpoch(tz.local, wish.reminderDate.millisecondsSinceEpoch)
+                          );
                           ////If in edit mode pop twice
                           if (editMode) {
                             Navigator.pop(context);
@@ -205,9 +198,7 @@ class _AddWishState extends State<AddWish> {
                               builder: (context) =>
                                   ////If in edit mode use the items id and not new one
                                   SingleWish(
-                                    wishId: editMode
-                                        ? widget.wish!.id
-                                        : id,
+                                    wishId: editMode ? widget.wish!.id : id,
                                   )));
                         }
                       });

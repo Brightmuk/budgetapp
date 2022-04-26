@@ -39,7 +39,7 @@ final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
                           fontWeight: pw.FontWeight.bold, fontSize: 25)),
                 ),
                 pw.SizedBox(height: 20),
-                pw.Text(dayDate.format( plan.date), style: pw.TextStyle()),
+                pw.Text(dayDate.format( plan.creationDate), style: pw.TextStyle()),
                 pw.SizedBox(height: 30),
                 pw.Table(tableWidth: pw.TableWidth.max, children: [
                   pw.TableRow(children: [

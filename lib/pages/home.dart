@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 0,
                 ),
                 Text(
-                  'PROGRESS',
+                  'TOTALS',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 35.sp,

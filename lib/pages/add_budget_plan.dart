@@ -6,10 +6,13 @@ import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/pages/single_budget_plan.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/date_services.dart';
+import 'package:budgetapp/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class AddBudgetPlan extends StatefulWidget {
   ///This is parsed when in edit mode
@@ -22,11 +25,11 @@ class AddBudgetPlan extends StatefulWidget {
 }
 
 class _AddBudgetPlanState extends State<AddBudgetPlan> {
-  final DateFormat dayDate = DateFormat('EEE dd, yyy');
   final TextEditingController _titleC = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final FocusNode _focusNode = FocusNode();
 
-  late DateTime _selectedDate = DateTime.now();
+  DateTime? _selectedDate = DateTime.now();
   late bool remider = true;
   bool exportAsPdf = true;
   int total = 0;
@@ -42,7 +45,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
       _expenses = widget.plan!.expenses;
       total = widget.plan!.total;
       remider = widget.plan!.reminder;
-      _selectedDate = widget.plan!.date;
+      _selectedDate = widget.plan!.reminderDate;
       _titleC.text = widget.plan!.title;
     }
   }
@@ -60,9 +63,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    editMode
-                        ? 'Edit Spending Plan'
-                        : 'Add a new Spending plan',
+                    editMode ? 'Edit Spending Plan' : 'Add a new Spending plan',
                     style:
                         TextStyle(fontSize: 40.sp, fontWeight: FontWeight.bold),
                   ),
@@ -82,6 +83,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               Form(
                 key: _formKey,
                 child: TextFormField(
+                  focusNode: _focusNode,
                   controller: _titleC,
                   cursorColor: AppColors.themeColor,
                   decoration: AppStyles().textFieldDecoration(
@@ -105,6 +107,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       TextStyle(fontWeight: FontWeight.bold, fontSize: 35.sp),
                 ),
                 onTap: () async {
+                  _focusNode.unfocus();
                   var result =
                       await Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => CreateList(
@@ -137,39 +140,18 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               ListTile(
                 leading: const Icon(Icons.calendar_month_outlined),
                 title: Text(
-                  'Select date',
+                  'Reminder date',
                   style: TextStyle(fontSize: 35.sp),
                 ),
-                trailing: Text(dayDate.format(_selectedDate),
-                    style: TextStyle(fontSize: 35.sp)),
+                trailing: DateServices(context: context)
+                    .dayDateTimeText(_selectedDate!),
                 onTap: () async {
-                  final result = await showDatePicker(
-                    context: context,
-                    initialDate: _selectedDate,
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 10)),
-                    builder: (context, child) {
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                            onSurface: AppColors.themeColor,
-
-                            primary: AppColors.themeColor,
-                            // header background color
-                          ),
-                          textButtonTheme: TextButtonThemeData(
-                            style: TextButton.styleFrom(
-                              primary: const Color.fromRGBO(72, 191, 132, 1),
-                            ),
-                          ),
-                        ),
-                        child: child!,
-                      );
-                    },
-                  );
-                  if (result != null) {
+                  _focusNode.unfocus();
+                  final dateResult = await DateServices(context: context)
+                      .getDateAndTime(_selectedDate!);
+                  if (dateResult != null) {
                     setState(() {
-                      _selectedDate = result;
+                      _selectedDate = dateResult;
                     });
                   }
                 },
@@ -183,6 +165,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       'You will be reminded to fullfil the Spending list',
                       style: TextStyle(fontSize: 35.sp)),
                   onChanged: (val) {
+                    _focusNode.unfocus();
                     setState(() {
                       remider = val!;
                     });
@@ -212,9 +195,10 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                           DateTime.now().millisecondsSinceEpoch.toString();
                       BudgetPlan plan = BudgetPlan(
                         ///If in edit mode use the items id and not new one
-                        id: editMode? widget.plan!.id : id,
+                        id: editMode ? widget.plan!.id : id,
                         total: total,
-                        date: _selectedDate,
+                        reminderDate: _selectedDate!,
+                        creationDate: DateTime.now(),
                         title: _titleC.value.text,
                         reminder: remider,
                         expenses: _expenses,
@@ -222,8 +206,20 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
 
                       await BudgetPlanService(context: context)
                           .saveBudgetPlan(budgetPlan: plan)
-                          .then((value) {
+                          .then((value) async {
                         if (value) {
+                          await NotificationService().zonedScheduleNotification(
+                              id: int.parse(plan.id),
+                              payload: '{"id":$id,"type":"spendingPlan"}',
+                              title: 'Spending list fulfilment',
+                              description:
+                                  'Remember to fulfil your spending list Buddy!',
+                              scheduling:
+                                  tz.TZDateTime.fromMillisecondsSinceEpoch(
+                                      tz.local,
+                                      plan.reminderDate
+                                          .millisecondsSinceEpoch));
+
                           ///If in edit mode pop twice
                           if (editMode) {
                             Navigator.pop(context);
@@ -234,9 +230,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
 
                                   ///If in edit mode use the items id and not new one
                                   SingleBudgetPlan(
-                                    budgetPlanId: editMode
-                                        ? widget.plan!.id
-                                        : id,
+                                    budgetPlanId:
+                                        editMode ? widget.plan!.id : id,
                                   )));
                         }
                       });

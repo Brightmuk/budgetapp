@@ -287,7 +287,8 @@ class _CreateListState extends State<CreateList> {
                     id: DateTime.now().millisecondsSinceEpoch.toString(),
                     total: _total,
                     title: 'Quick Budget List',
-                    date: DateTime.now(),
+                    creationDate: DateTime.now(),
+                    reminderDate: DateTime.now(),
                     reminder: false,
                     expenses: expenses);
                 File pdf = await PDFService.createPdf(plan);

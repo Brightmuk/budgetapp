@@ -8,15 +8,18 @@ class BudgetPlan {
   final String id;
   final int total;
   final String title;
-  final DateTime date;
+  final DateTime reminderDate;
+  final DateTime creationDate; 
   final bool reminder;
   final List<Expense> expenses;
+
   BudgetPlan({
     required this.id,
     required this.total,
     required this.title,
-    required this.date,
+    required this.reminderDate,
     required this.reminder,
+    required this.creationDate,
     required this.expenses,
   });
 
@@ -27,14 +30,16 @@ class BudgetPlan {
     int? total,
     String? title,
     DateTime? date,
+    DateTime? creationDate,
     bool? reminder,
     List<Expense>? items,
   }) {
     return BudgetPlan(
       id: id ?? this.id,
+      creationDate: creationDate??this.creationDate,
       total: total ?? this.total,
       title: title ?? this.title,
-      date: date ?? this.date,
+      reminderDate: date ?? this.reminderDate,
       reminder: reminder ?? this.reminder,
       expenses: items ?? this.expenses,
     );
@@ -45,7 +50,8 @@ class BudgetPlan {
       'id': id,
       'total': total,
       'title': title,
-      'date': date.millisecondsSinceEpoch,
+      'reminderDate': reminderDate.millisecondsSinceEpoch,
+      'creationDate': creationDate.millisecondsSinceEpoch,
       'reminder': reminder,
       'expenses': expenses.map((ex) => ex.toMap()).toList(),
     };
@@ -54,9 +60,10 @@ class BudgetPlan {
   factory BudgetPlan.fromMap(Map<String, dynamic> map) {
     return BudgetPlan(
       id: map['id'] ?? '',
+      creationDate: DateTime.fromMillisecondsSinceEpoch(map['creationDate']),
       total: map['total']?.toInt() ?? 0,
       title: map['title'] ?? '',
-      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+      reminderDate: DateTime.fromMillisecondsSinceEpoch(map['reminderDate']),
       reminder: map['reminder'] ?? false,
       expenses: List<Expense>.from(map['expenses']?.map((x) => Expense.fromMap(x))),
     );
@@ -68,7 +75,7 @@ class BudgetPlan {
 
   @override
   String toString() {
-    return 'BudgetPlan(id: $id, total: $total, title: $title, date: $date, reminder: $reminder, items: $expenses)';
+    return 'BudgetPlan(id: $id, total: $total, title: $title, reminderDate: $reminderDate, reminder: $reminder, items: $expenses)';
   }
 
   @override
@@ -79,7 +86,7 @@ class BudgetPlan {
       other.id == id &&
       other.total == total &&
       other.title == title &&
-      other.date == date &&
+      other.reminderDate == reminderDate &&
       other.reminder == reminder &&
       listEquals(other.expenses, expenses);
   }
@@ -89,7 +96,7 @@ class BudgetPlan {
     return id.hashCode ^
       total.hashCode ^
       title.hashCode ^
-      date.hashCode ^
+      reminderDate.hashCode ^
       reminder.hashCode ^
       expenses.hashCode;
   }

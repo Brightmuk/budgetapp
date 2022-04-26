@@ -4,13 +4,15 @@ class Wish {
   final String id;
   final int price;
   final String name;
-  final DateTime date;
+  final DateTime reminderDate;
+  final DateTime creationDate;
   final bool reminder;
   Wish({
     required this.id,
     required this.price,
     required this.name,
-    required this.date,
+    required this.reminderDate,
+     required this.creationDate,
     required this.reminder,
   });
 
@@ -25,7 +27,8 @@ class Wish {
       id: id ?? this.id,
       price: price ?? this.price,
       name: name ?? this.name,
-      date: date ?? this.date,
+      reminderDate: date ?? this.reminderDate,
+      creationDate: date ?? this.creationDate,
       reminder: reminder ?? this.reminder,
     );
   }
@@ -35,7 +38,8 @@ class Wish {
       'id': id,
       'price': price,
       'name': name,
-      'date': date.millisecondsSinceEpoch,
+      'reminderDate': reminderDate.millisecondsSinceEpoch,
+      'creationDate':creationDate.millisecondsSinceEpoch,
       'reminder': reminder,
     };
   }
@@ -43,9 +47,10 @@ class Wish {
   factory Wish.fromMap(Map<String, dynamic> map) {
     return Wish(
       id: map['id'] ?? '',
+      creationDate: DateTime.fromMillisecondsSinceEpoch(map['creationDate']),
       price: map['price']?.toInt() ?? 0,
       name: map['name'] ?? '',
-      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+      reminderDate: DateTime.fromMillisecondsSinceEpoch(map['reminderDate']),
       reminder: map['reminder'] ?? false,
     );
   }
@@ -56,27 +61,27 @@ class Wish {
 
   @override
   String toString() {
-    return 'Wish(id: $id, price: $price, name: $name, date: $date, reminder: $reminder)';
+    return 'Wish(id: $id, price: $price, name: $name, date: $reminderDate, creationDate:$creationDate, reminderDate: $reminder)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is Wish &&
-      other.id == id &&
-      other.price == price &&
-      other.name == name &&
-      other.date == date &&
-      other.reminder == reminder;
+        other.id == id &&
+        other.price == price &&
+        other.name == name &&
+        other.reminderDate == reminderDate &&
+        other.reminder == reminder;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      price.hashCode ^
-      name.hashCode ^
-      date.hashCode ^
-      reminder.hashCode;
+        price.hashCode ^
+        name.hashCode ^
+        reminderDate.hashCode ^
+        reminder.hashCode;
   }
 }

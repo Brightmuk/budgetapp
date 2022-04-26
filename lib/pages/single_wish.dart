@@ -7,6 +7,7 @@ import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
@@ -35,7 +36,6 @@ class _SingleWishState extends State<SingleWish> {
   List<Expense> items = [];
   void initState() {
     super.initState();
-    ToastService(context: context).showSuccessToast('Heelo');
   }
 
   @override
@@ -118,17 +118,26 @@ class _SingleWishState extends State<SingleWish> {
                         size: AppSizes.iconSize.sp,
                       ),
                       title: Text(
-                        'Date',
+                        'Creation Date',
                         style: TextStyle(
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
                       ),
-                      trailing: Text(
-                        dayDate.format(wish.date),
+                      trailing: DateServices(context: context).dayDateTimeText(wish.creationDate),
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(
+                        Icons.calendar_month_outlined,
+                        size: AppSizes.iconSize.sp,
+                      ),
+                      title: Text(
+                        'Reminder Date',
                         style: TextStyle(
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
                       ),
+                      trailing: DateServices(context: context).dayDateTimeText(wish.reminderDate),
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,

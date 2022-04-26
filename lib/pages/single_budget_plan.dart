@@ -6,6 +6,7 @@ import 'package:budgetapp/pages/add_budget_plan.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/widgets/action_dialogue.dart';
@@ -33,11 +34,12 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
 
   @override
   Widget build(BuildContext context) {
+    final budgetPlanId = ModalRoute.of(context)!.settings.arguments as String;
+
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
         appBar: AppBar(
-
           backgroundColor: Colors.transparent,
           leading: Container(),
           toolbarHeight: AppSizes.minToolBarHeight,
@@ -51,58 +53,62 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-              FloatingActionButton.extended(
-                elevation: 0,
-                heroTag: 'print',
-                label: Text(
-                  'Print',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: AppSizes.normalFontSize.sp),
-                ),
-                icon: Icon(
-                  Icons.print_outlined,
-                  color: Colors.white,
-                  size: AppSizes.iconSize.sp,
-                ),
-                onPressed: () async {
-                  BudgetPlan plan = await BudgetPlanService(context: context)
-                      .singleBudgetPlan(widget.budgetPlanId);
-                  File pdf = await PDFService.createPdf(plan);
-                  await Printing.layoutPdf(
-                      name: '${plan.title}.pdf',
-                      onLayout: (format) async => pdf.readAsBytes());
-                },
-                backgroundColor: AppColors.themeColor,
-              ),
-              FloatingActionButton.extended(
-                elevation: 0,
-                heroTag: 'share',
-                label: Text(
-                  'Share',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: AppSizes.normalFontSize.sp),
-                ),
-                icon: Icon(
-                  Icons.share_outlined,
-                  color: Colors.white,
-                  size: AppSizes.iconSize.sp,
-                ),
-                onPressed: () async {
-                  BudgetPlan plan = await BudgetPlanService(context: context)
-                      .singleBudgetPlan(widget.budgetPlanId);
-                  File pdf = await PDFService.createPdf(plan);
-                  await Printing.sharePdf(
-                      bytes: pdf.readAsBytesSync(),
-                      filename: '${plan.title}.pdf');
-                },
-                backgroundColor: AppColors.themeColor,
-              ),
+                    FloatingActionButton.extended(
+                      elevation: 0,
+                      heroTag: 'print',
+                      label: Text(
+                        'Print',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: AppSizes.normalFontSize.sp),
+                      ),
+                      icon: Icon(
+                        Icons.print_outlined,
+                        color: Colors.white,
+                        size: AppSizes.iconSize.sp,
+                      ),
+                      onPressed: () async {
+                        BudgetPlan plan =
+                            await BudgetPlanService(context: context)
+                                .singleBudgetPlan(widget.budgetPlanId);
+                        File pdf = await PDFService.createPdf(plan);
+                        await Printing.layoutPdf(
+                            name: '${plan.title}.pdf',
+                            onLayout: (format) async => pdf.readAsBytes());
+                      },
+                      backgroundColor: AppColors.themeColor,
+                    ),
+                    FloatingActionButton.extended(
+                      elevation: 0,
+                      heroTag: 'share',
+                      label: Text(
+                        'Share',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: AppSizes.normalFontSize.sp),
+                      ),
+                      icon: Icon(
+                        Icons.share_outlined,
+                        color: Colors.white,
+                        size: AppSizes.iconSize.sp,
+                      ),
+                      onPressed: () async {
+                        BudgetPlan plan =
+                            await BudgetPlanService(context: context)
+                                .singleBudgetPlan(widget.budgetPlanId);
+                        File pdf = await PDFService.createPdf(plan);
+                        await Printing.sharePdf(
+                            bytes: pdf.readAsBytesSync(),
+                            filename: '${plan.title}.pdf');
+                      },
+                      backgroundColor: AppColors.themeColor,
+                    ),
                   ],
                 ),
                 Row(
@@ -160,21 +166,53 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: Icon(
-                        Icons.calendar_month_outlined,
+                        Icons.monetization_on_outlined,
                         size: AppSizes.iconSize.sp,
                       ),
                       title: Text(
-                        'Date',
+                        'Total',
                         style: TextStyle(
+                          fontWeight: FontWeight.bold,
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
                       ),
                       trailing: Text(
-                        dayDate.format(plan.date),
+                        'ksh.' + plan.total.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: AppSizes.normalFontSize.sp,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(
+                        Icons.calendar_month_outlined,
+                        size: AppSizes.iconSize.sp,
+                      ),
+                      title: Text(
+                        'Created on',
                         style: TextStyle(
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
                       ),
+                      trailing: DateServices(context: context)
+                          .dayDateTimeText(plan.creationDate),
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(
+                        Icons.calendar_month_outlined,
+                        size: AppSizes.iconSize.sp,
+                      ),
+                      title: Text(
+                        'Reminder Date',
+                        style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,
+                        ),
+                      ),
+                      trailing: DateServices(context: context)
+                          .dayDateTimeText(plan.creationDate),
                     ),
                     CheckboxListTile(
                         contentPadding: EdgeInsets.zero,
@@ -197,27 +235,6 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                           //   remider = val!;
                           // });
                         }),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(
-                        Icons.monetization_on_outlined,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      title: Text(
-                        'Total',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: AppSizes.normalFontSize.sp,
-                        ),
-                      ),
-                      trailing: Text(
-                        'ksh.' + plan.total.toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: AppSizes.normalFontSize.sp,
-                        ),
-                      ),
-                    ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -227,7 +244,6 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                           fontSize: AppSizes.normalFontSize.sp,
                           fontWeight: FontWeight.bold),
                     ),
-                    
                     const SizedBox(
                       height: 20,
                     ),
@@ -302,7 +318,6 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                 },
                 backgroundColor: AppColors.themeColor,
               ),
-              
               FloatingActionButton.extended(
                 heroTag: 'delete',
                 label: Text(

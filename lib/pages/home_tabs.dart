@@ -69,7 +69,7 @@ class _BudgetListTabState extends State<BudgetListTab> {
                           ),
                           subtitle: Text(
                               dayDate.format(
-                                plans[index].date,
+                                plans[index].creationDate,
                               ),
                               style: TextStyle(
                                   fontSize: AppSizes.normalFontSize.sp)),
@@ -173,7 +173,7 @@ class _WishListTabState extends State<WishListTab> {
                             style:
                                 TextStyle(fontSize: AppSizes.normalFontSize.sp),
                           ),
-                          subtitle: Text(dayDate.format(plans[index].date),
+                          subtitle: Text(dayDate.format(plans[index].creationDate),
                               style: TextStyle(
                                   fontSize: AppSizes.normalFontSize.sp)),
                           trailing: Text(

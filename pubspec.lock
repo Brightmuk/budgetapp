@@ -37,7 +37,7 @@ packages:
     source: hosted
     version: "2.1.0"
   carousel_slider:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: carousel_slider
       url: "https://pub.dartlang.org"
@@ -126,7 +126,7 @@ packages:
     source: hosted
     version: "5.1.0"
   flutter_lints:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_lints
       url: "https://pub.dartlang.org"
@@ -154,14 +154,21 @@ packages:
     source: hosted
     version: "5.0.0"
   flutter_native_splash:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_native_splash
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.6"
+  flutter_native_timezone:
+    dependency: "direct main"
+    description:
+      name: flutter_native_timezone
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   flutter_screenutil:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_screenutil
       url: "https://pub.dartlang.org"
@@ -227,7 +234,7 @@ packages:
     source: hosted
     version: "1.0.1"
   localstore:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: localstore
       url: "https://pub.dartlang.org"
@@ -255,14 +262,14 @@ packages:
     source: hosted
     version: "1.7.0"
   motion_toast:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: motion_toast
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.6"
   package_info_plus:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: package_info_plus
       url: "https://pub.dartlang.org"
@@ -318,7 +325,7 @@ packages:
     source: hosted
     version: "1.0.0"
   path_provider:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: path_provider
       url: "https://pub.dartlang.org"
@@ -367,21 +374,21 @@ packages:
     source: hosted
     version: "2.0.5"
   pdf:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: pdf
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.7.4"
   percent_indicator:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: percent_indicator
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.4.0"
   permission_handler:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: permission_handler
       url: "https://pub.dartlang.org"
@@ -437,7 +444,7 @@ packages:
     source: hosted
     version: "2.1.2"
   printing:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: printing
       url: "https://pub.dartlang.org"
@@ -457,8 +464,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  rxdart:
+    dependency: "direct main"
+    description:
+      name: rxdart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.27.3"
   shared_preferences:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: shared_preferences
       url: "https://pub.dartlang.org"
@@ -582,7 +596,7 @@ packages:
     source: hosted
     version: "2.0.4"
   url_launcher:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: url_launcher
       url: "https://pub.dartlang.org"
