@@ -2,8 +2,6 @@ import 'package:budgetapp/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:toast/toast.dart';
-import 'package:budgetapp/pages/home.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -27,7 +25,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ToastContext().init(context);
     return ScreenUtilInit(
       designSize: const Size(1080, 2340),
       builder: (context) {

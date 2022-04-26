@@ -6,6 +6,7 @@ import 'package:budgetapp/pages/home_tabs.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/pages/settings.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/toast_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/widgets/expense_type.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initState() {
     super.initState();
+
   }
 
   String bPTotal(List<BudgetPlan> plans) {
@@ -95,7 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const SettingsPage()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const SettingsPage()));
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(20),
@@ -145,15 +148,16 @@ class _MyHomePageState extends State<MyHomePage> {
                           stream: BudgetPlanService(context: context)
                               .budgetPlansStream,
                           builder: (context, snapshot) {
-                           
                             return CircularPercentIndicator(
                               animation: true,
                               radius: 150.0.sp,
                               lineWidth: 15.0.sp,
-                              percent: 0.7,
+                              percent: 1,
                               backgroundColor: Colors.white.withOpacity(0.1),
                               center: Text(
-                                snapshot.hasData? bPTotal(snapshot.data!):'0',
+                                snapshot.hasData
+                                    ? bPTotal(snapshot.data!)
+                                    : '0',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 25.sp,
@@ -163,18 +167,18 @@ class _MyHomePageState extends State<MyHomePage> {
                             );
                           }),
                       StreamBuilder<List<Wish>>(
-                          stream: WishService(context: context)
-                              .wishStream,
+                          stream: WishService(context: context).wishStream,
                           builder: (context, snapshot) {
-                          
                             return CircularPercentIndicator(
                               animation: true,
                               radius: 150.0.sp,
                               lineWidth: 15.0.sp,
-                              percent: 0.2,
+                              percent: 1,
                               backgroundColor: Colors.white.withOpacity(0.1),
                               center: Text(
-                                snapshot.hasData? wishTotal(snapshot.data!):'0',
+                                snapshot.hasData
+                                    ? wishTotal(snapshot.data!)
+                                    : '0',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 25.sp,

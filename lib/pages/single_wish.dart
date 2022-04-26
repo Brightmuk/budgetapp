@@ -9,6 +9,7 @@ import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/pdf_service.dart';
+import 'package:budgetapp/services/toast_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/widgets/action_dialogue.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,6 +33,10 @@ class _SingleWishState extends State<SingleWish> {
   bool exportAsPdf = true;
 
   List<Expense> items = [];
+  void initState() {
+    super.initState();
+    ToastService(context: context).showSuccessToast('Heelo');
+  }
 
   @override
   Widget build(BuildContext context) {

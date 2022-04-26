@@ -30,7 +30,7 @@ class ExpenseType extends StatelessWidget {
                     height: 10,
                     width: 10),
               ),
-              title: Text('Budget Plan',style: TextStyle(fontSize: 35.sp),),
+              title: Text('Spending Plan',style: TextStyle(fontSize: 35.sp),),
               subtitle: Text('A plan to spend an amount of money',style: TextStyle(fontSize: 30.sp),),
               onTap: () {
                 Navigator.pop(context);

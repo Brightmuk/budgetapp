@@ -77,8 +77,8 @@ class BudgetPlanService {
         .collection(budgetPlanCollection)
         .doc(budgetPlanId)
         .delete()
-        .then((value) => ToastServcie.showToast('Budget plan deleted!'))
-        .catchError((e) => ToastServcie.showToast('An error occurred!'));
+        .then((value) => ToastService(context: context).showSuccessToast('Budget plan deleted!'))
+        .catchError((e) => ToastService(context: context).showSuccessToast('An error occurred!'));
     LoadService(context: context).hideLoader();
   }
 
@@ -92,8 +92,8 @@ class BudgetPlanService {
         .collection(budgetPlanCollection)
         .doc(budgetPlanId)
         .set({field: value}, SetOptions(merge: true))
-        .then((value) => ToastServcie.showToast('Budget plan edited!'))
-        .catchError((e) => ToastServcie.showToast('An error occurred!'));
+        .then((value) => ToastService(context: context).showSuccessToast('Budget plan edited!'))
+        .catchError((e) => ToastService(context: context).showSuccessToast('An error occurred!'));
     LoadService(context: context).hideLoader();
   }
 }

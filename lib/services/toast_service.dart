@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:toast/toast.dart';
+import 'package:motion_toast/motion_toast.dart';
 
-class ToastServcie{
+class ToastService {
+  final BuildContext context;
+  ToastService({required this.context});
 
-  static void showToast(String msg) {
-    Toast.show(msg, duration: 2, gravity: Toast.bottom, backgroundColor: Colors.grey[900]!);
+ void showSuccessToast(String msg) {
+    MotionToast.success(
+            title: Text('Success'),
+            description: Text(msg),
+            width: 300)
+        .show(context);
   }
 
+  static void showErrorToast(String msg) {}
 }

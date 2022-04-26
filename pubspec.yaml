@@ -32,7 +32,7 @@ dev_dependencies:
   flutter_native_splash: ^2.1.6
   package_info_plus: ^1.4.2
   localstore: ^1.2.3
-  toast: ^0.2.9
+  motion_toast: ^2.1.6
   flutter_screenutil: ^5.4.0+1
   url_launcher: ^6.1.0
   carousel_slider: ^4.1.1

@@ -4,6 +4,7 @@ import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class Help extends StatefulWidget {
   const Help({Key? key}) : super(key: key);
@@ -126,23 +127,16 @@ class _HelpState extends State<Help> {
   }
 
   void sendMessage() async {
-    final MailOptions mailOptions = MailOptions(
+    final Email mail = Email(
       body: _messageC.value.text,
       subject: 'Message from ${_nameC.value.text} via Budget Buddy',
       recipients: ['lebrightdesigns@gmail.com'],
+      isHTML: false,
     );
 
-    final MailerResponse response = await FlutterMailer.send(mailOptions);
-
-    switch (response) {
-      case MailerResponse.android:
-        ToastServcie.showToast('Message sent');
-        _messageC.clear();
-        _nameC.clear();
-        break;
-      default:
-        ToastServcie.showToast('Message not sent');
-        break;
-    }
+    await FlutterEmailSender.send(mail).then((value) {
+      ToastService(context: context).showSuccessToast('Message sent');
+      Navigator.pop(context);
+    });
   }
 }

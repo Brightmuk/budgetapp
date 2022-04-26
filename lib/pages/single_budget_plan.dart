@@ -187,7 +187,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                           ),
                         ),
                         subtitle: Text(
-                          'You will be reminded to fullfil the budget list',
+                          'You will be reminded to fullfil the Spending list',
                           style: TextStyle(
                             fontSize: AppSizes.normalFontSize.sp,
                           ),
@@ -323,7 +323,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                       context: context,
                       builder: (context) => ActionDialogue(
                             infoText:
-                                'Are you sure you want to delete this budget plan?',
+                                'Are you sure you want to delete this Spending plan?',
                             action: () {},
                             actionBtnText: 'Delete',
                           ));

@@ -61,8 +61,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 children: [
                   Text(
                     editMode
-                        ? 'Edit Budget Plan'
-                        : 'Add a new Budget plan',
+                        ? 'Edit Spending Plan'
+                        : 'Add a new Spending plan',
                     style:
                         TextStyle(fontSize: 40.sp, fontWeight: FontWeight.bold),
                   ),
@@ -180,7 +180,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                   title: Text('Set reminder on',
                       style: TextStyle(fontSize: 35.sp)),
                   subtitle: Text(
-                      'You will be reminded to fullfil the budget list',
+                      'You will be reminded to fullfil the Spending list',
                       style: TextStyle(fontSize: 35.sp)),
                   onChanged: (val) {
                     setState(() {

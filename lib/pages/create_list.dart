@@ -277,12 +277,12 @@ class _CreateListState extends State<CreateList> {
               if (expenses.isEmpty) {
                 return;
               }
-              bool asPdf = await showModalBottomSheet(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  context: context,
-                  builder: (context) => const ShareType());
-              if (asPdf) {
+              // bool asPdf = await showModalBottomSheet(
+              //     shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(20)),
+              //     context: context,
+              //     builder: (context) => const ShareType());
+              // if (asPdf) {
                 BudgetPlan plan = BudgetPlan(
                     id: DateTime.now().millisecondsSinceEpoch.toString(),
                     total: _total,
@@ -294,7 +294,7 @@ class _CreateListState extends State<CreateList> {
                 await Printing.sharePdf(
                     bytes: pdf.readAsBytesSync(),
                     filename: '${plan.title}.pdf');
-              }
+              // }
               // } else {
               //   File pdf = await PDFService.createPdf('new');
               //   await for (var page in Printing.raster(pdf.readAsBytesSync(),

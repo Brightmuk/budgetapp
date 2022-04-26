@@ -65,8 +65,8 @@ class WishService {
         .collection(wishCollection)
         .doc(id)
         .delete()
-        .then((value) => ToastServcie.showToast('Wish deleted!'))
-        .catchError((e) => ToastServcie.showToast('An error occurred!'));
+        .then((value) => ToastService(context: context).showSuccessToast('Wish deleted!'))
+        .catchError((e) => ToastService(context: context).showSuccessToast('An error occurred!'));
     LoadService(context: context).hideLoader();
   }
 
@@ -80,8 +80,8 @@ class WishService {
         .collection(wishCollection)
         .doc(wishId)
         .set({field: value}, SetOptions(merge: true))
-        .then((value) => ToastServcie.showToast('Wish edited!'))
-        .catchError((e) => ToastServcie.showToast('An error occurred!'));
+        .then((value) => ToastService(context: context).showSuccessToast('Wish edited!'))
+        .catchError((e) => ToastService(context: context).showSuccessToast('An error occurred!'));
     LoadService(context: context).hideLoader();
   }
 }

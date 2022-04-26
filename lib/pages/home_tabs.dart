@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
@@ -13,6 +14,7 @@ import 'package:budgetapp/widgets/action_dialogue.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BudgetListTab extends StatefulWidget {
@@ -80,7 +82,42 @@ class _BudgetListTabState extends State<BudgetListTab> {
                   );
                 });
           } else {
-            return Container();
+            return Column(
+              children: [
+                SizedBox(
+                  height: 50.sp,
+                ),
+                Image.asset(
+                  'assets/images/no_spending_plan.png',
+                  width: 700.sp,
+                ),
+                SizedBox(
+                  height: 50.sp,
+                ),
+                Text(
+                  'No Spending plans yet',
+                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                ),
+                SizedBox(
+                  height: 30.sp,
+                ),
+                MaterialButton(
+                    elevation: 0,
+                    color: AppColors.themeColor.withOpacity(0.3),
+                    onPressed: () {
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          context: context,
+                          builder: (context) => const AddBudgetPlan());
+                    },
+                    child: const Text(
+                      'CREAT ONE',
+                      style: TextStyle(color: AppColors.themeColor),
+                    )),
+              ],
+            );
           }
         });
   }
@@ -148,7 +185,42 @@ class _WishListTabState extends State<WishListTab> {
                   );
                 });
           } else {
-            return Container();
+            return Column(
+              children: [
+                SizedBox(
+                  height: 50.sp,
+                ),
+                Image.asset(
+                  'assets/images/no_wish.png',
+                  width: 700.sp,
+                ),
+                SizedBox(
+                  height: 50.sp,
+                ),
+                Text(
+                  'No wishes yet',
+                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                ),
+                SizedBox(
+                  height: 30.sp,
+                ),
+                MaterialButton(
+                    elevation: 0,
+                    color: AppColors.themeColor.withOpacity(0.3),
+                    onPressed: () {
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          context: context,
+                          builder: (context) => const AddWish());
+                    },
+                    child: const Text(
+                      'CREAT ONE',
+                      style: TextStyle(color: AppColors.themeColor),
+                    )),
+              ],
+            );
           }
         });
   }
