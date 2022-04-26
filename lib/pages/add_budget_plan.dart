@@ -57,6 +57,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Stack(
+          alignment: Alignment.center,
           children: [
             Column(children: [
               Row(
@@ -209,7 +210,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                           .then((value) async {
                         if (value) {
                           await NotificationService().zonedScheduleNotification(
-                              id: int.parse(plan.id),
+                              id: int.parse(plan.id.substring(8)),
                               payload: '{"id":$id,"type":"spendingPlan"}',
                               title: 'Spending list fulfilment',
                               description:

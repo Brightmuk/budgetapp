@@ -27,13 +27,13 @@ dependencies:
   flutter_native_splash: ^2.1.6
   package_info_plus: ^1.4.2
   localstore: ^1.2.3
-  motion_toast: ^2.1.6
   flutter_screenutil: ^5.4.0+1
   url_launcher: ^6.1.0
   carousel_slider: ^4.1.1
   shared_preferences: ^2.0.13
   rxdart: ^0.27.3
   flutter_native_timezone: ^2.0.0
+  overlay_support: ^1.2.1
 
 dev_dependencies:
   flutter_test:

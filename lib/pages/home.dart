@@ -25,9 +25,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final DateFormat dayDate = DateFormat('EEE dd, yyy');
 
+  Stream<List<BudgetPlan>> budgetPlansStream =
+      BudgetPlanService().budgetPlansStream;
+  Stream<List<Wish>> wishesStream = WishService().wishStream;
+
   void initState() {
     super.initState();
-
   }
 
   String bPTotal(List<BudgetPlan> plans) {
@@ -47,11 +50,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return total.toString();
   }
 
-  void newItem() {
-    showModalBottomSheet(
+  void newItem() async {
+    await showModalBottomSheet(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         context: context,
         builder: (context) => const ExpenseType());
+    setState(() {
+      budgetPlansStream = BudgetPlanService().budgetPlansStream;
+      wishesStream = WishService().wishStream;
+    });
   }
 
   @override
@@ -145,8 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       StreamBuilder<List<BudgetPlan>>(
-                          stream: BudgetPlanService(context: context)
-                              .budgetPlansStream,
+                          stream: budgetPlansStream,
                           builder: (context, snapshot) {
                             return CircularPercentIndicator(
                               animation: true,
@@ -167,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             );
                           }),
                       StreamBuilder<List<Wish>>(
-                          stream: WishService(context: context).wishStream,
+                          stream: wishesStream,
                           builder: (context, snapshot) {
                             return CircularPercentIndicator(
                               animation: true,
@@ -232,13 +238,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Colors.white,
                   size: AppSizes.iconSize.sp,
                 ),
-                onPressed: () {
-                  showModalBottomSheet(
+                onPressed: () async {
+                  await showModalBottomSheet(
                       isScrollControlled: true,
                       context: context,
                       builder: (context) => const CreateList(
                             expenses: [],
                           ));
+                  setState(() {
+                     wishesStream = WishService().wishStream;
+                    budgetPlansStream = BudgetPlanService().budgetPlansStream;
+                  });
                 },
                 backgroundColor: AppColors.themeColor,
               ),

@@ -39,7 +39,19 @@ class ActionDialogue extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-
+              MaterialButton(
+                 minWidth: 130,
+                  padding: const EdgeInsets.all(20),
+                shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50)),
+                color: Colors.grey[800],
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Cancel',
+                ),
+              ),
               MaterialButton(
                 minWidth: 130,
                  padding: const EdgeInsets.all(20),
@@ -54,19 +66,7 @@ class ActionDialogue extends StatelessWidget {
                   actionBtnText,
                 ),
               ),
-              MaterialButton(
-                 minWidth: 130,
-                  padding: const EdgeInsets.all(20),
-                shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50)),
-                color: Colors.grey[800],
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  'Cancel',
-                ),
-              ),
+
             ],
           )
         ],

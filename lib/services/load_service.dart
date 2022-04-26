@@ -15,22 +15,28 @@ class LoadService {
         builder: (context) {
           return Center(
             child: Container(
-              width: 100,
+              
+              width: 130,
+              height: 70,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                  color: Colors.grey[800],
+                  color: Colors.grey[900],
                   borderRadius: BorderRadius.circular(10)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  CircularProgressIndicator(
-                    color: AppColors.themeColor,
-                  ),
-                  Text(
-                    'Loading...',
-                    style: TextStyle(color: AppColors.themeColor, fontSize: 13),
-                  )
-                ],
+              child: Scaffold(
+                 backgroundColor: Colors.grey[900],
+                body: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    CircularProgressIndicator(
+                      color: AppColors.themeColor,
+                    ),
+                    Text(
+                      'Loading...',
+                      style: TextStyle(color: AppColors.themeColor, fontSize: 13),
+                    )
+                  ],
+                ),
               ),
             ),
           );

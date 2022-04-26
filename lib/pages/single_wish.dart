@@ -123,7 +123,8 @@ class _SingleWishState extends State<SingleWish> {
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
                       ),
-                      trailing: DateServices(context: context).dayDateTimeText(wish.creationDate),
+                      trailing: DateServices(context: context)
+                          .dayDateTimeText(wish.creationDate),
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
@@ -137,7 +138,8 @@ class _SingleWishState extends State<SingleWish> {
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
                       ),
-                      trailing: DateServices(context: context).dayDateTimeText(wish.reminderDate),
+                      trailing: DateServices(context: context)
+                          .dayDateTimeText(wish.reminderDate),
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
@@ -152,7 +154,7 @@ class _SingleWishState extends State<SingleWish> {
                         ),
                       ),
                       trailing: Text(
-                        'ksh.'+wish.price.toString(),
+                        'ksh.' + wish.price.toString(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: AppSizes.normalFontSize.sp,
@@ -193,22 +195,28 @@ class _SingleWishState extends State<SingleWish> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(),
-               FloatingActionButton.extended(
+              FloatingActionButton.extended(
                 heroTag: 'edit',
                 label: Text(
                   'Edit',
-                  style: TextStyle(color: Colors.white,fontSize: AppSizes.normalFontSize.sp),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: AppSizes.normalFontSize.sp),
                 ),
-                icon: Icon(Icons.edit_outlined,
-                color: Colors.white,size: AppSizes.iconSize.sp,),
+                icon: Icon(
+                  Icons.edit_outlined,
+                  color: Colors.white,
+                  size: AppSizes.iconSize.sp,
+                ),
                 onPressed: () async {
-                  Wish _wish = await WishService(context: context).singleWish(widget.wishId);
+                  Wish _wish = await WishService(context: context)
+                      .singleWish(widget.wishId);
                   showModalBottomSheet(
-                    isScrollControlled: true,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    context: context,
-                    builder: (context) =>AddWish(wish: _wish));
+                      isScrollControlled: true,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      context: context,
+                      builder: (context) => AddWish(wish: _wish));
                 },
                 backgroundColor: AppColors.themeColor,
               ),
@@ -226,6 +234,7 @@ class _SingleWishState extends State<SingleWish> {
                   size: AppSizes.iconSize.sp,
                 ),
                 onPressed: () async {
+
                   showModalBottomSheet(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
@@ -233,7 +242,10 @@ class _SingleWishState extends State<SingleWish> {
                       builder: (context) => ActionDialogue(
                             infoText:
                                 'Are you sure you want to delete this wish?',
-                            action: () {},
+                            action: () {
+                              WishService(context: context)
+                                  .deleteWish(wishId: widget.wishId);
+                            },
                             actionBtnText: 'Delete',
                           ));
                 },

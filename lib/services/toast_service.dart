@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:motion_toast/motion_toast.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class ToastService {
   final BuildContext context;
   ToastService({required this.context});
 
  void showSuccessToast(String msg) {
-    MotionToast.success(
-            title: Text('Success'),
-            description: Text(msg),
-            width: 300)
-        .show(context);
+  toast(msg);
   }
 
-  static void showErrorToast(String msg) {}
 }

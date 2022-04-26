@@ -10,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,20 +33,22 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
         designSize: const Size(1080, 2340),
         builder: (context) {
-          return MaterialApp(
-            initialRoute: "/",
-            debugShowCheckedModeBanner: false,
-            darkTheme: ThemeData.dark(),
-            themeMode: ThemeMode.dark,
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
+          return OverlaySupport.global(
+            child: MaterialApp(
+              initialRoute: "/",
+              debugShowCheckedModeBanner: false,
+              darkTheme: ThemeData.dark(),
+              themeMode: ThemeMode.dark,
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+              ),
+              // routes: {
+              //   '/': (context) => const MyHomePage(),
+              //   '/singlePlan': (context) => SingleBudgetPlan(),
+              //   '/singleWish': (context) => SingleWish(),
+              // },
+              home: const Wrapper(),
             ),
-            // routes: {
-            //   '/': (context) => const MyHomePage(),
-            //   '/singlePlan': (context) => SingleBudgetPlan(),
-            //   '/singleWish': (context) => SingleWish(),
-            // },
-            home: const Wrapper(),
           );
         });
   }

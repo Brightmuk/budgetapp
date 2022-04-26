@@ -34,7 +34,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
 
   @override
   Widget build(BuildContext context) {
-    final budgetPlanId = ModalRoute.of(context)!.settings.arguments as String;
+
 
     return SizedBox(
       height: MediaQuery.of(context).size.height,
@@ -212,7 +212,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                         ),
                       ),
                       trailing: DateServices(context: context)
-                          .dayDateTimeText(plan.creationDate),
+                          .dayDateTimeText(plan.reminderDate),
                     ),
                     CheckboxListTile(
                         contentPadding: EdgeInsets.zero,
@@ -339,7 +339,10 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                       builder: (context) => ActionDialogue(
                             infoText:
                                 'Are you sure you want to delete this Spending plan?',
-                            action: () {},
+                            action: () {
+                              BudgetPlanService(context: context)
+                                  .deleteBudgetPlan(budgetPlanId: widget.budgetPlanId);
+                            },
                             actionBtnText: 'Delete',
                           ));
                 },

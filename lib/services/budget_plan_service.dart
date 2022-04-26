@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:localstore/localstore.dart';
 
 class BudgetPlanService {
-  final BuildContext context;
-  BudgetPlanService({required this.context});
+  final BuildContext? context;
+  BudgetPlanService({this.context});
 
   static const String budgetPlanCollection = 'budgetPlanCollection';
   final db = Localstore.instance;
@@ -19,18 +19,18 @@ class BudgetPlanService {
   ///or edit a budget plan
   Future<bool> saveBudgetPlan({required BudgetPlan budgetPlan}) async {
     bool returnValue = true;
-    LoadService(context: context).showLoader();
+    LoadService(context: context!).showLoader();
 
     await db
         .collection(budgetPlanCollection)
         .doc(budgetPlan.id)
         .set(budgetPlan.toMap())
         .then((value) {
-      LoadService(context: context).hideLoader();
+      LoadService(context: context!).hideLoader();
       // ToastServcie.showToast('Budget plan saved!');
       returnValue = true;
     }).catchError((e) {
-      LoadService(context: context).hideLoader();
+      LoadService(context: context!).hideLoader();
       // ToastServcie.showToast('An error occurred!');
       returnValue = false;
     });
@@ -46,12 +46,10 @@ class BudgetPlanService {
         .then((value) => BudgetPlan.fromMap(value!));
   }
 
-  ///Get budget plans
+
   Stream<List<BudgetPlan>> get budgetPlansStream {
     return db.collection(budgetPlanCollection).stream.map(budgetPlanList);
   }
-
-
 
   final List<BudgetPlan> _items = [];
 
@@ -72,14 +70,18 @@ class BudgetPlanService {
 
   ///Delete a budget plan
   Future<void> deleteBudgetPlan({required String budgetPlanId}) async {
-    LoadService(context: context).showLoader();
+    LoadService(context: context!).showLoader();
     await db
         .collection(budgetPlanCollection)
         .doc(budgetPlanId)
         .delete()
-        .then((value) => ToastService(context: context).showSuccessToast('Budget plan deleted!'))
-        .catchError((e) => ToastService(context: context).showSuccessToast('An error occurred!'));
-    LoadService(context: context).hideLoader();
+        .then((value) => ToastService(context: context!)
+            .showSuccessToast('Budget plan deleted!'))
+        .catchError((e) => ToastService(context: context!)
+            .showSuccessToast('An error occurred!'));
+    _items.clear();
+    Navigator.pop(context!);
+    LoadService(context: context!).hideLoader();
   }
 
   ///Edit a budget plan
@@ -87,13 +89,15 @@ class BudgetPlanService {
       {required String field,
       required dynamic value,
       required String budgetPlanId}) async {
-    LoadService(context: context).showLoader();
+    LoadService(context: context!).showLoader();
     await db
         .collection(budgetPlanCollection)
         .doc(budgetPlanId)
         .set({field: value}, SetOptions(merge: true))
-        .then((value) => ToastService(context: context).showSuccessToast('Budget plan edited!'))
-        .catchError((e) => ToastService(context: context).showSuccessToast('An error occurred!'));
-    LoadService(context: context).hideLoader();
+        .then((value) => ToastService(context: context!)
+            .showSuccessToast('Budget plan edited!'))
+        .catchError((e) => ToastService(context: context!)
+            .showSuccessToast('An error occurred!'));
+    LoadService(context: context!).hideLoader();
   }
 }

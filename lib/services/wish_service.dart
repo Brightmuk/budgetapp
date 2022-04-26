@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:localstore/localstore.dart';
 
 class WishService {
-  final BuildContext context;
-  WishService({required this.context});
+  final BuildContext? context;
+  WishService({this.context});
 
   static const String wishCollection = 'wishCollection';
   final db = Localstore.instance;
@@ -15,7 +15,7 @@ class WishService {
   ///or edit a wish
   Future<bool> saveWish({required Wish wish}) async {
     bool returnValue = true;
-    LoadService(context: context).showLoader();
+    LoadService(context: context!).showLoader();
     await db
         .collection(wishCollection)
         .doc(wish.id)
@@ -27,7 +27,7 @@ class WishService {
       // ToastServcie.showToast('An error occurred!');
       returnValue = false;
     });
-    LoadService(context: context).hideLoader();
+    LoadService(context: context!).hideLoader();
     return returnValue;
   }
 
@@ -49,9 +49,14 @@ class WishService {
 
   ///Yield the list from stream
   List<Wish> wishList(Map<String, dynamic> query) {
-    final item = Wish.fromMap(query);
-    bool alreadyInList = _items.where((val) => val.id == item.id).isNotEmpty;
-    if (!alreadyInList) {
+        final item = Wish.fromMap(query);
+
+    //Get the item in a list first before we can add it to stream result
+    Iterable<Wish> wish = _items.where((val) => val.id == item.id);
+    if (!wish.isNotEmpty) {
+      _items.add(item);
+    } else {
+      _items.remove(wish.first);
       _items.add(item);
     }
     return _items;
@@ -59,15 +64,17 @@ class WishService {
 
   ///Delete a wish
   Future<void> deleteWish({required String wishId}) async {
-    LoadService(context: context).showLoader();
-    String id = DateTime.now().millisecondsSinceEpoch.toString();
+    LoadService(context: context!).showLoader();
     await db
         .collection(wishCollection)
-        .doc(id)
+        .doc(wishId)
         .delete()
-        .then((value) => ToastService(context: context).showSuccessToast('Wish deleted!'))
-        .catchError((e) => ToastService(context: context).showSuccessToast('An error occurred!'));
-    LoadService(context: context).hideLoader();
+        .then((value) =>
+            ToastService(context: context!).showSuccessToast('Wish deleted!'))
+        .catchError((e) => ToastService(context: context!)
+            .showSuccessToast('An error occurred!'));
+    Navigator.pop(context!);
+    LoadService(context: context!).hideLoader();
   }
 
   ///Edit a wish
@@ -75,13 +82,15 @@ class WishService {
       {required String field,
       required dynamic value,
       required String wishId}) async {
-    LoadService(context: context).showLoader();
+    LoadService(context: context!).showLoader();
     await db
         .collection(wishCollection)
         .doc(wishId)
         .set({field: value}, SetOptions(merge: true))
-        .then((value) => ToastService(context: context).showSuccessToast('Wish edited!'))
-        .catchError((e) => ToastService(context: context).showSuccessToast('An error occurred!'));
-    LoadService(context: context).hideLoader();
+        .then((value) =>
+            ToastService(context: context!).showSuccessToast('Wish edited!'))
+        .catchError((e) => ToastService(context: context!)
+            .showSuccessToast('An error occurred!'));
+    LoadService(context: context!).hideLoader();
   }
 }
