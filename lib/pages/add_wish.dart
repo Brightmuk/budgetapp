@@ -48,7 +48,7 @@ class _AddWishState extends State<AddWish> {
       child: Padding(
         padding: EdgeInsets.all(AppSizes.pagePading.sp),
         child: Stack(
-           alignment: Alignment.center,
+          alignment: Alignment.center,
           children: [
             Column(children: [
               Row(
@@ -184,18 +184,24 @@ class _AddWishState extends State<AddWish> {
                             .saveWish(wish: wish)
                             .then((value) async {
                           if (value) {
-                            await NotificationService()
-                                .zonedScheduleNotification(
-                                    id: int.parse(wish.id.substring(8)),
-                                    payload: '{"id":$id,"type":"spendingPlan"}',
-                                    title: 'Wish fulfilment',
-                                    description:
-                                        'Remember to fulfil your wish Buddy!',
-                                    scheduling: tz.TZDateTime
-                                        .fromMillisecondsSinceEpoch(
-                                            tz.local,
-                                            wish.reminderDate
-                                                .millisecondsSinceEpoch));
+                            ///only set reminder when user selects it
+                            if (wish.reminder) {
+                              await NotificationService().zonedScheduleNotification(
+                                  id: int.parse(wish.id.substring(8)),
+                                  payload: '{"id":$id,"type":"spendingPlan"}',
+                                  title: 'Wish fulfilment',
+                                  description:
+                                      'Remember to purchase your ${wish.name} Buddy!',
+                                  scheduling:
+                                      tz.TZDateTime.fromMillisecondsSinceEpoch(
+                                          tz.local,
+                                          wish.reminderDate
+                                              .millisecondsSinceEpoch));
+                            } else {
+                              ///Delete in case they are editing and seting reminder off
+                              await NotificationService().removeReminder(int.parse(wish.id.substring(8)));
+                            }
+
                             ////If in edit mode pop twice
                             if (editMode) {
                               Navigator.pop(context);
@@ -210,9 +216,9 @@ class _AddWishState extends State<AddWish> {
                                     )));
                           }
                         });
-                        
                       } catch (e) {
-                        
+                        ToastService(context: context)
+                            .showSuccessToast('Sorry, there was an error');
                       }
                     }
                   }),

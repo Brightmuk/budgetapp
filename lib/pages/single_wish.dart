@@ -162,6 +162,7 @@ class _SingleWishState extends State<SingleWish> {
                       ),
                     ),
                     CheckboxListTile(
+                      
                         contentPadding: EdgeInsets.zero,
                         activeColor: Colors.greenAccent,
                         value: wish.reminder,
@@ -172,16 +173,13 @@ class _SingleWishState extends State<SingleWish> {
                           ),
                         ),
                         subtitle: Text(
-                          'You will be reminded to fullfil the budget list',
+                          wish.reminder?'You will be reminded to fullfil this wish':
+                          'You will not be reminded to fullfil this wish',
                           style: TextStyle(
                             fontSize: AppSizes.normalFontSize.sp,
                           ),
                         ),
-                        onChanged: (val) {
-                          // setState(() {
-                          //   remider = val!;
-                          // });
-                        }),
+                        onChanged: null),
                     const Divider(),
                   ]),
                 );

@@ -209,17 +209,25 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                           .saveBudgetPlan(budgetPlan: plan)
                           .then((value) async {
                         if (value) {
+
+                          ///only set reminder if user sets so
+                          if(plan.reminder){
                           await NotificationService().zonedScheduleNotification(
                               id: int.parse(plan.id.substring(8)),
                               payload: '{"id":$id,"type":"spendingPlan"}',
                               title: 'Spending list fulfilment',
                               description:
-                                  'Remember to fulfil your spending list Buddy!',
+                                  'Remember to fulfil ${ plan.title}  Buddy!',
                               scheduling:
                                   tz.TZDateTime.fromMillisecondsSinceEpoch(
                                       tz.local,
                                       plan.reminderDate
                                           .millisecondsSinceEpoch));
+                          } else {
+                              ///Delete in case they are editing and seting reminder off
+                              await NotificationService().removeReminder(int.parse(plan.id.substring(8)));
+                            }
+
 
                           ///If in edit mode pop twice
                           if (editMode) {

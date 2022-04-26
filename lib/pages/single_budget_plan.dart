@@ -225,16 +225,13 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                           ),
                         ),
                         subtitle: Text(
-                          'You will be reminded to fullfil the Spending list',
+                          plan.reminder?'You will be reminded to fullfil the Spending list':
+                          'You will not be reminded to fullfil the Spending list',
                           style: TextStyle(
                             fontSize: AppSizes.normalFontSize.sp,
                           ),
                         ),
-                        onChanged: (val) {
-                          // setState(() {
-                          //   remider = val!;
-                          // });
-                        }),
+                        onChanged: null),
                     const SizedBox(
                       height: 20,
                     ),

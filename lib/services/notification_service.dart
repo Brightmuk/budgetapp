@@ -40,16 +40,21 @@ class NotificationService {
         id!,
         title,
         description,
-        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+        scheduling!,
         const NotificationDetails(
             android: AndroidNotificationDetails('1', 'Reminders',
                 importance: Importance.high,
-                channelDescription: 'Reminds you to perform a task')
-                ),
-                payload: payload,
+                channelDescription: 'Reminds you to perform a task')),
+        payload: payload,
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
+  }
+
+  ///Remove a reminder
+  Future<void> cancelReminder(int id) async {
+    await flutterLocalNotificationsPlugin.cancel(id);
+
   }
 
   ///A notification that dissapears after the set timeout
@@ -76,7 +81,7 @@ class NotificationService {
     return Future.value(1);
   }
 
-  void removeReminder(int notificationId) {
+  Future<void> removeReminder(int notificationId)async {
     flutterLocalNotificationsPlugin.cancel(notificationId);
   }
 }
