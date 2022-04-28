@@ -227,7 +227,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                             if (plan.reminder) {
                               await NotificationService().zonedScheduleNotification(
                                   id: int.parse(plan.id.substring(8)),
-                                  payload: '{"id":$id,"type":"spendingPlan"}',
+                                  payload: '{"itemId":$id,"route":"/spendingPlan"}',
                                   title: 'Spending list fulfilment',
                                   description:
                                       'Remember to fulfil ${plan.title}  Buddy!',

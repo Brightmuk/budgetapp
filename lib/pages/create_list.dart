@@ -261,8 +261,11 @@ class _CreateListState extends State<CreateList> {
             ),            SizedBox(
               height: 10.sp,
             ),
-            Text('Swipe right on item to delete',
-                style: TextStyle(fontSize: 13, color: Colors.grey[500])),
+            Visibility(
+              visible:expenses.isNotEmpty,
+              child: Text('Swipe right on item to delete',
+                  style: TextStyle(fontSize: 13, color: Colors.grey[500])),
+            ),
                             SizedBox(
               height: 10.sp,
             ),
@@ -280,7 +283,7 @@ class _CreateListState extends State<CreateList> {
         floatingActionButton: FloatingActionButton.extended(
           heroTag: 'Share',
           backgroundColor: AppColors.themeColor,
-          onPressed: () async {
+          onPressed: expenses.isNotEmpty?() async {
             if (widget.title != null) {
               Navigator.pop(context, {'expenses': expenses, 'total': _total});
             } else {
@@ -318,7 +321,7 @@ class _CreateListState extends State<CreateList> {
               //       bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
               // }
             }
-          },
+          }:null,
           tooltip: 'Share',
           label: Text(
             widget.title != null ? 'Done' : 'Share',

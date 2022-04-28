@@ -25,9 +25,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final DateFormat dayDate = DateFormat('EEE dd, yyy');
 
-  Stream<List<SpendingPlan>> budgetPlansStream =
-      BudgetPlanService().budgetPlansStream;
-  Stream<List<Wish>> wishesStream = WishService().wishStream;
 
   void initState() {
     super.initState();
@@ -55,10 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         context: context,
         builder: (context) => const ExpenseType());
-    setState(() {
-      budgetPlansStream = BudgetPlanService().budgetPlansStream;
-      wishesStream = WishService().wishStream;
-    });
+
   }
 
   @override
@@ -152,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       StreamBuilder<List<SpendingPlan>>(
-                          stream: budgetPlansStream,
+                          stream: BudgetPlanService().budgetPlansStream,
                           builder: (context, snapshot) {
                             return CircularPercentIndicator(
                               animation: true,
@@ -173,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             );
                           }),
                       StreamBuilder<List<Wish>>(
-                          stream: wishesStream,
+                          stream: WishService().wishStream,
                           builder: (context, snapshot) {
                             return CircularPercentIndicator(
                               animation: true,
@@ -245,10 +239,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       builder: (context) => const CreateList(
                             expenses: [],
                           ));
-                  setState(() {
-                     wishesStream = WishService().wishStream;
-                    budgetPlansStream = BudgetPlanService().budgetPlansStream;
-                  });
                 },
                 backgroundColor: AppColors.themeColor,
               ),

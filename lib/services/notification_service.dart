@@ -1,12 +1,16 @@
-import 'package:flutter/material.dart';
+import 'package:budgetapp/models/notification_model.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'dart:developer';
 
+///Stream to get info about notification while app is in background or foreground
 final BehaviorSubject<String?> selectNotificationSubject =
     BehaviorSubject<String?>();
+
+///Stream to get info about notification while app is in background or foreground
+final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
+    BehaviorSubject<ReceivedNotification>();
+
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -16,7 +20,11 @@ class NotificationService {
     init();
   }
 
-  Future<void> init() async {
+  ///Initialise method thats called when the service starts
+  Future<NotificationPayload?> init() async {
+    NotificationPayload? selectedNotificationPayload =
+        NotificationPayload(itemId: '', route: '/');
+
     var initializationSettingsAndroid =
         const AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = IOSInitializationSettings(
@@ -25,8 +33,13 @@ class NotificationService {
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: onSelectNotification);
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onSelectNotification: (String? payload) {
+        selectedNotificationPayload = NotificationPayload.fromJson(payload!);
+      },
+    );
+    return selectedNotificationPayload;
   }
 
   ///Schedule a notification to a certain time or date
@@ -54,7 +67,6 @@ class NotificationService {
   ///Remove a reminder
   Future<void> cancelReminder(int id) async {
     await flutterLocalNotificationsPlugin.cancel(id);
-
   }
 
   ///A notification that dissapears after the set timeout
@@ -70,18 +82,12 @@ class NotificationService {
         'Times out after ${mils! / 1000} seconds', platformChannelSpecifics);
   }
 
-  Future<void> onSelectNotification(String? payload) async {
-    // selectNotificationSubject.add()
-    // Navigator.pushNamed(context, message.data['screen'],
-    //         arguments: routeArguments(message.data['screen'], message.data));
-  }
-
   Future onDidReceiveLocalNotification(
       int? id, String? title, String? body, String? payload) async {
     return Future.value(1);
   }
 
-  Future<void> removeReminder(int notificationId)async {
+  Future<void> removeReminder(int notificationId) async {
     flutterLocalNotificationsPlugin.cancel(notificationId);
   }
 }

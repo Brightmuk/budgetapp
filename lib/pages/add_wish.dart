@@ -204,7 +204,7 @@ class _AddWishState extends State<AddWish> {
                             if (wish.reminder) {
                               await NotificationService().zonedScheduleNotification(
                                   id: int.parse(wish.id.substring(8)),
-                                  payload: '{"id":$id,"type":"spendingPlan"}',
+                                  payload: '{"itemId":$id,"route":"/wish"}',
                                   title: 'Wish fulfilment',
                                   description:
                                       'Remember to purchase your ${wish.name} Buddy!',
