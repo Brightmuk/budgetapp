@@ -18,7 +18,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final Uri _playStoreUrl = Uri.parse('https://flutter.dev');
+  final Uri _playStoreUrl = Uri.parse('https://play.google.com/store/apps/details?id=com.brightdesigns.expenditurebuddy');
 
   @override
   Widget build(BuildContext context) {

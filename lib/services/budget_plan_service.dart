@@ -17,7 +17,7 @@ class BudgetPlanService {
 
   ///Create a new budget plan
   ///or edit a budget plan
-  Future<bool> saveBudgetPlan({required BudgetPlan budgetPlan}) async {
+  Future<bool> saveBudgetPlan({required SpendingPlan budgetPlan}) async {
     bool returnValue = true;
     LoadService(context: context!).showLoader();
 
@@ -27,44 +27,48 @@ class BudgetPlanService {
         .set(budgetPlan.toMap())
         .then((value) {
       LoadService(context: context!).hideLoader();
-      // ToastServcie.showToast('Budget plan saved!');
+      ToastService(context: context!).showSuccessToast('Spending plan saved!');
       returnValue = true;
     }).catchError((e) {
       LoadService(context: context!).hideLoader();
-      // ToastServcie.showToast('An error occurred!');
+      ToastService(context: context!).showSuccessToast('An error occurred!');
       returnValue = false;
     });
     return returnValue;
   }
 
   ///Get single budget plan
-  Future<BudgetPlan> singleBudgetPlan(String budgetPlanId) async {
+  Future<SpendingPlan> singleBudgetPlan(String budgetPlanId) async {
     return await db
         .collection(budgetPlanCollection)
         .doc(budgetPlanId)
         .get()
-        .then((value) => BudgetPlan.fromMap(value!));
+        .then((value) => SpendingPlan.fromMap(value!));
   }
 
-
-  Stream<List<BudgetPlan>> get budgetPlansStream {
-    return db.collection(budgetPlanCollection).stream.map(budgetPlanList);
+  Stream<List<SpendingPlan>> get budgetPlansStream {
+    return db
+        .collection(budgetPlanCollection)
+        .stream
+        .asBroadcastStream()
+        .map(budgetPlanList);
   }
 
-  final List<BudgetPlan> _items = [];
+  final List<SpendingPlan> _items = [];
 
   ///Yield the list from stream
-  List<BudgetPlan> budgetPlanList(Map<String, dynamic> query) {
-    final item = BudgetPlan.fromMap(query);
+  List<SpendingPlan> budgetPlanList(Map<String, dynamic> query) {
+    final item = SpendingPlan.fromMap(query);
 
     //Get the item in a list first before we can add it to stream result
-    Iterable<BudgetPlan> plan = _items.where((val) => val.id == item.id);
+    Iterable<SpendingPlan> plan = _items.where((val) => val.id == item.id);
     if (!plan.isNotEmpty) {
       _items.add(item);
     } else {
       _items.remove(plan.first);
       _items.add(item);
     }
+    _items.sort((a, b) => b.creationDate.compareTo(a.creationDate));
     return _items;
   }
 
@@ -76,7 +80,7 @@ class BudgetPlanService {
         .doc(budgetPlanId)
         .delete()
         .then((value) => ToastService(context: context!)
-            .showSuccessToast('Budget plan deleted!'))
+            .showSuccessToast('Spending plan deleted!'))
         .catchError((e) => ToastService(context: context!)
             .showSuccessToast('An error occurred!'));
     _items.clear();
@@ -95,7 +99,7 @@ class BudgetPlanService {
         .doc(budgetPlanId)
         .set({field: value}, SetOptions(merge: true))
         .then((value) => ToastService(context: context!)
-            .showSuccessToast('Budget plan edited!'))
+            .showSuccessToast('Spending plan edited!'))
         .catchError((e) => ToastService(context: context!)
             .showSuccessToast('An error occurred!'));
     LoadService(context: context!).hideLoader();

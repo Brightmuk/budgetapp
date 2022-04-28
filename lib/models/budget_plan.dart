@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:budgetapp/models/expense.dart';
 
-class BudgetPlan {
+class SpendingPlan {
   final String id;
   final int total;
   final String title;
@@ -13,7 +13,7 @@ class BudgetPlan {
   final bool reminder;
   final List<Expense> expenses;
 
-  BudgetPlan({
+  SpendingPlan({
     required this.id,
     required this.total,
     required this.title,
@@ -25,7 +25,7 @@ class BudgetPlan {
 
 
 
-  BudgetPlan copyWith({
+  SpendingPlan copyWith({
     String? id,
     int? total,
     String? title,
@@ -34,7 +34,7 @@ class BudgetPlan {
     bool? reminder,
     List<Expense>? items,
   }) {
-    return BudgetPlan(
+    return SpendingPlan(
       id: id ?? this.id,
       creationDate: creationDate??this.creationDate,
       total: total ?? this.total,
@@ -57,8 +57,8 @@ class BudgetPlan {
     };
   }
 
-  factory BudgetPlan.fromMap(Map<String, dynamic> map) {
-    return BudgetPlan(
+  factory SpendingPlan.fromMap(Map<String, dynamic> map) {
+    return SpendingPlan(
       id: map['id'] ?? '',
       creationDate: DateTime.fromMillisecondsSinceEpoch(map['creationDate']),
       total: map['total']?.toInt() ?? 0,
@@ -71,7 +71,7 @@ class BudgetPlan {
 
   String toJson() => json.encode(toMap());
 
-  factory BudgetPlan.fromJson(String source) => BudgetPlan.fromMap(json.decode(source));
+  factory SpendingPlan.fromJson(String source) => SpendingPlan.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -82,7 +82,7 @@ class BudgetPlan {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
   
-    return other is BudgetPlan &&
+    return other is SpendingPlan &&
       other.id == id &&
       other.total == total &&
       other.title == title &&

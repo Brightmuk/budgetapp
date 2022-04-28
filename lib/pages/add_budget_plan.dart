@@ -17,7 +17,7 @@ import 'package:timezone/timezone.dart' as tz;
 class AddBudgetPlan extends StatefulWidget {
   ///This is parsed when in edit mode
   ///If not null then it means its an edit operation
-  final BudgetPlan? plan;
+  final SpendingPlan? plan;
   const AddBudgetPlan({Key? key, this.plan}) : super(key: key);
 
   @override
@@ -194,7 +194,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                     if (_formKey.currentState!.validate()) {
                       String id =
                           DateTime.now().millisecondsSinceEpoch.toString();
-                      BudgetPlan plan = BudgetPlan(
+                      SpendingPlan plan = SpendingPlan(
                         ///If in edit mode use the items id and not new one
                         id: editMode ? widget.plan!.id : id,
                         total: total,

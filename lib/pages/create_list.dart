@@ -8,6 +8,7 @@ import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/widgets/share_type.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -88,6 +89,7 @@ class _CreateListState extends State<CreateList> {
                 width: MediaQuery.of(context).size.width * 0.2,
                 child: TextFormField(
                   keyboardType: TextInputType.number,
+                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   controller: _quantityC,
                   onFieldSubmitted: (val) {
                      if (_formKey.currentState!.validate()) {
@@ -115,6 +117,7 @@ class _CreateListState extends State<CreateList> {
                 width: MediaQuery.of(context).size.width * 0.2,
                 child: TextFormField(
                     keyboardType: TextInputType.number,
+                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     controller: _priceC,
                     onFieldSubmitted: (val) {
                       if (_formKey.currentState!.validate()) {
@@ -283,7 +286,7 @@ class _CreateListState extends State<CreateList> {
               //     context: context,
               //     builder: (context) => const ShareType());
               // if (asPdf) {
-                BudgetPlan plan = BudgetPlan(
+                SpendingPlan plan = SpendingPlan(
                     id: DateTime.now().millisecondsSinceEpoch.toString(),
                     total: _total,
                     title: 'Quick Budget List',

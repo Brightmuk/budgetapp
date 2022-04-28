@@ -12,7 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 class PDFService {
   
   ///Create a pdf from for sharing or printing
-  static Future<File> createPdf(BudgetPlan plan) async {
+  static Future<File> createPdf(SpendingPlan plan) async {
      final DateFormat dayDate = DateFormat('EEE dd, yyy');
     final pdf = pw.Document();
     String dir = (await pp.getTemporaryDirectory()).path;

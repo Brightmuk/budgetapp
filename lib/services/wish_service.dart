@@ -21,10 +21,10 @@ class WishService {
         .doc(wish.id)
         .set(wish.toMap())
         .then((value) {
-      // ToastServcie.showToast('Wish saved!');
+      ToastService(context: context!).showSuccessToast('Wish saved!');
       returnValue = true;
     }).catchError((e) {
-      // ToastServcie.showToast('An error occurred!');
+      ToastService(context: context!).showSuccessToast('An error occurred!');
       returnValue = false;
     });
     LoadService(context: context!).hideLoader();
@@ -49,7 +49,7 @@ class WishService {
 
   ///Yield the list from stream
   List<Wish> wishList(Map<String, dynamic> query) {
-        final item = Wish.fromMap(query);
+    final item = Wish.fromMap(query);
 
     //Get the item in a list first before we can add it to stream result
     Iterable<Wish> wish = _items.where((val) => val.id == item.id);
@@ -59,6 +59,7 @@ class WishService {
       _items.remove(wish.first);
       _items.add(item);
     }
+    _items.sort((a, b) => b.creationDate.compareTo(a.creationDate));
     return _items;
   }
 

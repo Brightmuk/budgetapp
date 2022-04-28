@@ -1,4 +1,5 @@
 import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/input_formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/wish.dart';
@@ -8,6 +9,7 @@ import 'package:budgetapp/services/notification_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -97,6 +99,7 @@ class _AddWishState extends State<AddWish> {
                       width: MediaQuery.of(context).size.width * 0.25,
                       child: TextFormField(
                           focusNode: _focusNode2,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           keyboardType: TextInputType.number,
                           controller: _priceC,
                           cursorColor: AppColors.themeColor,
