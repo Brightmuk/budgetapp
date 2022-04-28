@@ -29,14 +29,14 @@ class _AddWishState extends State<AddWish> {
   final FocusNode _focusNode2 = FocusNode();
   bool editMode = false;
 
-  late DateTime _selectedDate = DateTime.now();
-  late bool remider = true;
+  late DateTime _selectedDate = DateTime.now().add(const Duration(hours: 1));
+  late bool reminder = false;
   @override
   void initState() {
     super.initState();
     editMode = widget.wish != null;
     if (widget.wish != null) {
-      remider = widget.wish!.reminder;
+      reminder = widget.wish!.reminder;
       _selectedDate = widget.wish!.reminderDate;
       _nameC.text = widget.wish!.name;
       _priceC.text = widget.wish!.price.toString();
@@ -118,33 +118,10 @@ class _AddWishState extends State<AddWish> {
               const SizedBox(
                 height: 20,
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.calendar_month_outlined,
-                  size: AppSizes.iconSize.sp,
-                ),
-                title: Text(
-                  'Reminder date',
-                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                ),
-                trailing: DateServices(context: context)
-                    .dayDateTimeText(_selectedDate),
-                onTap: () async {
-                  _focusNode.unfocus();
-                  _focusNode2.unfocus();
-                  final dateResult = await DateServices(context: context)
-                      .getDateAndTime(_selectedDate);
-                  if (dateResult != null) {
-                    setState(() {
-                      _selectedDate = dateResult;
-                    });
-                  }
-                },
-              ),
               const Divider(),
-              CheckboxListTile(
+               CheckboxListTile(
                   activeColor: Colors.greenAccent,
-                  value: remider,
+                  value: reminder,
                   title: Text('Set reminder on',
                       style: TextStyle(fontSize: 35.sp)),
                   subtitle: Text('You will be reminded to fullfil the wish',
@@ -153,9 +130,45 @@ class _AddWishState extends State<AddWish> {
                     _focusNode.unfocus();
                     _focusNode2.unfocus();
                     setState(() {
-                      remider = val!;
+                      reminder = val!;
                     });
                   }),
+              Opacity(
+                opacity: reminder?1:0.5,
+                child: ListTile(
+                  leading: Icon(
+                    Icons.calendar_month_outlined,
+                    size: AppSizes.iconSize.sp,
+                  ),
+                  title: Text(
+                    'Reminder date',
+                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                  ),
+                  trailing: DateServices(context: context)
+                      .dayDateTimeText(_selectedDate),
+                  onTap: reminder?() async {
+                    _focusNode.unfocus();
+                    _focusNode2.unfocus();
+                          var now =
+                              DateTime.now().add(const Duration(hours: 1));
+                          final dateResult =
+                              await DateServices(context: context)
+                                  .getDateAndTime(_selectedDate);
+                          if (dateResult != null&&dateResult.millisecondsSinceEpoch >
+                              now.millisecondsSinceEpoch) {
+                            setState(() {
+                              _selectedDate = dateResult;
+                            });
+                          } else if (dateResult!.millisecondsSinceEpoch <
+                              now.millisecondsSinceEpoch) {
+                            ToastService(context: context).showSuccessToast(
+                                'Reminders can only be set an hour from now');
+                          }
+                  }:null,
+                ),
+              ),
+
+
             ]),
             Positioned(
               bottom: 10,
@@ -181,7 +194,7 @@ class _AddWishState extends State<AddWish> {
                           reminderDate: _selectedDate,
                           creationDate: DateTime.now(),
                           name: _nameC.value.text,
-                          reminder: remider,
+                          reminder: reminder,
                         );
                         await WishService(context: context)
                             .saveWish(wish: wish)

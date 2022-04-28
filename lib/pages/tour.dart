@@ -9,7 +9,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TourScreen extends StatefulWidget {
-    final bool isFirstTime;
+  final bool isFirstTime;
   const TourScreen({Key? key, required this.isFirstTime}) : super(key: key);
 
   @override
@@ -43,10 +43,11 @@ class _TourScreenState extends State<TourScreen> {
                 height: 20,
                 width: 20,
                 decoration: BoxDecoration(
-                  color: currentIndex != index
+                  color: currentIndex == index
                       ? AppColors.themeColor
-                      : Colors.white.withOpacity(0.4),
-                  border: Border.all(color: Colors.white, width: 0.6),
+                      : Colors.white.withOpacity(0.1),
+                  border: Border.all(
+                      color: Colors.white.withOpacity(0.2), width: 0.6),
                   borderRadius: BorderRadius.circular(10),
                 ),
               );
@@ -57,37 +58,49 @@ class _TourScreenState extends State<TourScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.themeColor,
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(10.sp, 200.sp, 10.sp, 10.sp),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CarouselSlider.builder(
-                options: CarouselOptions(
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      viewIndex = index;
-                    });
-                  },
-                  height: AppSizes(context: context).screenHeight * 0.6,
-                  aspectRatio: 16 / 9,
-                  viewportFraction: 1,
-                  initialPage: 0,
-                  autoPlayCurve: Curves.fastOutSlowIn,
-                  enlargeCenterPage: true,
-                  scrollDirection: Axis.horizontal,
-                ),
-                itemCount: pages.length,
-                itemBuilder: (BuildContext context, int index, int pageViewIndex) =>
-                        Image.asset(
-                          pages[index],
-                        )),
-            SizedBox(
-              height: 200.sp,
-            ),
-
-            indicator(viewIndex)
+      body: Container(
+        height: AppSizes(context: context).screenHeight,
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO(72, 191, 132, 1),
+            Color.fromRGBO(50, 84, 67, 1),
           ],
+        )),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(10.sp, 200.sp, 10.sp, 10.sp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CarouselSlider.builder(
+                  options: CarouselOptions(
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        viewIndex = index;
+                      });
+                    },
+                    height: AppSizes(context: context).screenHeight * 0.6,
+                    aspectRatio: 16 / 9,
+                    viewportFraction: 1,
+                    initialPage: 0,
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    enlargeCenterPage: true,
+                    scrollDirection: Axis.horizontal,
+                  ),
+                  itemCount: pages.length,
+                  itemBuilder:
+                      (BuildContext context, int index, int pageViewIndex) =>
+                          Image.asset(
+                            pages[index],
+                          )),
+              SizedBox(
+                height: 200.sp,
+              ),
+              indicator(viewIndex)
+            ],
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -102,10 +115,11 @@ class _TourScreenState extends State<TourScreen> {
           size: AppSizes.iconSize.sp,
         ),
         onPressed: () {
-          widget.isFirstTime?
-          SharedPrefs().setSeenTour().then((value) => Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const MyHomePage()))):
-              Navigator.pop(context);
+          widget.isFirstTime
+              ? SharedPrefs().setSeenTour().then((value) =>
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const MyHomePage())))
+              : Navigator.pop(context);
         },
         backgroundColor: AppColors.themeColor,
       ),

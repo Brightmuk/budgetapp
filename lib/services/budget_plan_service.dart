@@ -27,11 +27,12 @@ class BudgetPlanService {
         .set(budgetPlan.toMap())
         .then((value) {
       LoadService(context: context!).hideLoader();
-      ToastService(context: context!).showSuccessToast('Spending plan saved!');
+      // ToastService(context: context!).showSuccessToast('Spending plan saved!');
+
       returnValue = true;
     }).catchError((e) {
       LoadService(context: context!).hideLoader();
-      ToastService(context: context!).showSuccessToast('An error occurred!');
+      // ToastService(context: context!).showSuccessToast('An error occurred!');
       returnValue = false;
     });
     return returnValue;

@@ -258,6 +258,13 @@ class _CreateListState extends State<CreateList> {
                       ),
                     );
                   }),
+            ),            SizedBox(
+              height: 10.sp,
+            ),
+            Text('Swipe right on item to delete',
+                style: TextStyle(fontSize: 13, color: Colors.grey[500])),
+                            SizedBox(
+              height: 10.sp,
             ),
             expense(),
             SizedBox(

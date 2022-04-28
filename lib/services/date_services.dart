@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class DateServices {
   final BuildContext context;
 
@@ -54,7 +53,7 @@ class DateServices {
                 onSurface: AppColors.themeColor,
                 background: Colors.grey[900]!,
                 primary: AppColors.themeColor,
-                
+
                 // header background color
               ),
               textButtonTheme: TextButtonThemeData(
@@ -68,6 +67,7 @@ class DateServices {
         },
       );
     }
+
     return DateTime(dateResult!.year, dateResult.month, dateResult.day,
         timeResult!.hour, timeResult.minute);
   }
@@ -89,5 +89,4 @@ class DateServices {
       ]),
     );
   }
-
 }

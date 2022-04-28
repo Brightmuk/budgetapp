@@ -74,7 +74,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                         size: AppSizes.iconSize.sp,
                       ),
                       onPressed: () async {
-                        BudgetPlan plan =
+                        SpendingPlan plan =
                             await BudgetPlanService(context: context)
                                 .singleBudgetPlan(widget.budgetPlanId);
                         File pdf = await PDFService.createPdf(plan);
@@ -99,7 +99,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                         size: AppSizes.iconSize.sp,
                       ),
                       onPressed: () async {
-                        BudgetPlan plan =
+                        SpendingPlan plan =
                             await BudgetPlanService(context: context)
                                 .singleBudgetPlan(widget.budgetPlanId);
                         File pdf = await PDFService.createPdf(plan);
@@ -135,7 +135,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
             ),
           ),
         ),
-        body: FutureBuilder<BudgetPlan>(
+        body: FutureBuilder<SpendingPlan>(
             future: BudgetPlanService(context: context)
                 .singleBudgetPlan(widget.budgetPlanId),
             builder: (context, snapshot) {
@@ -145,7 +145,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                 );
               }
               if (snapshot.hasData) {
-                BudgetPlan? plan = snapshot.data;
+                SpendingPlan? plan = snapshot.data;
 
                 return Padding(
                   padding: const EdgeInsets.all(20),
@@ -199,39 +199,43 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                       trailing: DateServices(context: context)
                           .dayDateTimeText(plan.creationDate),
                     ),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(
-                        Icons.calendar_month_outlined,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      title: Text(
-                        'Reminder Date',
-                        style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,
-                        ),
-                      ),
-                      trailing: DateServices(context: context)
-                          .dayDateTimeText(plan.reminderDate),
-                    ),
-                    CheckboxListTile(
+                    Visibility(
+                      visible: plan.reminder,
+                      child: ListTile(
                         contentPadding: EdgeInsets.zero,
-                        activeColor: Colors.greenAccent,
-                        value: plan.reminder,
+                        leading: Icon(
+                          Icons.calendar_month_outlined,
+                          size: AppSizes.iconSize.sp,
+                        ),
                         title: Text(
-                          'Reminder ',
+                          'Reminder Date',
                           style: TextStyle(
                             fontSize: AppSizes.normalFontSize.sp,
                           ),
                         ),
-                        subtitle: Text(
-                          plan.reminder?'You will be reminded to fullfil the Spending list':
-                          'You will not be reminded to fullfil the Spending list',
-                          style: TextStyle(
-                            fontSize: AppSizes.normalFontSize.sp,
+                        trailing: DateServices(context: context)
+                            .dayDateTimeText(plan.reminderDate),
+                      ),
+                    ),
+                     CheckboxListTile(
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: Colors.greenAccent,
+                          value: plan.reminder,
+                          title: Text(
+                            'Reminder ',
+                            style: TextStyle(
+                              fontSize: AppSizes.normalFontSize.sp,
+                            ),
                           ),
-                        ),
-                        onChanged: null),
+                          subtitle: Text(
+                            plan.reminder?'You will be reminded to fullfil the Spending list':
+                            'You will not be reminded to fullfil the Spending list',
+                            style: TextStyle(
+                              fontSize: AppSizes.normalFontSize.sp,
+                            ),
+                          ),
+                          onChanged: null),
+                    
                     const SizedBox(
                       height: 20,
                     ),
@@ -304,7 +308,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                   size: AppSizes.iconSize.sp,
                 ),
                 onPressed: () async {
-                  BudgetPlan _plan = await BudgetPlanService(context: context)
+                  SpendingPlan _plan = await BudgetPlanService(context: context)
                       .singleBudgetPlan(widget.budgetPlanId);
                   showModalBottomSheet(
                       isScrollControlled: true,

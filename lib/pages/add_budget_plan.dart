@@ -8,6 +8,7 @@ import 'package:budgetapp/pages/single_budget_plan.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/notification_service.dart';
+import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -29,8 +30,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNode = FocusNode();
 
-  DateTime? _selectedDate = DateTime.now();
-  late bool remider = true;
+  DateTime? _selectedDate = DateTime.now().add(const Duration(hours: 1));
+  late bool remider = false;
   bool exportAsPdf = true;
   int total = 0;
   bool expenseError = false;
@@ -138,25 +139,6 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                     ),
                   )),
               const Divider(),
-              ListTile(
-                leading: const Icon(Icons.calendar_month_outlined),
-                title: Text(
-                  'Reminder date',
-                  style: TextStyle(fontSize: 35.sp),
-                ),
-                trailing: DateServices(context: context)
-                    .dayDateTimeText(_selectedDate!),
-                onTap: () async {
-                  _focusNode.unfocus();
-                  final dateResult = await DateServices(context: context)
-                      .getDateAndTime(_selectedDate!);
-                  if (dateResult != null) {
-                    setState(() {
-                      _selectedDate = dateResult;
-                    });
-                  }
-                },
-              ),
               CheckboxListTile(
                   activeColor: Colors.greenAccent,
                   value: remider,
@@ -171,6 +153,38 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       remider = val!;
                     });
                   }),
+              Opacity(
+                opacity: remider ? 1 : 0.5,
+                child: ListTile(
+                  leading: const Icon(Icons.calendar_month_outlined),
+                  title: Text(
+                    'Reminder date',
+                    style: TextStyle(fontSize: 35.sp),
+                  ),
+                  trailing: DateServices(context: context)
+                      .dayDateTimeText(_selectedDate!),
+                  onTap: remider
+                      ? () async {
+                          _focusNode.unfocus();
+                          var now =
+                              DateTime.now().add(const Duration(hours: 1));
+                          final dateResult =
+                              await DateServices(context: context)
+                                  .getDateAndTime(_selectedDate!);
+                          if (dateResult != null&&dateResult.millisecondsSinceEpoch >
+                              now.millisecondsSinceEpoch) {
+                            setState(() {
+                              _selectedDate = dateResult;
+                            });
+                          } else if (dateResult!.millisecondsSinceEpoch <
+                              now.millisecondsSinceEpoch) {
+                            ToastService(context: context).showSuccessToast(
+                                'Reminders can only be set an hour from now');
+                          }
+                        }
+                      : null,
+                ),
+              ),
             ]),
             Positioned(
               bottom: 10,
@@ -204,46 +218,51 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                         reminder: remider,
                         expenses: _expenses,
                       );
-
-                      await BudgetPlanService(context: context)
-                          .saveBudgetPlan(budgetPlan: plan)
-                          .then((value) async {
-                        if (value) {
-
-                          ///only set reminder if user sets so
-                          if(plan.reminder){
-                          await NotificationService().zonedScheduleNotification(
-                              id: int.parse(plan.id.substring(8)),
-                              payload: '{"id":$id,"type":"spendingPlan"}',
-                              title: 'Spending list fulfilment',
-                              description:
-                                  'Remember to fulfil ${ plan.title}  Buddy!',
-                              scheduling:
-                                  tz.TZDateTime.fromMillisecondsSinceEpoch(
-                                      tz.local,
-                                      plan.reminderDate
-                                          .millisecondsSinceEpoch));
-                          } else {
+                      try {
+                        await BudgetPlanService(context: context)
+                            .saveBudgetPlan(budgetPlan: plan)
+                            .then((value) async {
+                          if (value) {
+                            ///only set reminder if user sets so
+                            if (plan.reminder) {
+                              await NotificationService().zonedScheduleNotification(
+                                  id: int.parse(plan.id.substring(8)),
+                                  payload: '{"id":$id,"type":"spendingPlan"}',
+                                  title: 'Spending list fulfilment',
+                                  description:
+                                      'Remember to fulfil ${plan.title}  Buddy!',
+                                  scheduling:
+                                      tz.TZDateTime.fromMillisecondsSinceEpoch(
+                                          tz.local,
+                                          plan.reminderDate
+                                              .millisecondsSinceEpoch));
+                            } else {
                               ///Delete in case they are editing and seting reminder off
-                              await NotificationService().removeReminder(int.parse(plan.id.substring(8)));
+                              await NotificationService().removeReminder(
+                                  int.parse(plan.id.substring(8)));
                             }
 
+                            ///If in edit mode pop twice
+                            if (editMode) {
+                              Navigator.pop(context);
+                            }
 
-                          ///If in edit mode pop twice
-                          if (editMode) {
                             Navigator.pop(context);
-                          }
-                          Navigator.pop(context);
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
 
-                                  ///If in edit mode use the items id and not new one
-                                  SingleBudgetPlan(
-                                    budgetPlanId:
-                                        editMode ? widget.plan!.id : id,
-                                  )));
-                        }
-                      });
+                                    ///If in edit mode use the items id and not new one
+                                    SingleBudgetPlan(
+                                      budgetPlanId:
+                                          editMode ? widget.plan!.id : id,
+                                    )));
+                          }
+                        });
+                      } catch (e) {
+                        print(e.toString());
+                        ToastService(context: context)
+                            .showSuccessToast('Sorry, there was an error!');
+                      }
                     }
                   }),
             ),

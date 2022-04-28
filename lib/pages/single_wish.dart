@@ -126,20 +126,23 @@ class _SingleWishState extends State<SingleWish> {
                       trailing: DateServices(context: context)
                           .dayDateTimeText(wish.creationDate),
                     ),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(
-                        Icons.calendar_month_outlined,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      title: Text(
-                        'Reminder Date',
-                        style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,
+                    Visibility(
+                      visible: wish.reminder,
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(
+                          Icons.calendar_month_outlined,
+                          size: AppSizes.iconSize.sp,
                         ),
+                        title: Text(
+                          'Reminder Date',
+                          style: TextStyle(
+                            fontSize: AppSizes.normalFontSize.sp,
+                          ),
+                        ),
+                        trailing: DateServices(context: context)
+                            .dayDateTimeText(wish.reminderDate),
                       ),
-                      trailing: DateServices(context: context)
-                          .dayDateTimeText(wish.reminderDate),
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,

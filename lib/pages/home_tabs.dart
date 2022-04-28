@@ -31,7 +31,7 @@ class _BudgetListTabState extends State<BudgetListTab> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<BudgetPlan>>(
+    return StreamBuilder<List<SpendingPlan>>(
         stream: BudgetPlanService(context: context).budgetPlansStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -43,7 +43,7 @@ class _BudgetListTabState extends State<BudgetListTab> {
           //    return LoadService.dataLoader;
           // }
           if (snapshot.hasData) {
-            List<BudgetPlan>? plans = snapshot.data;
+            List<SpendingPlan>? plans = snapshot.data;
             return ListView.builder(
                 controller: _controller,
                 itemCount: plans!.length,

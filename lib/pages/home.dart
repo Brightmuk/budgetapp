@@ -25,7 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final DateFormat dayDate = DateFormat('EEE dd, yyy');
 
-  Stream<List<BudgetPlan>> budgetPlansStream =
+  Stream<List<SpendingPlan>> budgetPlansStream =
       BudgetPlanService().budgetPlansStream;
   Stream<List<Wish>> wishesStream = WishService().wishStream;
 
@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  String bPTotal(List<BudgetPlan> plans) {
+  String bPTotal(List<SpendingPlan> plans) {
     int total = 0;
     for (var plan in plans) {
       total += plan.total;
@@ -151,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      StreamBuilder<List<BudgetPlan>>(
+                      StreamBuilder<List<SpendingPlan>>(
                           stream: budgetPlansStream,
                           builder: (context, snapshot) {
                             return CircularPercentIndicator(
