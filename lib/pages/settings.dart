@@ -1,24 +1,29 @@
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
+import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/pages/settings/about_us.dart';
 import 'package:budgetapp/pages/settings/help.dart';
 import 'package:budgetapp/pages/tour.dart';
+import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:currency_picker/currency_picker.dart';
 
 class SettingsPage extends StatefulWidget {
-
   const SettingsPage({
-    Key? key, }) : super(key: key);
+    Key? key,
+  }) : super(key: key);
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final Uri _playStoreUrl = Uri.parse('https://play.google.com/store/apps/details?id=com.brightdesigns.expenditurebuddy');
+  final Uri _playStoreUrl = Uri.parse(
+      'https://play.google.com/store/apps/details?id=com.brightdesigns.expenditurebuddy');
+  Future<String?> currencyFuture = SharedPrefs().getCurrency();
 
   @override
   Widget build(BuildContext context) {
@@ -68,14 +73,59 @@ class _SettingsPageState extends State<SettingsPage> {
               height: 20,
             ),
             ListTile(
+              leading: Icon(Icons.currency_exchange_outlined,
+                  size: AppSizes.iconSize.sp),
+              title: Text(
+                'Change currency',
+                style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+              ),
+              onTap: () {
+                showCurrencyPicker(
+                  theme: CurrencyPickerThemeData(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                   
+                  ),
+                  context: context,
+                  showFlag: true,
+                  showCurrencyName: true,
+                  showCurrencyCode: true,
+                  onSelect: (Currency currency) {
+                    SharedPrefs().setCurrency(currency.code);
+                    setState(() {
+                      currencyFuture = SharedPrefs().getCurrency();
+                    });
+                  },
+                );
+              },
+              trailing: FutureBuilder<String?>(
+                  future: currencyFuture,
+                  builder: (context, snapshot) {
+                    return RichText(
+                      text: TextSpan(children: [
+                        TextSpan(
+                            text: 'current ',
+                            style: TextStyle(
+                                fontSize: AppSizes.normalFontSize.sp,
+                                color: Colors.grey)),
+                        TextSpan(
+                            text: snapshot.hasData ? snapshot.data : '.',
+                            style:
+                                TextStyle(fontSize: AppSizes.normalFontSize.sp))
+                      ]),
+                    );
+                  }),
+            ),
+            ListTile(
               leading: Icon(Icons.info_outline, size: AppSizes.iconSize.sp),
               title: Text(
                 'Take a tour',
                 style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
               ),
               onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (ctx) => const TourScreen(isFirstTime: false,)));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (ctx) => const TourScreen(
+                          isFirstTime: false,
+                        )));
               },
             ),
             ListTile(

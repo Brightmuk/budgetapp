@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:budgetapp/models/budget_plan.dart';
+import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -10,15 +11,17 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PDFService {
-  
   ///Create a pdf from for sharing or printing
   static Future<File> createPdf(SpendingPlan plan) async {
-     final DateFormat dayDate = DateFormat('EEE dd, yyy');
+    final DateFormat dayDate = DateFormat('EEE dd, yyy');
     final pdf = pw.Document();
     String dir = (await pp.getTemporaryDirectory()).path;
     File file = File('$dir/${plan.title}');
 
-final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
+    String? currency = await SharedPrefs().getCurrency();
+
+
+    final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
 
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -27,10 +30,11 @@ final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Row(children: [
-                  pw.Image(logo,height: 50),
+                  pw.Image(logo, height: 50),
                 ]),
-                pw.SizedBox(height: 10,),
-                
+                pw.SizedBox(
+                  height: 10,
+                ),
                 pw.SizedBox(
                   width: 200,
                   height: 50,
@@ -39,7 +43,8 @@ final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
                           fontWeight: pw.FontWeight.bold, fontSize: 25)),
                 ),
                 pw.SizedBox(height: 20),
-                pw.Text(dayDate.format( plan.creationDate), style: pw.TextStyle()),
+                pw.Text(dayDate.format(plan.creationDate),
+                    style: pw.TextStyle()),
                 pw.SizedBox(height: 30),
                 pw.Table(tableWidth: pw.TableWidth.max, children: [
                   pw.TableRow(children: [
@@ -53,21 +58,16 @@ final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                   ]),
                   pw.TableRow(children: [pw.SizedBox(height: 20)]),
-
-                  for(var el in plan.expenses)
-                  
-                  pw.TableRow(
-                   
-                    children: [
+                  for (var el in plan.expenses)
+                    pw.TableRow(children: [
                       pw.Padding(
                         padding: const pw.EdgeInsets.only(bottom: 10),
-                        child: pw.Text(el.name),),
-                    
-                    pw.Text(el.quantity.toString()),
-                    pw.Text(el.price.toString()),
-                    pw.Text((el.price*el.quantity).toString()),
-                  ]),
-
+                        child: pw.Text(el.name),
+                      ),
+                      pw.Text(el.quantity.toString()),
+                      pw.Text(el.price.toString()),
+                      pw.Text((el.price * el.quantity).toString()),
+                    ]),
                   pw.TableRow(children: [pw.SizedBox(height: 50)]),
                   pw.TableRow(children: [
                     pw.Text('Total',
@@ -75,7 +75,7 @@ final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
                             fontWeight: pw.FontWeight.bold, fontSize: 15)),
                     pw.Text(''),
                     pw.Text(''),
-                    pw.Text('ksh.${plan.total}',
+                    pw.Text('$currency.${plan.total}',
                         style: pw.TextStyle(
                             fontWeight: pw.FontWeight.bold, fontSize: 15)),
                   ]),
@@ -91,9 +91,10 @@ final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
     return await file.writeAsBytes(await pdf.save());
   }
 
-  static Future saveInStorage(String fileName, Uint8List file, BuildContext context) async {
+  static Future saveInStorage(
+      String fileName, Uint8List file, BuildContext context) async {
     if (await Permission.manageExternalStorage.request().isGranted) {
-            ScaffoldMessenger.of(context)
+      ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Okay')));
       final directory = (await pp.getExternalStorageDirectories(
           type: pp.StorageDirectory.documents));

@@ -10,6 +10,7 @@ import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/pdf_service.dart';
+import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/widgets/action_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -193,13 +194,19 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
                       ),
-                      trailing: Text(
-                        'ksh.' + plan.total.toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: AppSizes.normalFontSize.sp,
-                        ),
-                      ),
+                      trailing: FutureBuilder<String?>(
+                          future: SharedPrefs().getCurrency(),
+                          builder: (context, sn) {
+                            return Text(
+                              sn.hasData
+                                  ? '${sn.data!} ${plan.total.toString()}'
+                                  : plan.total.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppSizes.normalFontSize.sp,
+                              ),
+                            );
+                          }),
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,

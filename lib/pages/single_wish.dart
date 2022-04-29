@@ -10,6 +10,7 @@ import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/pdf_service.dart';
+import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/widgets/action_dialogue.dart';
@@ -156,16 +157,21 @@ class _SingleWishState extends State<SingleWish> {
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
                       ),
-                      trailing: Text(
-                        'ksh.' + wish.price.toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: AppSizes.normalFontSize.sp,
-                        ),
-                      ),
+                      trailing: FutureBuilder<String?>(
+                          future: SharedPrefs().getCurrency(),
+                          builder: (context, sn) {
+                            return Text(
+                              sn.hasData
+                                  ? '${sn.data!} ${wish.price.toString()}'
+                                  : wish.price.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppSizes.normalFontSize.sp,
+                              ),
+                            );
+                          }),
                     ),
                     CheckboxListTile(
-                      
                         contentPadding: EdgeInsets.zero,
                         activeColor: Colors.greenAccent,
                         value: wish.reminder,
@@ -176,8 +182,9 @@ class _SingleWishState extends State<SingleWish> {
                           ),
                         ),
                         subtitle: Text(
-                          wish.reminder?'You will be reminded to fullfil this wish':
-                          'You will not be reminded to fullfil this wish',
+                          wish.reminder
+                              ? 'You will be reminded to fullfil this wish'
+                              : 'You will not be reminded to fullfil this wish',
                           style: TextStyle(
                             fontSize: AppSizes.normalFontSize.sp,
                           ),
@@ -235,7 +242,6 @@ class _SingleWishState extends State<SingleWish> {
                   size: AppSizes.iconSize.sp,
                 ),
                 onPressed: () async {
-
                   showModalBottomSheet(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),

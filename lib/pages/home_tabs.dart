@@ -8,6 +8,7 @@ import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/pages/single_budget_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -45,7 +46,7 @@ class _BudgetListTabState extends State<BudgetListTab> {
             List<SpendingPlan>? plans = snapshot.data;
             return ListView.builder(
                 controller: _controller,
-                itemCount: plans!.length+1,
+                itemCount: plans!.length + 1,
                 itemBuilder: (context, index) {
                   if (index == plans.length) {
                     return AdmobBanner(
@@ -60,35 +61,43 @@ class _BudgetListTabState extends State<BudgetListTab> {
                   } else {
                     return InkWell(
                       child: Ink(
-                        child: ListTile(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SingleBudgetPlan(
-                                        budgetPlanId: plans[index].id,
-                                      )));
-                            },
-                            leading: Icon(
-                              Icons.receipt_long_outlined,
-                              size: AppSizes.iconSize.sp,
-                              color: Colors.pinkAccent,
+                          child: ListTile(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SingleBudgetPlan(
+                                    budgetPlanId: plans[index].id,
+                                  )));
+                        },
+                        leading: Icon(
+                          Icons.receipt_long_outlined,
+                          size: AppSizes.iconSize.sp,
+                          color: Colors.pinkAccent,
+                        ),
+                        title: Text(
+                          plans[index].title,
+                          style:
+                              TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                        ),
+                        subtitle: Text(
+                            dayDate.format(
+                              plans[index].creationDate,
                             ),
-                            title: Text(
-                              plans[index].title,
-                              style: TextStyle(
-                                  fontSize: AppSizes.normalFontSize.sp),
-                            ),
-                            subtitle: Text(
-                                dayDate.format(
-                                  plans[index].creationDate,
-                                ),
+                            style: TextStyle(
+                                fontSize: AppSizes.normalFontSize.sp)),
+                        trailing: FutureBuilder<String?>(
+                            future: SharedPrefs().getCurrency(),
+                            builder: (context, sn) {
+                              return Text(
+                                sn.hasData
+                                    ? '${sn.data!} ${plans[index].total.toString()}'
+                                    : plans[index].total.toString(),
                                 style: TextStyle(
-                                    fontSize: AppSizes.normalFontSize.sp)),
-                            trailing: Text(
-                              'Ksh.${plans[index].total}',
-                              style: TextStyle(
-                                  fontSize: AppSizes.normalFontSize.sp),
-                            )),
-                      ),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: AppSizes.normalFontSize.sp,
+                                ),
+                              );
+                            }),
+                      )),
                     );
                   }
                 });
@@ -205,11 +214,19 @@ class _WishListTabState extends State<WishListTab> {
                                 dayDate.format(wishes[index].creationDate),
                                 style: TextStyle(
                                     fontSize: AppSizes.normalFontSize.sp)),
-                            trailing: Text(
-                              'Ksh.${wishes[index].price}',
-                              style: TextStyle(
-                                  fontSize: AppSizes.normalFontSize.sp),
-                            )),
+                                                    trailing: FutureBuilder<String?>(
+                            future: SharedPrefs().getCurrency(),
+                            builder: (context, sn) {
+                              return Text(
+                                sn.hasData
+                                    ? '${sn.data!} ${wishes[index].price.toString()}'
+                                    : wishes[index].price.toString(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: AppSizes.normalFontSize.sp,
+                                ),
+                              );
+                            }),),
                       ),
                     );
                   }

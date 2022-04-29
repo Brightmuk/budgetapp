@@ -7,6 +7,7 @@ import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/services/pdf_service.dart';
+import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/widgets/share_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -210,13 +211,19 @@ class _CreateListState extends State<CreateList> {
                           fontSize: 40.sp,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      'ksh.' + _total.toString(),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 40.sp,
-                          fontWeight: FontWeight.bold),
-                    )
+                    FutureBuilder<String?>(
+                        future: SharedPrefs().getCurrency(),
+                        builder: (context, sn) {
+                          return Text(
+                            sn.hasData
+                                ? '${sn.data!} ${_total.toString()}'
+                                : _total.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: AppSizes.normalFontSize.sp,
+                            ),
+                          );
+                        }),
                   ],
                 )
               ],
@@ -262,12 +269,17 @@ class _CreateListState extends State<CreateList> {
                         subtitle: Text(expenses[index].quantity.toString() +
                             ' unit(s) @ ksh.' +
                             expenses[index].price.toString()),
-                        trailing: Text(
-                          'ksh.' +
-                              (expenses[index].quantity * expenses[index].price)
-                                  .toString(),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                        trailing: FutureBuilder<String?>(
+                            future: SharedPrefs().getCurrency(),
+                            builder: (context, sn) {
+                              return Text(
+                                sn.hasData?
+                                '${sn.data!} ${(expenses[index].quantity * expenses[index].price).toString()}':
+                                (expenses[index].quantity * expenses[index].price).toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              );
+                            }),
                       ),
                     );
                   }),
@@ -336,8 +348,8 @@ class _CreateListState extends State<CreateList> {
                     //   await Printing.sharePdf(
                     //       bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
                     // }
+                    interstitialAd.show();
                   }
-                  interstitialAd.show();
                 }
               : null,
           tooltip: 'Share',

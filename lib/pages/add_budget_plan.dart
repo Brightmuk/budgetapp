@@ -8,6 +8,7 @@ import 'package:budgetapp/pages/single_budget_plan.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/notification_service.dart';
+import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -103,11 +104,17 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               ListTile(
                 title: const Text('Edit list'),
                 subtitle: Text('${_expenses.length} expense(s) in list'),
-                trailing: Text(
-                  'Ksh.$total',
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 35.sp),
-                ),
+                trailing: FutureBuilder<String?>(
+                    future: SharedPrefs().getCurrency(),
+                    builder: (context, sn) {
+                      return Text(
+                        sn.hasData ? '${sn.data!} ${total.toString()}' : total.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: AppSizes.normalFontSize.sp,
+                        ),
+                      );
+                    }),
                 onTap: () async {
                   _focusNode.unfocus();
                   var result =
@@ -171,8 +178,9 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                           final dateResult =
                               await DateServices(context: context)
                                   .getDateAndTime(_selectedDate!);
-                          if (dateResult != null&&dateResult.millisecondsSinceEpoch >
-                              now.millisecondsSinceEpoch) {
+                          if (dateResult != null &&
+                              dateResult.millisecondsSinceEpoch >
+                                  now.millisecondsSinceEpoch) {
                             setState(() {
                               _selectedDate = dateResult;
                             });
@@ -227,7 +235,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                             if (plan.reminder) {
                               await NotificationService().zonedScheduleNotification(
                                   id: int.parse(plan.id.substring(8)),
-                                  payload: '{"itemId":$id,"route":"/singlePlan"}',
+                                  payload:
+                                      '{"itemId":$id,"route":"/singlePlan"}',
                                   title: 'Spending list fulfilment',
                                   description:
                                       'Remember to fulfil ${plan.title}  Buddy!',
