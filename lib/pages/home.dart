@@ -1,3 +1,4 @@
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
@@ -25,9 +26,42 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final DateFormat dayDate = DateFormat('EEE dd, yyy');
 
+  ///Ads here
+  AdmobBannerSize? bannerSize;
+  late AdmobInterstitial interstitialAd;
+  // late AdmobReward rewardAd;
 
+  @override
   void initState() {
     super.initState();
+    bannerSize = AdmobBannerSize.BANNER;
+    Admob.requestTrackingAuthorization();
+
+    interstitialAd = AdmobInterstitial(
+      adUnitId: 'ca-app-pub-1360540534588513/6335620084',
+      listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
+        if (event == AdmobAdEvent.closed) interstitialAd.load();
+        // handleEvent(event, args, 'Interstitial');
+      },
+    );
+
+    // rewardAd = AdmobReward(
+    //   adUnitId: getRewardBasedVideoAdUnitId()!,
+    //   listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
+    //     if (event == AdmobAdEvent.closed) rewardAd.load();
+    //     handleEvent(event, args, 'Reward');
+    //   },
+    // );
+
+    interstitialAd.load();
+    // rewardAd.load();
+  }
+
+  @override
+  void dispose() {
+    interstitialAd.dispose();
+    // rewardAd.dispose();
+    super.dispose();
   }
 
   String bPTotal(List<SpendingPlan> plans) {
@@ -48,11 +82,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void newItem() async {
+    // final isLoaded = await interstitialAd.isLoaded;
+    // if (isLoaded ?? false) {
+    //   interstitialAd.show();
+    // } else {
+    //   ToastService(context: context).showSuccessToast('Loading...');
+    // }
     await showModalBottomSheet(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         context: context,
         builder: (context) => const ExpenseType());
-
   }
 
   @override
@@ -259,4 +298,45 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+  //  void handleEvent(
+  //     AdmobAdEvent event, Map<String, dynamic>? args, String adType) {
+  //   switch (event) {
+  //     case AdmobAdEvent.loaded:
+  //       showSnackBar('New Admob $adType Ad loaded!');
+  //       break;
+  //     case AdmobAdEvent.opened:
+  //       showSnackBar('Admob $adType Ad opened!');
+  //       break;
+  //     case AdmobAdEvent.closed:
+  //       showSnackBar('Admob $adType Ad closed!');
+  //       break;
+  //     case AdmobAdEvent.failedToLoad:
+  //       showSnackBar('Admob $adType failed to load. :(');
+  //       break;
+  //     case AdmobAdEvent.rewarded:
+  //       showDialog(
+  //         context: scaffoldState.currentContext!,
+  //         builder: (BuildContext context) {
+  //           return WillPopScope(
+  //             onWillPop: () async {
+  //               ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  //               return true;
+  //             },
+  //             child: AlertDialog(
+  //               content: Column(
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 children: <Widget>[
+  //                   Text('Reward callback fired. Thanks Andrew!'),
+  //                   Text('Type: ${args!['type']}'),
+  //                   Text('Amount: ${args['amount']}'),
+  //                 ],
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //       break;
+  //     default:
+  //   }
+  // }
 }

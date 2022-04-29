@@ -1,3 +1,4 @@
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/pages/home.dart';
 import 'package:budgetapp/pages/single_budget_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
@@ -17,7 +18,8 @@ NotificationPayload? payload;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   payload = await NotificationService().init();
-  
+
+  Admob.initialize();
   await configureLocalTimeZone();
   await ScreenUtil.ensureScreenSize();
 

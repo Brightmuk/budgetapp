@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
@@ -29,13 +30,27 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
   late bool remider = true;
   late bool save = true;
   bool exportAsPdf = true;
-
   List<Expense> items = [];
+
+  late AdmobInterstitial interstitialAd;
+  @override
+  void initState() {
+    super.initState();
+
+    Admob.requestTrackingAuthorization();
+
+    interstitialAd = AdmobInterstitial(
+      adUnitId: 'ca-app-pub-1360540534588513/6335620084',
+      listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
+        if (event == AdmobAdEvent.closed) interstitialAd.load();
+        debugPrint(args.toString());
+      },
+    );
+    interstitialAd.load();
+  }
 
   @override
   Widget build(BuildContext context) {
-
-
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
@@ -53,7 +68,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
@@ -81,6 +96,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                         await Printing.layoutPdf(
                             name: '${plan.title}.pdf',
                             onLayout: (format) async => pdf.readAsBytes());
+                        interstitialAd.show();
                       },
                       backgroundColor: AppColors.themeColor,
                     ),
@@ -106,6 +122,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                         await Printing.sharePdf(
                             bytes: pdf.readAsBytesSync(),
                             filename: '${plan.title}.pdf');
+                        interstitialAd.show();
                       },
                       backgroundColor: AppColors.themeColor,
                     ),
@@ -217,25 +234,25 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                             .dayDateTimeText(plan.reminderDate),
                       ),
                     ),
-                     CheckboxListTile(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.greenAccent,
-                          value: plan.reminder,
-                          title: Text(
-                            'Reminder ',
-                            style: TextStyle(
-                              fontSize: AppSizes.normalFontSize.sp,
-                            ),
+                    CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        activeColor: Colors.greenAccent,
+                        value: plan.reminder,
+                        title: Text(
+                          'Reminder ',
+                          style: TextStyle(
+                            fontSize: AppSizes.normalFontSize.sp,
                           ),
-                          subtitle: Text(
-                            plan.reminder?'You will be reminded to fullfil the Spending list':
-                            'You will not be reminded to fullfil the Spending list',
-                            style: TextStyle(
-                              fontSize: AppSizes.normalFontSize.sp,
-                            ),
+                        ),
+                        subtitle: Text(
+                          plan.reminder
+                              ? 'You will be reminded to fullfil the Spending list'
+                              : 'You will not be reminded to fullfil the Spending list',
+                          style: TextStyle(
+                            fontSize: AppSizes.normalFontSize.sp,
                           ),
-                          onChanged: null),
-                    
+                        ),
+                        onChanged: null),
                     const SizedBox(
                       height: 20,
                     ),
@@ -342,7 +359,8 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                                 'Are you sure you want to delete this Spending plan?',
                             action: () {
                               BudgetPlanService(context: context)
-                                  .deleteBudgetPlan(budgetPlanId: widget.budgetPlanId);
+                                  .deleteBudgetPlan(
+                                      budgetPlanId: widget.budgetPlanId);
                             },
                             actionBtnText: 'Delete',
                           ));

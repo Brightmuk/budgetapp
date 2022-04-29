@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
@@ -31,12 +32,24 @@ class _CreateListState extends State<CreateList> {
 
   List<Expense> expenses = [];
 
+  late AdmobInterstitial interstitialAd;
   @override
   void initState() {
     super.initState();
     expenses.addAll(widget.expenses!);
 
     _quantityC.text = '1';
+
+    Admob.requestTrackingAuthorization();
+
+    interstitialAd = AdmobInterstitial(
+      adUnitId: 'ca-app-pub-1360540534588513/6335620084',
+      listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
+        if (event == AdmobAdEvent.closed) interstitialAd.load();
+        debugPrint(args.toString());
+      },
+    );
+    interstitialAd.load();
   }
 
   int get _total {
@@ -61,20 +74,20 @@ class _CreateListState extends State<CreateList> {
                   controller: _nameC,
                   cursorColor: AppColors.themeColor,
                   onFieldSubmitted: (val) {
-                     if (_formKey.currentState!.validate()) {
-                        Expense exp = Expense(
-                            price: int.parse(_priceC.value.text),
-                            index: 0,
-                            quantity: int.parse(_quantityC.value.text),
-                            name: _nameC.value.text);
-                        setState(() {
-                          expenses.add(exp);
-                        });
-                        _nameC.clear();
-                        _quantityC.text = '1';
-                        _priceC.clear();
-                        _focusNode.requestFocus();
-                      }
+                    if (_formKey.currentState!.validate()) {
+                      Expense exp = Expense(
+                          price: int.parse(_priceC.value.text),
+                          index: 0,
+                          quantity: int.parse(_quantityC.value.text),
+                          name: _nameC.value.text);
+                      setState(() {
+                        expenses.add(exp);
+                      });
+                      _nameC.clear();
+                      _quantityC.text = '1';
+                      _priceC.clear();
+                      _focusNode.requestFocus();
+                    }
                   },
                   decoration: AppStyles()
                       .textFieldDecoration(label: 'Name', hintText: 'Food'),
@@ -89,23 +102,23 @@ class _CreateListState extends State<CreateList> {
                 width: MediaQuery.of(context).size.width * 0.2,
                 child: TextFormField(
                   keyboardType: TextInputType.number,
-                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   controller: _quantityC,
                   onFieldSubmitted: (val) {
-                     if (_formKey.currentState!.validate()) {
-                        Expense exp = Expense(
-                            price: int.parse(val),
-                            index: 0,
-                            quantity: int.parse(_quantityC.value.text),
-                            name: _nameC.value.text);
-                        setState(() {
-                          expenses.add(exp);
-                        });
-                        _nameC.clear();
-                        _quantityC.text = '1';
-                        _priceC.clear();
-                        _focusNode.requestFocus();
-                      }
+                    if (_formKey.currentState!.validate()) {
+                      Expense exp = Expense(
+                          price: int.parse(val),
+                          index: 0,
+                          quantity: int.parse(_quantityC.value.text),
+                          name: _nameC.value.text);
+                      setState(() {
+                        expenses.add(exp);
+                      });
+                      _nameC.clear();
+                      _quantityC.text = '1';
+                      _priceC.clear();
+                      _focusNode.requestFocus();
+                    }
                   },
                   cursorColor: AppColors.themeColor,
                   decoration: AppStyles().textFieldDecoration(
@@ -117,7 +130,7 @@ class _CreateListState extends State<CreateList> {
                 width: MediaQuery.of(context).size.width * 0.2,
                 child: TextFormField(
                     keyboardType: TextInputType.number,
-                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     controller: _priceC,
                     onFieldSubmitted: (val) {
                       if (_formKey.currentState!.validate()) {
@@ -258,15 +271,16 @@ class _CreateListState extends State<CreateList> {
                       ),
                     );
                   }),
-            ),            SizedBox(
+            ),
+            SizedBox(
               height: 10.sp,
             ),
             Visibility(
-              visible:expenses.isNotEmpty,
+              visible: expenses.isNotEmpty,
               child: Text('Swipe right on item to delete',
                   style: TextStyle(fontSize: 13, color: Colors.grey[500])),
             ),
-                            SizedBox(
+            SizedBox(
               height: 10.sp,
             ),
             expense(),
@@ -283,45 +297,49 @@ class _CreateListState extends State<CreateList> {
         floatingActionButton: FloatingActionButton.extended(
           heroTag: 'Share',
           backgroundColor: AppColors.themeColor,
-          onPressed: expenses.isNotEmpty?() async {
-            if (widget.title != null) {
-              Navigator.pop(context, {'expenses': expenses, 'total': _total});
-            } else {
-              if (expenses.isEmpty) {
-                return;
-              }
-              // bool asPdf = await showModalBottomSheet(
-              //     shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(20)),
-              //     context: context,
-              //     builder: (context) => const ShareType());
-              // if (asPdf) {
-                SpendingPlan plan = SpendingPlan(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    total: _total,
-                    title: 'Quick Budget List',
-                    creationDate: DateTime.now(),
-                    reminderDate: DateTime.now(),
-                    reminder: false,
-                    expenses: expenses);
-                File pdf = await PDFService.createPdf(plan);
-                await Printing.sharePdf(
-                    bytes: pdf.readAsBytesSync(),
-                    filename: '${plan.title}.pdf');
-              // }
-              // } else {
-              //   File pdf = await PDFService.createPdf('new');
-              //   await for (var page in Printing.raster(pdf.readAsBytesSync(),
-              //       pages: [0, 1], dpi: 72)) {
-              //     final image = await page.toImage();
-              //     image.toByteData();
-              //   }
+          onPressed: expenses.isNotEmpty
+              ? () async {
+                  if (widget.title != null) {
+                    Navigator.pop(
+                        context, {'expenses': expenses, 'total': _total});
+                  } else {
+                    if (expenses.isEmpty) {
+                      return;
+                    }
+                    // bool asPdf = await showModalBottomSheet(
+                    //     shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(20)),
+                    //     context: context,
+                    //     builder: (context) => const ShareType());
+                    // if (asPdf) {
+                    SpendingPlan plan = SpendingPlan(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        total: _total,
+                        title: 'Quick Budget List',
+                        creationDate: DateTime.now(),
+                        reminderDate: DateTime.now(),
+                        reminder: false,
+                        expenses: expenses);
+                    File pdf = await PDFService.createPdf(plan);
+                    await Printing.sharePdf(
+                        bytes: pdf.readAsBytesSync(),
+                        filename: '${plan.title}.pdf');
+                    // }
+                    // } else {
+                    //   File pdf = await PDFService.createPdf('new');
+                    //   await for (var page in Printing.raster(pdf.readAsBytesSync(),
+                    //       pages: [0, 1], dpi: 72)) {
+                    //     final image = await page.toImage();
+                    //     image.toByteData();
+                    //   }
 
-              //   await Printing.sharePdf(
-              //       bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
-              // }
-            }
-          }:null,
+                    //   await Printing.sharePdf(
+                    //       bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
+                    // }
+                  }
+                  interstitialAd.show();
+                }
+              : null,
           tooltip: 'Share',
           label: Text(
             widget.title != null ? 'Done' : 'Share',

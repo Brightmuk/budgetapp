@@ -150,7 +150,7 @@ class _AddWishState extends State<AddWish> {
                     _focusNode.unfocus();
                     _focusNode2.unfocus();
                           var now =
-                              DateTime.now().add(const Duration(hours: 1));
+                              DateTime.now();
                           final dateResult =
                               await DateServices(context: context)
                                   .getDateAndTime(_selectedDate);
@@ -204,7 +204,7 @@ class _AddWishState extends State<AddWish> {
                             if (wish.reminder) {
                               await NotificationService().zonedScheduleNotification(
                                   id: int.parse(wish.id.substring(8)),
-                                  payload: '{"itemId":$id,"route":"/wish"}',
+                                  payload: '{"itemId":$id,"route":"/singlewish"}',
                                   title: 'Wish fulfilment',
                                   description:
                                       'Remember to purchase your ${wish.name} Buddy!',
