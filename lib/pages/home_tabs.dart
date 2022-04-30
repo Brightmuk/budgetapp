@@ -1,5 +1,6 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
@@ -93,7 +94,7 @@ class _BudgetListTabState extends State<BudgetListTab> {
                             builder: (context, sn) {
                               return Text(
                                 sn.hasData
-                                    ? '${sn.data!} ${plans[index].total.toString()}'
+                                    ? '${sn.data!} ${AppFormatters.moneyCommaStr(plans[index].total)}'
                                     : plans[index].total.toString(),
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -224,7 +225,7 @@ class _WishListTabState extends State<WishListTab> {
                               builder: (context, sn) {
                                 return Text(
                                   sn.hasData
-                                      ? '${sn.data!} ${wishes[index].price.toString()}'
+                                      ? '${sn.data!} ${AppFormatters.moneyCommaStr(wishes[index].price)}'
                                       : wishes[index].price.toString(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,

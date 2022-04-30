@@ -1,5 +1,6 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
@@ -72,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (var plan in plans) {
       total += plan.total;
     }
-    return total.toString();
+    return AppFormatters.moneyStr(total);
   }
 
   String wishTotal(List<Wish> wishes) {
@@ -81,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
       total += wish.price;
     }
 
-    return total.toString();
+    return AppFormatters.moneyStr(total);
   }
 
   void newItem() async {

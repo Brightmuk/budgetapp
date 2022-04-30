@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/budget_plan.dart';
@@ -216,8 +217,8 @@ class _CreateListState extends State<CreateList> {
                         builder: (context, sn) {
                           return Text(
                             sn.hasData
-                                ? '${sn.data!} ${_total.toString()}'
-                                : _total.toString(),
+                                ? '${sn.data!} ${AppFormatters.moneyCommaStr(_total)}'
+                                : AppFormatters.moneyCommaStr(_total),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: AppSizes.normalFontSize.sp,
@@ -261,25 +262,28 @@ class _CreateListState extends State<CreateList> {
                           expenses.removeAt(index);
                         });
                       },
-                      child: ListTile(
-                        title: Text(
-                          expenses[index].name.toUpperCase(),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(expenses[index].quantity.toString() +
-                            ' unit(s) @ ksh.' +
-                            expenses[index].price.toString()),
-                        trailing: FutureBuilder<String?>(
-                            future: SharedPrefs().getCurrency(),
-                            builder: (context, sn) {
-                              return Text(
-                                sn.hasData?
-                                '${sn.data!} ${(expenses[index].quantity * expenses[index].price).toString()}':
-                                (expenses[index].quantity * expenses[index].price).toString(),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              );
-                            }),
+                      child: FutureBuilder<String?>(
+                       future: SharedPrefs().getCurrency(),
+                        builder: (context, sn) {
+                          return ListTile(
+                            title: Text(
+                              expenses[index].name.toUpperCase(),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(  sn.hasData? expenses[index].quantity.toString() +
+                                ' unit(s) @ ${sn.data!} ' +
+                                AppFormatters.moneyCommaStr(expenses[index].price):expenses[index].quantity.toString() +
+                                ' unit(s) @   ' +
+                                AppFormatters.moneyCommaStr(expenses[index].price) ),
+                            trailing: Text(
+                                    sn.hasData?
+                                    '${sn.data!} ${ AppFormatters.moneyCommaStr((expenses[index].quantity * expenses[index].price))}':
+                                    (expenses[index].quantity * expenses[index].price).toString(),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                          );
+                        }
                       ),
                     );
                   }),

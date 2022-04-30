@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
@@ -166,7 +167,7 @@ class _SingleWishState extends State<SingleWish> {
                           builder: (context, sn) {
                             return Text(
                               sn.hasData
-                                  ? '${sn.data!} ${wish.price.toString()}'
+                                  ? '${sn.data!} ${AppFormatters.moneyCommaStr(wish.price) }'
                                   : wish.price.toString(),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
