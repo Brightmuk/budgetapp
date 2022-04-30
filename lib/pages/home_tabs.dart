@@ -7,12 +7,14 @@ import 'package:budgetapp/pages/add_budget_plan.dart';
 import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/pages/single_budget_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class BudgetListTab extends StatefulWidget {
   const BudgetListTab({Key? key}) : super(key: key);
@@ -33,8 +35,10 @@ class _BudgetListTabState extends State<BudgetListTab> {
 
   @override
   Widget build(BuildContext context) {
+    final AppState _appState = Provider.of<AppState>(context);
     return StreamBuilder<List<SpendingPlan>>(
-        stream: BudgetPlanService(context: context).budgetPlansStream,
+        stream: BudgetPlanService(context: context, appState: _appState)
+            .budgetPlansStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -165,8 +169,9 @@ class _WishListTabState extends State<WishListTab> {
 
   @override
   Widget build(BuildContext context) {
+    final AppState _appState = Provider.of<AppState>(context);
     return StreamBuilder<List<Wish>>(
-        stream: WishService(context: context).wishStream,
+        stream: WishService(context: context, appState: _appState).wishStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -194,39 +199,40 @@ class _WishListTabState extends State<WishListTab> {
                     return InkWell(
                       child: Ink(
                         child: ListTile(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SingleWish(
-                                        wishId: wishes[index].id,
-                                      )));
-                            },
-                            leading: Icon(
-                              Icons.shopping_cart_outlined,
-                              size: AppSizes.iconSize.sp,
-                              color: Colors.orangeAccent,
-                            ),
-                            title: Text(
-                              wishes[index].name,
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SingleWish(
+                                      wishId: wishes[index].id,
+                                    )));
+                          },
+                          leading: Icon(
+                            Icons.shopping_cart_outlined,
+                            size: AppSizes.iconSize.sp,
+                            color: Colors.orangeAccent,
+                          ),
+                          title: Text(
+                            wishes[index].name,
+                            style:
+                                TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                          ),
+                          subtitle: Text(
+                              dayDate.format(wishes[index].creationDate),
                               style: TextStyle(
-                                  fontSize: AppSizes.normalFontSize.sp),
-                            ),
-                            subtitle: Text(
-                                dayDate.format(wishes[index].creationDate),
-                                style: TextStyle(
-                                    fontSize: AppSizes.normalFontSize.sp)),
-                                                    trailing: FutureBuilder<String?>(
-                            future: SharedPrefs().getCurrency(),
-                            builder: (context, sn) {
-                              return Text(
-                                sn.hasData
-                                    ? '${sn.data!} ${wishes[index].price.toString()}'
-                                    : wishes[index].price.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: AppSizes.normalFontSize.sp,
-                                ),
-                              );
-                            }),),
+                                  fontSize: AppSizes.normalFontSize.sp)),
+                          trailing: FutureBuilder<String?>(
+                              future: SharedPrefs().getCurrency(),
+                              builder: (context, sn) {
+                                return Text(
+                                  sn.hasData
+                                      ? '${sn.data!} ${wishes[index].price.toString()}'
+                                      : wishes[index].price.toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: AppSizes.normalFontSize.sp,
+                                  ),
+                                );
+                              }),
+                        ),
                       ),
                     );
                   }

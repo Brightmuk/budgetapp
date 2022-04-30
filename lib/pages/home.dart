@@ -6,7 +6,9 @@ import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/home_tabs.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/pages/settings.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/widgets/expense_type.dart';
@@ -14,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -82,12 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void newItem() async {
-    // final isLoaded = await interstitialAd.isLoaded;
-    // if (isLoaded ?? false) {
-    //   interstitialAd.show();
-    // } else {
-    //   ToastService(context: context).showSuccessToast('Loading...');
-    // }
     await showModalBottomSheet(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         context: context,
@@ -96,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final AppState _appState = Provider.of<AppState>(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -185,43 +183,82 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       StreamBuilder<List<SpendingPlan>>(
-                          stream: BudgetPlanService().budgetPlansStream,
+                          stream: BudgetPlanService(appState: _appState)
+                              .budgetPlansStream,
                           builder: (context, snapshot) {
                             return CircularPercentIndicator(
                               animation: true,
+                              animateFromLastPercent: true,
                               radius: 150.0.sp,
-                              lineWidth: 15.0.sp,
+                              lineWidth: 10.0.sp,
                               percent: 1,
                               backgroundColor: Colors.white.withOpacity(0.1),
-                              center: Text(
-                                snapshot.hasData
-                                    ? bPTotal(snapshot.data!)
-                                    : '0',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 25.sp,
-                                    fontWeight: FontWeight.bold),
+                              center: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FutureBuilder<String?>(
+                                      future: SharedPrefs().getCurrency(),
+                                      builder: (context, sn) {
+                                        return Text(
+                                          sn.hasData ? sn.data! : '',
+                                          style: TextStyle(
+                                            color:
+                                                Colors.white.withOpacity(0.6),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10,
+                                          ),
+                                        );
+                                      }),
+                                  Text(
+                                    snapshot.hasData
+                                        ? bPTotal(snapshot.data!)
+                                        : '0',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
                               progressColor: Colors.pinkAccent,
                             );
                           }),
                       StreamBuilder<List<Wish>>(
-                          stream: WishService().wishStream,
+                          stream: WishService(appState: _appState).wishStream,
                           builder: (context, snapshot) {
                             return CircularPercentIndicator(
                               animation: true,
+                              animateFromLastPercent: true,
                               radius: 150.0.sp,
-                              lineWidth: 15.0.sp,
+                              lineWidth: 10.0.sp,
                               percent: 1,
                               backgroundColor: Colors.white.withOpacity(0.1),
-                              center: Text(
-                                snapshot.hasData
-                                    ? wishTotal(snapshot.data!)
-                                    : '0',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 25.sp,
-                                    fontWeight: FontWeight.bold),
+                              center: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FutureBuilder<String?>(
+                                      future: SharedPrefs().getCurrency(),
+                                      builder: (context, sn) {
+                                        return Text(
+                                          sn.hasData ? sn.data! : '',
+                                          style: TextStyle(
+                                            color:
+                                                Colors.white.withOpacity(0.6),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10,
+                                          ),
+                                        );
+                                      }),
+                                  Text(
+                                    snapshot.hasData
+                                        ? wishTotal(snapshot.data!)
+                                        : '0',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
                               progressColor: Colors.orangeAccent,
                             );

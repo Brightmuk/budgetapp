@@ -5,6 +5,7 @@ import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/pages/single_budget_plan.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/notification_service.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class AddBudgetPlan extends StatefulWidget {
@@ -54,6 +56,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
 
   @override
   Widget build(BuildContext context) {
+        final AppState _appState = Provider.of<AppState>(context);
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
       child: Padding(
@@ -227,7 +230,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                         expenses: _expenses,
                       );
                       try {
-                        await BudgetPlanService(context: context)
+                        await BudgetPlanService(context: context,appState:_appState)
                             .saveBudgetPlan(budgetPlan: plan)
                             .then((value) async {
                           if (value) {

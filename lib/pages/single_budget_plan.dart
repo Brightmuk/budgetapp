@@ -6,6 +6,7 @@ import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/pages/add_budget_plan.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/load_service.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class SingleBudgetPlan extends StatefulWidget {
   final String budgetPlanId;
@@ -52,6 +54,8 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
 
   @override
   Widget build(BuildContext context) {
+        final AppState _appState = Provider.of<AppState>(context);
+
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
@@ -91,7 +95,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                       ),
                       onPressed: () async {
                         SpendingPlan plan =
-                            await BudgetPlanService(context: context)
+                            await BudgetPlanService(context: context,appState: _appState)
                                 .singleBudgetPlan(widget.budgetPlanId);
                         File pdf = await PDFService.createPdf(plan);
                         await Printing.layoutPdf(
@@ -117,7 +121,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                       ),
                       onPressed: () async {
                         SpendingPlan plan =
-                            await BudgetPlanService(context: context)
+                            await BudgetPlanService(context: context,appState: _appState)
                                 .singleBudgetPlan(widget.budgetPlanId);
                         File pdf = await PDFService.createPdf(plan);
                         await Printing.sharePdf(
@@ -154,7 +158,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
           ),
         ),
         body: FutureBuilder<SpendingPlan>(
-            future: BudgetPlanService(context: context)
+            future: BudgetPlanService(context: context,appState:_appState )
                 .singleBudgetPlan(widget.budgetPlanId),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -292,15 +296,22 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                                     fontSize: AppSizes.normalFontSize.sp,
                                   ),
                                 ),
-                                trailing: Text(
-                                  'ksh.' +
-                                      (plan.expenses[index].quantity *
+                                                      trailing: FutureBuilder<String?>(
+                          future: SharedPrefs().getCurrency(),
+                          builder: (context, sn) {
+                            return Text(
+                              sn.hasData
+                                  ? '${sn.data!} ${(plan.expenses[index].quantity *
                                               plan.expenses[index].price)
-                                          .toString(),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: AppSizes.normalFontSize.sp),
-                                ),
+                                          .toString()}'
+                                  : plan.total.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppSizes.normalFontSize.sp,
+                              ),
+                            );
+                          }),
+
                               );
                             })),
                     SizedBox(
@@ -332,7 +343,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                   size: AppSizes.iconSize.sp,
                 ),
                 onPressed: () async {
-                  SpendingPlan _plan = await BudgetPlanService(context: context)
+                  SpendingPlan _plan = await BudgetPlanService(context: context,appState: _appState)
                       .singleBudgetPlan(widget.budgetPlanId);
                   showModalBottomSheet(
                       isScrollControlled: true,
@@ -365,7 +376,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                             infoText:
                                 'Are you sure you want to delete this Spending plan?',
                             action: () {
-                              BudgetPlanService(context: context)
+                              BudgetPlanService(context: context,appState: _appState)
                                   .deleteBudgetPlan(
                                       budgetPlanId: widget.budgetPlanId);
                             },

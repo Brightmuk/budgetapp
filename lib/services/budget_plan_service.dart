@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,8 @@ import 'package:localstore/localstore.dart';
 
 class BudgetPlanService {
   final BuildContext? context;
-  BudgetPlanService({this.context});
+  final AppState appState;
+  BudgetPlanService({this.context, required this.appState});
 
   static const String budgetPlanCollection = 'budgetPlanCollection';
   final db = Localstore.instance;
@@ -55,22 +57,22 @@ class BudgetPlanService {
         .map(budgetPlanList);
   }
 
-  final List<SpendingPlan> _items = [];
-
   ///Yield the list from stream
   List<SpendingPlan> budgetPlanList(Map<String, dynamic> query) {
     final item = SpendingPlan.fromMap(query);
 
     //Get the item in a list first before we can add it to stream result
-    Iterable<SpendingPlan> plan = _items.where((val) => val.id == item.id);
+    Iterable<SpendingPlan> plan =
+        appState.budgetPlans.where((val) => val.id == item.id);
     if (!plan.isNotEmpty) {
-      _items.add(item);
+      appState.budgetPlans.add(item);
     } else {
-      _items.remove(plan.first);
-      _items.add(item);
+      appState.budgetPlans.remove(plan.first);
+      appState.budgetPlans.add(item);
     }
-    _items.sort((a, b) => b.creationDate.compareTo(a.creationDate));
-    return _items;
+    appState.budgetPlans
+        .sort((a, b) => b.creationDate.compareTo(a.creationDate));
+    return appState.budgetPlans;
   }
 
   ///Delete a budget plan
@@ -80,11 +82,13 @@ class BudgetPlanService {
         .collection(budgetPlanCollection)
         .doc(budgetPlanId)
         .delete()
-        .then((value) => ToastService(context: context!)
-            .showSuccessToast('Spending plan deleted!'))
-        .catchError((e) => ToastService(context: context!)
-            .showSuccessToast('An error occurred!'));
-    _items.clear();
+        .then((value) {
+      appState.deleteBudgetPlan(budgetPlanId);
+      ToastService(context: context!)
+          .showSuccessToast('Spending plan deleted!');
+    }).catchError((e) {
+      ToastService(context: context!).showSuccessToast('An error occurred!');
+    });
     Navigator.pop(context!);
     LoadService(context: context!).hideLoader();
   }

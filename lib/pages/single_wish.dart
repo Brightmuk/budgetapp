@@ -6,6 +6,7 @@ import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/load_service.dart';
@@ -19,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class SingleWish extends StatefulWidget {
   final String wishId;
@@ -41,6 +43,8 @@ class _SingleWishState extends State<SingleWish> {
 
   @override
   Widget build(BuildContext context) {
+    final AppState _appState = Provider.of<AppState>(context);
+
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
@@ -86,7 +90,7 @@ class _SingleWishState extends State<SingleWish> {
           ),
         ),
         body: FutureBuilder<Wish>(
-            future: WishService(context: context).singleWish(widget.wishId),
+            future: WishService(context: context,appState: _appState).singleWish(widget.wishId),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Center(
@@ -217,7 +221,7 @@ class _SingleWishState extends State<SingleWish> {
                   size: AppSizes.iconSize.sp,
                 ),
                 onPressed: () async {
-                  Wish _wish = await WishService(context: context)
+                  Wish _wish = await WishService(context: context,appState: _appState)
                       .singleWish(widget.wishId);
                   showModalBottomSheet(
                       isScrollControlled: true,
@@ -250,11 +254,12 @@ class _SingleWishState extends State<SingleWish> {
                             infoText:
                                 'Are you sure you want to delete this wish?',
                             action: () {
-                              WishService(context: context)
+                              WishService(context: context,appState: _appState)
                                   .deleteWish(wishId: widget.wishId);
                             },
                             actionBtnText: 'Delete',
                           ));
+
                 },
                 backgroundColor: AppColors.themeColor,
               ),

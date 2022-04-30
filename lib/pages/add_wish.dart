@@ -1,9 +1,10 @@
 import 'package:budgetapp/constants/colors.dart';
-import 'package:budgetapp/constants/input_formatters.dart';
+import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/single_wish.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/notification_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
@@ -11,6 +12,7 @@ import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class AddWish extends StatefulWidget {
@@ -45,6 +47,7 @@ class _AddWishState extends State<AddWish> {
 
   @override
   Widget build(BuildContext context) {
+        final AppState _appState = Provider.of<AppState>(context);
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.5,
       child: Padding(
@@ -196,7 +199,7 @@ class _AddWishState extends State<AddWish> {
                           name: _nameC.value.text,
                           reminder: reminder,
                         );
-                        await WishService(context: context)
+                        await WishService(context: context,appState: _appState)
                             .saveWish(wish: wish)
                             .then((value) async {
                           if (value) {

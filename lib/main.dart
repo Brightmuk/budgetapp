@@ -2,11 +2,13 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/pages/home.dart';
 import 'package:budgetapp/pages/single_budget_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/notification_service.dart';
 import 'package:budgetapp/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -27,7 +29,14 @@ void main() async {
       statusBarColor: Color.fromARGB(0, 233, 213, 213),
       statusBarBrightness: Brightness.dark));
 
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<AppState>.value(
+        value: AppState()
+        )
+    ],
+    child: const MyApp()
+    ));
 }
 
 class MyApp extends StatelessWidget {

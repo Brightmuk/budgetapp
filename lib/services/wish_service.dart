@@ -1,4 +1,5 @@
 import 'package:budgetapp/models/wish.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,8 @@ import 'package:localstore/localstore.dart';
 
 class WishService {
   final BuildContext? context;
-  WishService({this.context});
+  final AppState appState;
+  WishService({this.context, required this.appState});
 
   static const String wishCollection = 'wishCollection';
   final db = Localstore.instance;
@@ -45,35 +47,31 @@ class WishService {
     return db.collection(wishCollection).stream.map(wishList);
   }
 
-  final List<Wish> _items = [];
-
   ///Yield the list from stream
   List<Wish> wishList(Map<String, dynamic> query) {
     final item = Wish.fromMap(query);
 
     //Get the item in a list first before we can add it to stream result
-    Iterable<Wish> wish = _items.where((val) => val.id == item.id);
+    Iterable<Wish> wish = appState.wishes.where((val) => val.id == item.id);
     if (!wish.isNotEmpty) {
-      _items.add(item);
+      appState.wishes.add(item);
     } else {
-      _items.remove(wish.first);
-      _items.add(item);
+      appState.wishes.remove(wish.first);
+      appState.wishes.add(item);
     }
-    _items.sort((a, b) => b.creationDate.compareTo(a.creationDate));
-    return _items;
+    appState.wishes.sort((a, b) => b.creationDate.compareTo(a.creationDate));
+    return appState.wishes;
   }
 
   ///Delete a wish
   Future<void> deleteWish({required String wishId}) async {
     LoadService(context: context!).showLoader();
-    await db
-        .collection(wishCollection)
-        .doc(wishId)
-        .delete()
-        .then((value) =>
-            ToastService(context: context!).showSuccessToast('Wish deleted!'))
-        .catchError((e) => ToastService(context: context!)
-            .showSuccessToast('An error occurred!'));
+    await db.collection(wishCollection).doc(wishId).delete().then((value) {
+      appState.deleteWish(wishId);
+      ToastService(context: context!).showSuccessToast('Wish deleted!');
+    }).catchError((e) {
+      ToastService(context: context!).showSuccessToast('An error occurred!');
+    });
     Navigator.pop(context!);
     LoadService(context: context!).hideLoader();
   }
