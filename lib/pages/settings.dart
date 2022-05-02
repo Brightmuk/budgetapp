@@ -22,7 +22,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final Uri _playStoreUrl = Uri.parse(
-      'https://play.google.com/store/apps/details?id=com.brightdesigns.expenditurebuddy');
+      'market://details?id=com.brightdesigns.expenditurebuddy');
   Future<String?> currencyFuture = SharedPrefs().getCurrency();
 
   @override

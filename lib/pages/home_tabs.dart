@@ -37,122 +37,134 @@ class _BudgetListTabState extends State<BudgetListTab> {
   @override
   Widget build(BuildContext context) {
     final AppState _appState = Provider.of<AppState>(context);
-    return StreamBuilder<List<SpendingPlan>>(
-        stream: BudgetPlanService(context: context, appState: _appState)
-            .budgetPlansStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: StreamBuilder<List<SpendingPlan>>(
+          stream: BudgetPlanService(context: context, appState: _appState)
+              .budgetPlansStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error.toString()),
+              );
+            }
 
-          if (snapshot.hasData) {
-            List<SpendingPlan>? plans = snapshot.data;
-            return ListView.builder(
-                controller: _controller,
-                itemCount: plans!.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == plans.length) {
-                    return AdmobBanner(
-                      adUnitId: 'ca-app-pub-1360540534588513/9843905660',
-                      adSize: AdmobBannerSize.FULL_BANNER,
-                      listener:
-                          (AdmobAdEvent event, Map<String, dynamic>? args) {
-                        debugPrint(args.toString());
-                      },
-                      onBannerCreated: (AdmobBannerController controller) {},
+            if (snapshot.hasData) {
+              List<SpendingPlan>? plans = snapshot.data;
+              return ListView.separated(
+                  controller: _controller,
+                  itemCount: plans!.length + 1,
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: 3,
                     );
-                  } else {
-                    return InkWell(
-                      child: Ink(
-                          child: ListTile(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => SingleBudgetPlan(
-                                    budgetPlanId: plans[index].id,
-                                  )));
-                        },
-                        leading: Icon(
-                          Icons.receipt_long_outlined,
-                          size: AppSizes.iconSize.sp,
-                          color: Colors.pinkAccent,
-                        ),
-                        title: Text(
-                          plans[index].title,
-                          style:
-                              TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                        ),
-                        subtitle: Text(
-                            dayDate.format(
-                              plans[index].creationDate,
-                            ),
-                            style: TextStyle(
-                                fontSize: AppSizes.normalFontSize.sp)),
-                        trailing: FutureBuilder<String?>(
-                            future: SharedPrefs().getCurrency(),
-                            builder: (context, sn) {
-                              return Text(
-                                sn.hasData
-                                    ? '${sn.data!} ${AppFormatters.moneyCommaStr(plans[index].total)}'
-                                    : plans[index].total.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: AppSizes.normalFontSize.sp,
-                                ),
-                              );
-                            }),
-                      )),
-                    );
-                  }
-                });
-          } else {
-            return Column(
-              children: [
-                AdmobBanner(
-                  adUnitId: 'ca-app-pub-1360540534588513/9843905660',
-                  adSize: AdmobBannerSize.FULL_BANNER,
-                  listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
-                    debugPrint(args.toString());
                   },
-                  onBannerCreated: (AdmobBannerController controller) {},
-                ),
-                SizedBox(
-                  height: 20.sp,
-                ),
-                Image.asset(
-                  'assets/images/no_spending_plan.png',
-                  width: 700.sp,
-                ),
-                SizedBox(
-                  height: 50.sp,
-                ),
-                Text(
-                  'No Spending plans yet',
-                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                ),
-                SizedBox(
-                  height: 30.sp,
-                ),
-                MaterialButton(
-                    elevation: 0,
-                    color: AppColors.themeColor.withOpacity(0.3),
-                    onPressed: () {
-                      showModalBottomSheet(
-                          isScrollControlled: true,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          context: context,
-                          builder: (context) => const AddBudgetPlan());
+                  itemBuilder: (context, index) {
+                    if (index == plans.length) {
+                      return AdmobBanner(
+                        adUnitId: 'ca-app-pub-1360540534588513/9843905660',
+                        adSize: AdmobBannerSize.FULL_BANNER,
+                        listener:
+                            (AdmobAdEvent event, Map<String, dynamic>? args) {
+                          debugPrint(args.toString());
+                        },
+                        onBannerCreated: (AdmobBannerController controller) {},
+                      );
+                    } else {
+                      return InkWell(
+                        child: Ink(
+                            child: ListTile(
+                          tileColor: AppColors.themeColor.withOpacity(0.03),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SingleBudgetPlan(
+                                      budgetPlanId: plans[index].id,
+                                    )));
+                          },
+                          leading: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.receipt_long_outlined,
+                              size: AppSizes.iconSize.sp,
+                              color: Colors.pinkAccent,
+                            ),
+                          ),
+                          title: Text(
+                            plans[index].title,
+                            style:
+                                TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                          ),
+                          subtitle: Text(
+                              dayDate.format(
+                                plans[index].creationDate,
+                              ),
+                              style: TextStyle(
+                                  fontSize: AppSizes.normalFontSize.sp)),
+                          trailing: FutureBuilder<String?>(
+                              future: SharedPrefs().getCurrency(),
+                              builder: (context, sn) {
+                                return Text(
+                                  sn.hasData
+                                      ? '${sn.data!} ${AppFormatters.moneyCommaStr(plans[index].total)}'
+                                      : plans[index].total.toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: AppSizes.normalFontSize.sp,
+                                  ),
+                                );
+                              }),
+                        )),
+                      );
+                    }
+                  });
+            } else {
+              return Column(
+                children: [
+                  AdmobBanner(
+                    adUnitId: 'ca-app-pub-1360540534588513/9843905660',
+                    adSize: AdmobBannerSize.FULL_BANNER,
+                    listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
+                      debugPrint(args.toString());
                     },
-                    child: const Text(
-                      'CREAT ONE',
-                      style: TextStyle(color: AppColors.themeColor),
-                    )),
-              ],
-            );
-          }
-        });
+                    onBannerCreated: (AdmobBannerController controller) {},
+                  ),
+                  SizedBox(
+                    height: 20.sp,
+                  ),
+                  Image.asset(
+                    'assets/images/no_spending_plan.png',
+                    width: 700.sp,
+                  ),
+                  SizedBox(
+                    height: 50.sp,
+                  ),
+                  Text(
+                    'No Spending plans yet',
+                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                  ),
+                  SizedBox(
+                    height: 30.sp,
+                  ),
+                  MaterialButton(
+                      elevation: 0,
+                      color: AppColors.themeColor.withOpacity(0.3),
+                      onPressed: () {
+                        showModalBottomSheet(
+                            isScrollControlled: true,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            context: context,
+                            builder: (context) => const AddBudgetPlan());
+                      },
+                      child: const Text(
+                        'CREAT ONE',
+                        style: TextStyle(color: AppColors.themeColor),
+                      )),
+                ],
+              );
+            }
+          }),
+    );
   }
 }
 
@@ -171,119 +183,131 @@ class _WishListTabState extends State<WishListTab> {
   @override
   Widget build(BuildContext context) {
     final AppState _appState = Provider.of<AppState>(context);
-    return StreamBuilder<List<Wish>>(
-        stream: WishService(context: context, appState: _appState).wishStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: StreamBuilder<List<Wish>>(
+          stream: WishService(context: context, appState: _appState).wishStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error.toString()),
+              );
+            }
 
-          if (snapshot.hasData) {
-            List<Wish>? wishes = snapshot.data;
-            return ListView.builder(
-                controller: _controller,
-                itemCount: wishes!.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == wishes.length) {
-                    return AdmobBanner(
-                      adUnitId: 'ca-app-pub-1360540534588513/3235895594',
-                      adSize: AdmobBannerSize.FULL_BANNER,
-                      listener:
-                          (AdmobAdEvent event, Map<String, dynamic>? args) {
-                        debugPrint(args.toString());
-                      },
-                      onBannerCreated: (AdmobBannerController controller) {},
+            if (snapshot.hasData) {
+              List<Wish>? wishes = snapshot.data;
+              return ListView.separated(
+                  controller: _controller,
+                  itemCount: wishes!.length + 1,
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: 3,
                     );
-                  } else {
-                    return InkWell(
-                      child: Ink(
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => SingleWish(
-                                      wishId: wishes[index].id,
-                                    )));
-                          },
-                          leading: Icon(
-                            Icons.shopping_cart_outlined,
-                            size: AppSizes.iconSize.sp,
-                            color: Colors.orangeAccent,
-                          ),
-                          title: Text(
-                            wishes[index].name,
-                            style:
-                                TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                          ),
-                          subtitle: Text(
-                              dayDate.format(wishes[index].creationDate),
-                              style: TextStyle(
-                                  fontSize: AppSizes.normalFontSize.sp)),
-                          trailing: FutureBuilder<String?>(
-                              future: SharedPrefs().getCurrency(),
-                              builder: (context, sn) {
-                                return Text(
-                                  sn.hasData
-                                      ? '${sn.data!} ${AppFormatters.moneyCommaStr(wishes[index].price)}'
-                                      : wishes[index].price.toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: AppSizes.normalFontSize.sp,
-                                  ),
-                                );
-                              }),
-                        ),
-                      ),
-                    );
-                  }
-                });
-          } else {
-            return Column(
-              children: [
-                AdmobBanner(
-                  adUnitId: 'ca-app-pub-1360540534588513/3235895594',
-                  adSize: AdmobBannerSize.FULL_BANNER,
-                  listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
-                    debugPrint(args.toString());
                   },
-                  onBannerCreated: (AdmobBannerController controller) {},
-                ),
-                SizedBox(
-                  height: 20.sp,
-                ),
-                Image.asset(
-                  'assets/images/no_wish.png',
-                  width: 700.sp,
-                ),
-                SizedBox(
-                  height: 50.sp,
-                ),
-                Text(
-                  'No wishes yet',
-                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                ),
-                SizedBox(
-                  height: 30.sp,
-                ),
-                MaterialButton(
-                    elevation: 0,
-                    color: AppColors.themeColor.withOpacity(0.3),
-                    onPressed: () {
-                      showModalBottomSheet(
-                          isScrollControlled: true,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          context: context,
-                          builder: (context) => const AddWish());
+                  itemBuilder: (context, index) {
+                    if (index == wishes.length) {
+                      return AdmobBanner(
+                        adUnitId: 'ca-app-pub-1360540534588513/3235895594',
+                        adSize: AdmobBannerSize.FULL_BANNER,
+                        listener:
+                            (AdmobAdEvent event, Map<String, dynamic>? args) {
+                          debugPrint(args.toString());
+                        },
+                        onBannerCreated: (AdmobBannerController controller) {},
+                      );
+                    } else {
+                      return InkWell(
+                        child: Ink(
+                          child: ListTile(
+                            tileColor: AppColors.themeColor.withOpacity(0.03),
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SingleWish(
+                                        wishId: wishes[index].id,
+                                      )));
+                            },
+                            leading: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.shopping_cart_outlined,
+                                size: AppSizes.iconSize.sp,
+                                color: Colors.orangeAccent,
+                              ),
+                            ),
+                            title: Text(
+                              wishes[index].name,
+                              style: TextStyle(
+                                  fontSize: AppSizes.normalFontSize.sp),
+                            ),
+                            subtitle: Text(
+                                dayDate.format(wishes[index].creationDate),
+                                style: TextStyle(
+                                    fontSize: AppSizes.normalFontSize.sp)),
+                            trailing: FutureBuilder<String?>(
+                                future: SharedPrefs().getCurrency(),
+                                builder: (context, sn) {
+                                  return Text(
+                                    sn.hasData
+                                        ? '${sn.data!} ${AppFormatters.moneyCommaStr(wishes[index].price)}'
+                                        : wishes[index].price.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: AppSizes.normalFontSize.sp,
+                                    ),
+                                  );
+                                }),
+                          ),
+                        ),
+                      );
+                    }
+                  });
+            } else {
+              return Column(
+                children: [
+                  AdmobBanner(
+                    adUnitId: 'ca-app-pub-1360540534588513/3235895594',
+                    adSize: AdmobBannerSize.FULL_BANNER,
+                    listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
+                      debugPrint(args.toString());
                     },
-                    child: const Text(
-                      'CREAT ONE',
-                      style: TextStyle(color: AppColors.themeColor),
-                    )),
-              ],
-            );
-          }
-        });
+                    onBannerCreated: (AdmobBannerController controller) {},
+                  ),
+                  SizedBox(
+                    height: 20.sp,
+                  ),
+                  Image.asset(
+                    'assets/images/no_wish.png',
+                    width: 700.sp,
+                  ),
+                  SizedBox(
+                    height: 50.sp,
+                  ),
+                  Text(
+                    'No wishes yet',
+                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                  ),
+                  SizedBox(
+                    height: 30.sp,
+                  ),
+                  MaterialButton(
+                      elevation: 0,
+                      color: AppColors.themeColor.withOpacity(0.3),
+                      onPressed: () {
+                        showModalBottomSheet(
+                            isScrollControlled: true,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            context: context,
+                            builder: (context) => const AddWish());
+                      },
+                      child: const Text(
+                        'CREAT ONE',
+                        style: TextStyle(color: AppColors.themeColor),
+                      )),
+                ],
+              );
+            }
+          }),
+    );
   }
 }

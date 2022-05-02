@@ -189,9 +189,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           builder: (context, snapshot) {
                             return CircularPercentIndicator(
                               animation: true,
+                              linearGradient: const LinearGradient(begin: Alignment.topCenter,end: Alignment.bottomCenter, colors: [
+                                Colors.pinkAccent,
+                                AppColors.themeColor]),
                               animateFromLastPercent: true,
                               radius: 150.0.sp,
-                              lineWidth: 10.0.sp,
+                              lineWidth: 5.0.sp,
                               percent: 1,
                               backgroundColor: Colors.white.withOpacity(0.1),
                               center: Column(
@@ -221,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 ],
                               ),
-                              progressColor: Colors.pinkAccent,
+                              
                             );
                           }),
                       StreamBuilder<List<Wish>>(
@@ -230,8 +233,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             return CircularPercentIndicator(
                               animation: true,
                               animateFromLastPercent: true,
+                               linearGradient: const LinearGradient(begin: Alignment.topCenter,end: Alignment.bottomCenter, colors: [
+                                Colors.orangeAccent,
+                                AppColors.themeColor]),
                               radius: 150.0.sp,
-                              lineWidth: 10.0.sp,
+                              lineWidth: 5.0.sp,
                               percent: 1,
                               backgroundColor: Colors.white.withOpacity(0.1),
                               center: Column(
@@ -261,7 +267,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 ],
                               ),
-                              progressColor: Colors.orangeAccent,
+                              
                             );
                           }),
                     ]),
