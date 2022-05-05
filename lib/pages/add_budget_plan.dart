@@ -107,19 +107,12 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               ListTile(
                 title: const Text('Edit list'),
                 subtitle: Text('${_expenses.length} expense(s) in list'),
-                trailing: FutureBuilder<String?>(
-                    future: SharedPrefs().getCurrency(),
-                    builder: (context, sn) {
-                      return Text(
-                        sn.hasData
-                            ? '${sn.data!} ${total.toString()}'
-                            : total.toString(),
+                trailing: Text( ' ${total.toString()} ${_appState.currentCurrency}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
-                      );
-                    }),
+                      ),
                 onTap: () async {
                   _focusNode.unfocus();
                   var result =

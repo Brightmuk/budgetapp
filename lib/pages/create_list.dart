@@ -7,6 +7,7 @@ import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/expense.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/widgets/share_type.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class CreateList extends StatefulWidget {
   final String? title;
@@ -166,6 +168,8 @@ class _CreateListState extends State<CreateList> {
       );
   @override
   Widget build(BuildContext context) {
+        final AppState _appState = Provider.of<AppState>(context);
+
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
@@ -191,7 +195,7 @@ class _CreateListState extends State<CreateList> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.title ?? 'Quick Budget',
+                      widget.title ?? 'Quick Spending Plan',
                       style: TextStyle(
                           fontSize: 40.sp, fontWeight: FontWeight.bold),
                     ),
@@ -213,19 +217,12 @@ class _CreateListState extends State<CreateList> {
                           fontSize: 40.sp,
                           fontWeight: FontWeight.bold),
                     ),
-                    FutureBuilder<String?>(
-                        future: SharedPrefs().getCurrency(),
-                        builder: (context, sn) {
-                          return Text(
-                            sn.hasData
-                                ? '${sn.data!} ${AppFormatters.moneyCommaStr(_total)}'
-                                : AppFormatters.moneyCommaStr(_total),
+                    Text('${AppFormatters.moneyCommaStr(_total)} ${_appState.currentCurrency} ',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: AppSizes.normalFontSize.sp,
                             ),
-                          );
-                        }),
+                          ),
                   ],
                 )
               ],
@@ -263,29 +260,20 @@ class _CreateListState extends State<CreateList> {
                           expenses.removeAt(index);
                         });
                       },
-                      child: FutureBuilder<String?>(
-                       future: SharedPrefs().getCurrency(),
-                        builder: (context, sn) {
-                          return ListTile(
+                      child:ListTile(
                             title: Text(
                               expenses[index].name.toUpperCase(),
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            subtitle: Text(  sn.hasData? expenses[index].quantity.toString() +
-                                ' unit(s) @ ${sn.data!} ' +
-                                AppFormatters.moneyCommaStr(expenses[index].price):expenses[index].quantity.toString() +
-                                ' unit(s) @   ' +
-                                AppFormatters.moneyCommaStr(expenses[index].price) ),
+                            subtitle: Text(expenses[index].quantity.toString() +
+                                ' unit(s) @' +
+                                AppFormatters.moneyCommaStr(expenses[index].price)+' ${_appState.currentCurrency} ' ),
                             trailing: Text(
-                                    sn.hasData?
-                                    '${sn.data!} ${ AppFormatters.moneyCommaStr((expenses[index].quantity * expenses[index].price))}':
-                                    (expenses[index].quantity * expenses[index].price).toString(),
+                                    '${ AppFormatters.moneyCommaStr((expenses[index].quantity * expenses[index].price))} ${_appState.currentCurrency}',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold),
                                   ),
-                          );
-                        }
-                      ),
+                          ),
                     );
                   }),
             ),
@@ -332,7 +320,7 @@ class _CreateListState extends State<CreateList> {
                     SpendingPlan plan = SpendingPlan(
                         id: DateTime.now().millisecondsSinceEpoch.toString(),
                         total: _total,
-                        title: 'Quick Budget List',
+                        title: 'Quick Spending Plan',
                         creationDate: DateTime.now(),
                         reminderDate: DateTime.now(),
                         reminder: false,

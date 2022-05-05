@@ -61,7 +61,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
         appBar: AppBar(
-           elevation: 0,
+          elevation: 0,
           backgroundColor: Colors.transparent,
           leading: Container(),
           toolbarHeight: AppSizes.minToolBarHeight,
@@ -202,19 +202,13 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
                       ),
-                      trailing: FutureBuilder<String?>(
-                          future: SharedPrefs().getCurrency(),
-                          builder: (context, sn) {
-                            return Text(
-                              sn.hasData
-                                  ? '${sn.data!} ${AppFormatters.moneyCommaStr(plan.total)}'
-                                  : plan.total.toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: AppSizes.normalFontSize.sp,
-                              ),
-                            );
-                          }),
+                      trailing: Text(
+                        ' ${AppFormatters.moneyCommaStr(plan.total)} ${_appState.currentCurrency}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: AppSizes.normalFontSize.sp,
+                        ),
+                      ),
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
@@ -283,7 +277,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                     const Divider(),
                     Expanded(
                         child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount: plan.expenses.length,
                             itemBuilder: (context, index) {
                               return ListTile(
@@ -295,25 +289,20 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                                 ),
                                 subtitle: Text(
                                   plan.expenses[index].quantity.toString() +
-                                      ' unit(s) @ ksh.' +
-                                      plan.expenses[index].price.toString(),
+                                      ' unit(s) @' +
+                                      plan.expenses[index].price.toString() +
+                                      ' ${_appState.currentCurrency}',
                                   style: TextStyle(
                                     fontSize: AppSizes.normalFontSize.sp,
                                   ),
                                 ),
-                                trailing: FutureBuilder<String?>(
-                                    future: SharedPrefs().getCurrency(),
-                                    builder: (context, sn) {
-                                      return Text(
-                                        sn.hasData
-                                            ? '${sn.data!} ${AppFormatters.moneyCommaStr((plan.expenses[index].quantity * plan.expenses[index].price))}'
-                                            : plan.total.toString(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: AppSizes.normalFontSize.sp,
-                                        ),
-                                      );
-                                    }),
+                                trailing: Text(
+                                  '${AppFormatters.moneyCommaStr((plan.expenses[index].quantity * plan.expenses[index].price))} ${_appState.currentCurrency}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: AppSizes.normalFontSize.sp,
+                                  ),
+                                ),
                               );
                             })),
                     SizedBox(

@@ -100,19 +100,12 @@ class _BudgetListTabState extends State<BudgetListTab> {
                               ),
                               style: TextStyle(
                                   fontSize: AppSizes.normalFontSize.sp)),
-                          trailing: FutureBuilder<String?>(
-                              future: SharedPrefs().getCurrency(),
-                              builder: (context, sn) {
-                                return Text(
-                                  sn.hasData
-                                      ? '${sn.data!} ${AppFormatters.moneyCommaStr(plans[index].total)}'
-                                      : plans[index].total.toString(),
+                          trailing: Text('${_appState.currentCurrency} ${AppFormatters.moneyCommaStr(plans[index].total)}',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: AppSizes.normalFontSize.sp,
                                   ),
-                                );
-                              }),
+                                ),
                         )),
                       );
                     }
@@ -243,19 +236,12 @@ class _WishListTabState extends State<WishListTab> {
                                 dayDate.format(wishes[index].creationDate),
                                 style: TextStyle(
                                     fontSize: AppSizes.normalFontSize.sp)),
-                            trailing: FutureBuilder<String?>(
-                                future: SharedPrefs().getCurrency(),
-                                builder: (context, sn) {
-                                  return Text(
-                                    sn.hasData
-                                        ? '${sn.data!} ${AppFormatters.moneyCommaStr(wishes[index].price)}'
-                                        : wishes[index].price.toString(),
+                            trailing: Text('${AppFormatters.moneyCommaStr(wishes[index].price)} ${_appState.currentCurrency}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: AppSizes.normalFontSize.sp,
                                     ),
-                                  );
-                                }),
+                                  ),
                           ),
                         ),
                       );

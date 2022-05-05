@@ -166,19 +166,14 @@ class _SingleWishState extends State<SingleWish> {
                           fontSize: AppSizes.normalFontSize.sp,
                         ),
                       ),
-                      trailing: FutureBuilder<String?>(
-                          future: SharedPrefs().getCurrency(),
-                          builder: (context, sn) {
-                            return Text(
-                              sn.hasData
-                                  ? '${sn.data!} ${AppFormatters.moneyCommaStr(wish.price) }'
-                                  : wish.price.toString(),
+                      trailing: Text(
+                               '${AppFormatters.moneyCommaStr(wish.price)} ${_appState.currentCurrency}'
+                                  ,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: AppSizes.normalFontSize.sp,
                               ),
-                            );
-                          }),
+                            ),
                     ),
                     CheckboxListTile(
                         contentPadding: EdgeInsets.zero,

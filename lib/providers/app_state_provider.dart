@@ -4,15 +4,32 @@ import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/services/wish_service.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/foundation.dart';
 
 enum AdPaymentState { initial, summary, complete, failed }
 
 class AppState extends ChangeNotifier {
+  String? currentCurrency;
+  bool adShown = false;
+
   final List<SpendingPlan> budgetPlans = [];
   final List<Wish> wishes = [];
 
-  void reload() {
+  AppState() {
+    init();
+  }
+
+  void init() async {
+    currentCurrency = await SharedPrefs().getCurrency();
+  }
+
+  void changeAdView() {
+    adShown = !adShown;
+  }
+
+  void setCurrency(Currency currency) {
+    currentCurrency = currency.code;
     notifyListeners();
   }
 

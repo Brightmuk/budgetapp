@@ -9,6 +9,8 @@ import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart' as pp;
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:budgetapp/models/string_modified.dart';
+
 
 class PDFService {
   ///Create a pdf from for sharing or printing
@@ -19,7 +21,6 @@ class PDFService {
     File file = File('$dir/${plan.title}');
 
     String? currency = await SharedPrefs().getCurrency();
-
 
     final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
 
@@ -52,9 +53,9 @@ class PDFService {
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                     pw.Text('Quantity',
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    pw.Text('Unit Price',
+                    pw.Text('Unit Price($currency)',
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    pw.Text('Subtotal',
+                    pw.Text('Subtotal($currency)',
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                   ]),
                   pw.TableRow(children: [pw.SizedBox(height: 20)]),
@@ -62,22 +63,24 @@ class PDFService {
                     pw.TableRow(children: [
                       pw.Padding(
                         padding: const pw.EdgeInsets.only(bottom: 10),
-                        child: pw.Text(el.name),
+                        child: pw.Text(el.name.sentenceCase()),
                       ),
                       pw.Text(el.quantity.toString()),
                       pw.Text(el.price.toString()),
                       pw.Text((el.price * el.quantity).toString()),
                     ]),
                   pw.TableRow(children: [pw.SizedBox(height: 50)]),
+
+                  // const pw.TableRow(decoration: pw.BoxDecoration(border: pw.Border.fromBorderSide(pw.BorderSide(color: PdfColors.grey500))), children: []),
                   pw.TableRow(children: [
                     pw.Text('Total',
                         style: pw.TextStyle(
-                            fontWeight: pw.FontWeight.bold, fontSize: 15)),
+                            fontWeight: pw.FontWeight.bold, fontSize: 14)),
                     pw.Text(''),
                     pw.Text(''),
-                    pw.Text('$currency.${plan.total}',
+                    pw.Text('${plan.total} $currency',
                         style: pw.TextStyle(
-                            fontWeight: pw.FontWeight.bold, fontSize: 15)),
+                            fontWeight: pw.FontWeight.bold, fontSize: 14)),
                   ]),
                 ]),
                 pw.SizedBox(height: 50),

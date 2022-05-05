@@ -5,11 +5,13 @@ import 'package:budgetapp/pages/settings/about_us.dart';
 import 'package:budgetapp/pages/settings/help.dart';
 import 'package:budgetapp/pages/settings/remove_ads.dart';
 import 'package:budgetapp/pages/tour.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:pay/pay.dart';
@@ -26,10 +28,11 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final Uri _playStoreUrl =
       Uri.parse('market://details?id=com.brightdesigns.expenditurebuddy');
-  Future<String?> currencyFuture = SharedPrefs().getCurrency();
 
   @override
   Widget build(BuildContext context) {
+    final AppState _appState = Provider.of<AppState>(context);
+
     return SizedBox(
       child: Scaffold(
         appBar: AppBar(
@@ -38,7 +41,6 @@ class _SettingsPageState extends State<SettingsPage> {
           leading: Container(),
           toolbarHeight: AppSizes.minToolBarHeight,
           flexibleSpace: AnimatedContainer(
-
             padding: const EdgeInsets.all(15),
             duration: const Duration(seconds: 2),
             decoration: BoxDecoration(
@@ -95,30 +97,22 @@ class _SettingsPageState extends State<SettingsPage> {
                   showCurrencyName: true,
                   showCurrencyCode: true,
                   onSelect: (Currency currency) {
-                    SharedPrefs().setCurrency(currency.code);
-                    setState(() {
-                      currencyFuture = SharedPrefs().getCurrency();
-                    });
+                    _appState.setCurrency(currency);
                   },
                 );
               },
-              trailing: FutureBuilder<String?>(
-                  future: currencyFuture,
-                  builder: (context, snapshot) {
-                    return RichText(
-                      text: TextSpan(children: [
-                        TextSpan(
-                            text: 'current ',
-                            style: TextStyle(
-                                fontSize: AppSizes.normalFontSize.sp,
-                                color: Colors.grey)),
-                        TextSpan(
-                            text: snapshot.hasData ? snapshot.data : '.',
-                            style:
-                                TextStyle(fontSize: AppSizes.normalFontSize.sp))
-                      ]),
-                    );
-                  }),
+              trailing: RichText(
+                text: TextSpan(children: [
+                  TextSpan(
+                      text: 'current ',
+                      style: TextStyle(
+                          fontSize: AppSizes.normalFontSize.sp,
+                          color: Colors.grey)),
+                  TextSpan(
+                      text: _appState.currentCurrency,
+                      style: TextStyle(fontSize: AppSizes.normalFontSize.sp))
+                ]),
+              ),
             ),
             ListTile(
               leading: Icon(Icons.info_outline, size: AppSizes.iconSize.sp),

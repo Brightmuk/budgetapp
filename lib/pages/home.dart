@@ -207,19 +207,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               center: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  FutureBuilder<String?>(
-                                      future: SharedPrefs().getCurrency(),
-                                      builder: (context, sn) {
-                                        return Text(
-                                          sn.hasData ? sn.data! : '',
+                                  Text(
+                                          _appState.currentCurrency!,
                                           style: TextStyle(
                                             color:
                                                 Colors.white.withOpacity(0.6),
                                             fontWeight: FontWeight.bold,
                                             fontSize: 10,
                                           ),
-                                        );
-                                      }),
+                                        ),
                                   Text(
                                     snapshot.hasData
                                         ? bPTotal(snapshot.data!)
@@ -253,19 +249,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               center: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  FutureBuilder<String?>(
-                                      future: SharedPrefs().getCurrency(),
-                                      builder: (context, sn) {
-                                        return Text(
-                                          sn.hasData ? sn.data! : '',
+                                  Text(
+                                          _appState.currentCurrency!,
                                           style: TextStyle(
                                             color:
                                                 Colors.white.withOpacity(0.6),
                                             fontWeight: FontWeight.bold,
                                             fontSize: 10,
                                           ),
-                                        );
-                                      }),
+                                        ),
                                   Text(
                                     snapshot.hasData
                                         ? wishTotal(snapshot.data!)
