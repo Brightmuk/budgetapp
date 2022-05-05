@@ -56,6 +56,7 @@ class NotificationService {
       String? description,
       String? payload,
       tz.TZDateTime? scheduling}) async {
+        
     await flutterLocalNotificationsPlugin.zonedSchedule(
         id!,
         title,
@@ -63,8 +64,9 @@ class NotificationService {
         scheduling!,
         const NotificationDetails(
             android: AndroidNotificationDetails('1', 'Reminders',
-                importance: Importance.high,
-                sound: RawResourceAndroidNotificationSound('guitar'),
+                importance: Importance.max,
+                priority: Priority.high,
+                sound: RawResourceAndroidNotificationSound('marimba'),
                 channelDescription: 'Reminds you to perform a task')),
         payload: payload,
         

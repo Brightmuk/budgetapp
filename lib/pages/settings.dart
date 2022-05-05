@@ -38,7 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
           leading: Container(),
           toolbarHeight: AppSizes.minToolBarHeight,
           flexibleSpace: AnimatedContainer(
-            
+
             padding: const EdgeInsets.all(15),
             duration: const Duration(seconds: 2),
             decoration: BoxDecoration(
@@ -162,17 +162,17 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: Text('Rate Us',
                     style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
                 onTap: _launchUrl),
-            ListTile(
-              leading: Icon(Icons.ads_click_sharp, size: AppSizes.iconSize.sp),
-              title: Text('Remove Ads Forever',
-                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
-              onTap: () {
-                showCupertinoModalPopup(
-                  barrierDismissible: false,
-                  context: context, builder: (context) => const Center(child: RemoveAds())
-                  );
-              },
-            ),
+            // ListTile(
+            //   leading: Icon(Icons.ads_click_sharp, size: AppSizes.iconSize.sp),
+            //   title: Text('Remove Ads Forever',
+            //       style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
+            //   onTap: () {
+            //     showCupertinoModalPopup(
+            //       barrierDismissible: false,
+            //       context: context, builder: (context) => const Center(child: RemoveAds())
+            //       );
+            //   },
+            // ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.6,
             ),
