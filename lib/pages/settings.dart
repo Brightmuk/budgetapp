@@ -3,13 +3,16 @@ import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/pages/settings/about_us.dart';
 import 'package:budgetapp/pages/settings/help.dart';
+import 'package:budgetapp/pages/settings/remove_ads.dart';
 import 'package:budgetapp/pages/tour.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:currency_picker/currency_picker.dart';
+import 'package:pay/pay.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
@@ -21,8 +24,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final Uri _playStoreUrl = Uri.parse(
-      'market://details?id=com.brightdesigns.expenditurebuddy');
+  final Uri _playStoreUrl =
+      Uri.parse('market://details?id=com.brightdesigns.expenditurebuddy');
   Future<String?> currencyFuture = SharedPrefs().getCurrency();
 
   @override
@@ -30,10 +33,12 @@ class _SettingsPageState extends State<SettingsPage> {
     return SizedBox(
       child: Scaffold(
         appBar: AppBar(
+          elevation: 0,
           backgroundColor: Colors.transparent,
           leading: Container(),
           toolbarHeight: AppSizes.minToolBarHeight,
           flexibleSpace: AnimatedContainer(
+            
             padding: const EdgeInsets.all(15),
             duration: const Duration(seconds: 2),
             decoration: BoxDecoration(
@@ -82,8 +87,8 @@ class _SettingsPageState extends State<SettingsPage> {
               onTap: () {
                 showCurrencyPicker(
                   theme: CurrencyPickerThemeData(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                   
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                   context: context,
                   showFlag: true,
@@ -157,6 +162,17 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: Text('Rate Us',
                     style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
                 onTap: _launchUrl),
+            ListTile(
+              leading: Icon(Icons.ads_click_sharp, size: AppSizes.iconSize.sp),
+              title: Text('Remove Ads Forever',
+                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
+              onTap: () {
+                showCupertinoModalPopup(
+                  barrierDismissible: false,
+                  context: context, builder: (context) => const Center(child: RemoveAds())
+                  );
+              },
+            ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.6,
             ),

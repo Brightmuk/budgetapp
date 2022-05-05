@@ -61,6 +61,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
         appBar: AppBar(
+           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: Container(),
           toolbarHeight: AppSizes.minToolBarHeight,
@@ -71,90 +72,92 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
               borderRadius: BorderRadius.circular(10),
               color: AppColors.themeColor,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    FloatingActionButton.extended(
-                      elevation: 0,
-                      heroTag: 'print',
-                      label: Text(
-                        'Print',
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      FloatingActionButton.extended(
+                        elevation: 0,
+                        heroTag: 'print',
+                        label: Text(
+                          'Print',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: AppSizes.normalFontSize.sp),
+                        ),
+                        icon: Icon(
+                          Icons.print_outlined,
+                          color: Colors.white,
+                          size: AppSizes.iconSize.sp,
+                        ),
+                        onPressed: () async {
+                          SpendingPlan plan = await BudgetPlanService(
+                                  context: context, appState: _appState)
+                              .singleBudgetPlan(widget.budgetPlanId);
+                          File pdf = await PDFService.createPdf(plan);
+                          await Printing.layoutPdf(
+                              name: '${plan.title}.pdf',
+                              onLayout: (format) async => pdf.readAsBytes());
+                          interstitialAd.show();
+                        },
+                        backgroundColor: AppColors.themeColor,
+                      ),
+                      FloatingActionButton.extended(
+                        elevation: 0,
+                        heroTag: 'share',
+                        label: Text(
+                          'Share',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: AppSizes.normalFontSize.sp),
+                        ),
+                        icon: Icon(
+                          Icons.share_outlined,
+                          color: Colors.white,
+                          size: AppSizes.iconSize.sp,
+                        ),
+                        onPressed: () async {
+                          SpendingPlan plan = await BudgetPlanService(
+                                  context: context, appState: _appState)
+                              .singleBudgetPlan(widget.budgetPlanId);
+                          File pdf = await PDFService.createPdf(plan);
+                          await Printing.sharePdf(
+                              bytes: pdf.readAsBytesSync(),
+                              filename: '${plan.title}.pdf');
+                          interstitialAd.show();
+                        },
+                        backgroundColor: AppColors.themeColor,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Spending plan',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: AppSizes.normalFontSize.sp),
+                            fontSize: AppSizes.titleFont.sp,
+                            fontWeight: FontWeight.bold),
                       ),
-                      icon: Icon(
-                        Icons.print_outlined,
-                        color: Colors.white,
-                        size: AppSizes.iconSize.sp,
+                      IconButton(
+                        icon: Icon(
+                          Icons.clear_outlined,
+                          size: AppSizes.iconSize.sp,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                       ),
-                      onPressed: () async {
-                        SpendingPlan plan = await BudgetPlanService(
-                                context: context, appState: _appState)
-                            .singleBudgetPlan(widget.budgetPlanId);
-                        File pdf = await PDFService.createPdf(plan);
-                        await Printing.layoutPdf(
-                            name: '${plan.title}.pdf',
-                            onLayout: (format) async => pdf.readAsBytes());
-                        interstitialAd.show();
-                      },
-                      backgroundColor: AppColors.themeColor,
-                    ),
-                    FloatingActionButton.extended(
-                      elevation: 0,
-                      heroTag: 'share',
-                      label: Text(
-                        'Share',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: AppSizes.normalFontSize.sp),
-                      ),
-                      icon: Icon(
-                        Icons.share_outlined,
-                        color: Colors.white,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      onPressed: () async {
-                        SpendingPlan plan = await BudgetPlanService(
-                                context: context, appState: _appState)
-                            .singleBudgetPlan(widget.budgetPlanId);
-                        File pdf = await PDFService.createPdf(plan);
-                        await Printing.sharePdf(
-                            bytes: pdf.readAsBytesSync(),
-                            filename: '${plan.title}.pdf');
-                        interstitialAd.show();
-                      },
-                      backgroundColor: AppColors.themeColor,
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Spending plan',
-                      style: TextStyle(
-                          fontSize: AppSizes.titleFont.sp,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.clear_outlined,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -280,6 +283,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                     const Divider(),
                     Expanded(
                         child: ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
                             itemCount: plan.expenses.length,
                             itemBuilder: (context, index) {
                               return ListTile(

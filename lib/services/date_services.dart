@@ -13,6 +13,10 @@ class DateServices {
   static DateFormat dayDateTime = DateFormat('EEE dd, yyy hh:mm');
   static DateFormat time = DateFormat('hh:mm');
 
+  bool isPastDate(DateTime date) {
+    return date.millisecondsSinceEpoch < DateTime.now().millisecondsSinceEpoch;
+  }
+
   Future<DateTime?> getDateAndTime(DateTime selectedDate) async {
     DateTime? dateResult;
     TimeOfDay? timeResult;

@@ -197,14 +197,14 @@ class _AddWishState extends State<AddWish> {
                           reminderDate: _selectedDate,
                           creationDate: DateTime.now(),
                           name: _nameC.value.text,
-                          reminder: reminder,
+                          reminder: DateServices(context: context).isPastDate(_selectedDate)?false:reminder,
                         );
                         await WishService(context: context,appState: _appState)
                             .saveWish(wish: wish)
                             .then((value) async {
                           if (value) {
                             ///only set reminder when user selects it
-                            if (wish.reminder) {
+                            if (wish.reminder&&!DateServices(context: context).isPastDate(_selectedDate)) {
                               await NotificationService().zonedScheduleNotification(
                                   id: int.parse(wish.id.substring(8)),
                                   payload: '{"itemId":$id,"route":"/singlewish"}',

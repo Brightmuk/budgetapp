@@ -51,42 +51,46 @@ class _SingleWishState extends State<SingleWish> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
+          elevation: 0,
           leading: Container(),
           toolbarHeight: AppSizes.minToolBarHeight,
           flexibleSpace: AnimatedContainer(
+            height: AppSizes.minToolBarHeight,
             padding: const EdgeInsets.all(15),
             duration: const Duration(seconds: 2),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: AppColors.themeColor,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Wish',
-                      style: TextStyle(
-                          fontSize: AppSizes.titleFont.sp,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.clear_outlined,
-                        size: AppSizes.iconSize.sp,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Wish',
+                        style: TextStyle(
+                            fontSize: AppSizes.titleFont.sp,
+                            fontWeight: FontWeight.bold),
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                      IconButton(
+                        icon: Icon(
+                          Icons.clear_outlined,
+                          size: AppSizes.iconSize.sp,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

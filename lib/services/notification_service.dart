@@ -2,6 +2,10 @@ import 'package:budgetapp/models/notification_model.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:just_audio/just_audio.dart';
+
+
+final player = AudioPlayer();
 
 ///Stream to get info about notification while app is in background or foreground
 final BehaviorSubject<String?> selectNotificationSubject =
@@ -13,6 +17,7 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 
 
 class NotificationService {
+  
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -22,6 +27,8 @@ class NotificationService {
 
   ///Initialise method thats called when the service starts
   Future<NotificationPayload?> init() async {
+
+
     NotificationPayload? selectedNotificationPayload =
         NotificationPayload(itemId: '', route: '/');
 
@@ -57,8 +64,10 @@ class NotificationService {
         const NotificationDetails(
             android: AndroidNotificationDetails('1', 'Reminders',
                 importance: Importance.high,
+                sound: RawResourceAndroidNotificationSound('guitar'),
                 channelDescription: 'Reminds you to perform a task')),
         payload: payload,
+        
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
@@ -75,10 +84,14 @@ class NotificationService {
         AndroidNotificationDetails('0', 'Popup',
             channelDescription: 'Short reminder',
             timeoutAfter: mils,
+            priority: Priority.high,
+            importance: Importance.high,
+            sound: const RawResourceAndroidNotificationSound('guitar'),
+            fullScreenIntent: true,
             styleInformation: const DefaultStyleInformation(true, true));
     NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(0, 'Timeout notification',
+    await flutterLocalNotificationsPlugin.show(0, 'Time notification',
         'Times out after ${mils! / 1000} seconds', platformChannelSpecifics);
   }
 

@@ -9,6 +9,7 @@ import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/pages/settings.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/notification_service.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
@@ -86,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void newItem() async {
+    // NotificationService().showTimeoutNotification(1000);
     await showModalBottomSheet(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         context: context,
@@ -100,12 +102,13 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
+          elevation: 0,
           backgroundColor: Colors.transparent,
           leading: Container(),
           toolbarHeight: AppSizes.maxToolBarHeight,
           flexibleSpace: AnimatedContainer(
             duration: const Duration(seconds: 2),
-            height: AppSizes(context: context).screenHeight * 0.4,
+            height: AppSizes.maxToolBarHeight,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: AppColors.themeColor,
@@ -189,9 +192,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           builder: (context, snapshot) {
                             return CircularPercentIndicator(
                               animation: true,
-                              linearGradient: const LinearGradient(begin: Alignment.topCenter,end: Alignment.bottomCenter, colors: [
-                                Colors.pinkAccent,
-                                AppColors.themeColor]),
+                              linearGradient: const LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.pinkAccent,
+                                    AppColors.themeColor
+                                  ]),
                               animateFromLastPercent: true,
                               radius: 150.0.sp,
                               lineWidth: 5.0.sp,
@@ -224,7 +231,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 ],
                               ),
-                              
                             );
                           }),
                       StreamBuilder<List<Wish>>(
@@ -233,9 +239,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             return CircularPercentIndicator(
                               animation: true,
                               animateFromLastPercent: true,
-                               linearGradient: const LinearGradient(begin: Alignment.topCenter,end: Alignment.bottomCenter, colors: [
-                                Colors.orangeAccent,
-                                AppColors.themeColor]),
+                              linearGradient: const LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.orangeAccent,
+                                    AppColors.themeColor
+                                  ]),
                               radius: 150.0.sp,
                               lineWidth: 5.0.sp,
                               percent: 1,
@@ -267,7 +277,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 ],
                               ),
-                              
                             );
                           }),
                     ]),
@@ -295,7 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         body: const Padding(
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 50),
+          padding: EdgeInsets.only(bottom: 50),
           child: TabBarView(
             children: [BudgetListTab(), WishListTab()],
           ),

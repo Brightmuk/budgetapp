@@ -218,7 +218,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                     }
                     if (_formKey.currentState!.validate()) {
                       String id =
-                          DateTime.now().millisecondsSinceEpoch.toString();
+                      DateTime.now().millisecondsSinceEpoch.toString();
                       SpendingPlan plan = SpendingPlan(
                         ///If in edit mode use the items id and not new one
                         id: editMode ? widget.plan!.id : id,
@@ -226,7 +226,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                         reminderDate: _selectedDate!,
                         creationDate: DateTime.now(),
                         title: _titleC.value.text,
-                        reminder: remider,
+                        reminder: DateServices(context: context).isPastDate(_selectedDate!) ?false:remider,
                         expenses: _expenses,
                       );
                       try {
@@ -235,7 +235,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                             .then((value) async {
                           if (value) {
                             ///only set reminder if user sets so
-                            if (plan.reminder) {
+                            if (plan.reminder&&!DateServices(context: context).isPastDate(_selectedDate!)) {
                               await NotificationService().zonedScheduleNotification(
                                   id: int.parse(plan.id.substring(8)),
                                   payload:

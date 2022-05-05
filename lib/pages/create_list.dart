@@ -170,6 +170,7 @@ class _CreateListState extends State<CreateList> {
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
         appBar: AppBar(
+          elevation: 0,
           backgroundColor: Colors.transparent,
           leading: Container(),
           toolbarHeight: AppSizes.midToolBarHeight,
