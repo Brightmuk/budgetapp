@@ -168,7 +168,7 @@ class _CreateListState extends State<CreateList> {
       );
   @override
   Widget build(BuildContext context) {
-        final AppState _appState = Provider.of<AppState>(context);
+    final AppState _appState = Provider.of<AppState>(context);
 
     return SizedBox(
       height: MediaQuery.of(context).size.height,
@@ -217,12 +217,13 @@ class _CreateListState extends State<CreateList> {
                           fontSize: 40.sp,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text('${AppFormatters.moneyCommaStr(_total)} ${_appState.currentCurrency} ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: AppSizes.normalFontSize.sp,
-                            ),
-                          ),
+                    Text(
+                      '${AppFormatters.moneyCommaStr(_total)} ${_appState.currentCurrency} ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppSizes.normalFontSize.sp,
+                      ),
+                    ),
                   ],
                 )
               ],
@@ -260,20 +261,20 @@ class _CreateListState extends State<CreateList> {
                           expenses.removeAt(index);
                         });
                       },
-                      child:ListTile(
-                            title: Text(
-                              expenses[index].name.toUpperCase(),
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(expenses[index].quantity.toString() +
-                                ' unit(s) @' +
-                                AppFormatters.moneyCommaStr(expenses[index].price)+' ${_appState.currentCurrency} ' ),
-                            trailing: Text(
-                                    '${ AppFormatters.moneyCommaStr((expenses[index].quantity * expenses[index].price))} ${_appState.currentCurrency}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                          ),
+                      child: ListTile(
+                        title: Text(
+                          expenses[index].name.toUpperCase(),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(expenses[index].quantity.toString() +
+                            ' unit(s) @' +
+                            AppFormatters.moneyCommaStr(expenses[index].price) +
+                            ' ${_appState.currentCurrency} '),
+                        trailing: Text(
+                          '${AppFormatters.moneyCommaStr((expenses[index].quantity * expenses[index].price))} ${_appState.currentCurrency}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     );
                   }),
             ),
@@ -341,7 +342,12 @@ class _CreateListState extends State<CreateList> {
                     //   await Printing.sharePdf(
                     //       bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
                     // }
-                    interstitialAd.show();
+                    if (!_appState.adShown) {
+                      interstitialAd.show();
+                      _appState.changeAdView();
+                    } else {
+                      _appState.changeAdView();
+                    }
                   }
                 }
               : null,

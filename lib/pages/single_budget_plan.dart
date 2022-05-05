@@ -104,7 +104,12 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                           await Printing.layoutPdf(
                               name: '${plan.title}.pdf',
                               onLayout: (format) async => pdf.readAsBytes());
-                          interstitialAd.show();
+                          if (!_appState.adShown) {
+                            interstitialAd.show();
+                            _appState.changeAdView();
+                          }else{
+                            _appState.changeAdView();
+                          }
                         },
                         backgroundColor: AppColors.themeColor,
                       ),
@@ -130,7 +135,12 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                           await Printing.sharePdf(
                               bytes: pdf.readAsBytesSync(),
                               filename: '${plan.title}.pdf');
-                          interstitialAd.show();
+                           if (!_appState.adShown) {
+                            interstitialAd.show();
+                            _appState.changeAdView();
+                          }else{
+                            _appState.changeAdView();
+                          }
                         },
                         backgroundColor: AppColors.themeColor,
                       ),
