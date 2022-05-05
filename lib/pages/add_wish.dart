@@ -152,21 +152,14 @@ class _AddWishState extends State<AddWish> {
                   onTap: reminder?() async {
                     _focusNode.unfocus();
                     _focusNode2.unfocus();
-                          var now =
-                              DateTime.now();
                           final dateResult =
                               await DateServices(context: context)
                                   .getDateAndTime(_selectedDate);
-                          if (dateResult != null&&dateResult.millisecondsSinceEpoch >
-                              now.millisecondsSinceEpoch) {
+                          if (dateResult != null) {
                             setState(() {
                               _selectedDate = dateResult;
                             });
-                          } else if (dateResult!.millisecondsSinceEpoch <
-                              now.millisecondsSinceEpoch) {
-                            ToastService(context: context).showSuccessToast(
-                                'Reminders can only be set an hour from now');
-                          }
+                          } 
                   }:null,
                 ),
               ),
@@ -186,7 +179,16 @@ class _AddWishState extends State<AddWish> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onPressed: () async {
+
                     if (_formKey.currentState!.validate()) {
+                     if (_selectedDate.millisecondsSinceEpoch <
+                        DateTime.now()
+                            .add(const Duration(minutes: 5))
+                            .millisecondsSinceEpoch&&reminder) {
+                      ToastService(context: context).showSuccessToast(
+                          'Reminders need to be a minimum of 5 minutes from now');
+                      return;
+                    }
                       try {
                         String id =
                             DateTime.now().millisecondsSinceEpoch.toString();

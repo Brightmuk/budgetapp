@@ -34,7 +34,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
   final FocusNode _focusNode = FocusNode();
 
   DateTime? _selectedDate = DateTime.now().add(const Duration(hours: 1));
-  late bool remider = false;
+  late bool reminder = false;
   bool exportAsPdf = true;
   int total = 0;
   bool expenseError = false;
@@ -48,7 +48,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
     if (widget.plan != null) {
       _expenses = widget.plan!.expenses;
       total = widget.plan!.total;
-      remider = widget.plan!.reminder;
+      reminder = widget.plan!.reminder;
       _selectedDate = widget.plan!.reminderDate;
       _titleC.text = widget.plan!.title;
     }
@@ -56,7 +56,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
 
   @override
   Widget build(BuildContext context) {
-        final AppState _appState = Provider.of<AppState>(context);
+    final AppState _appState = Provider.of<AppState>(context);
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
       child: Padding(
@@ -111,7 +111,9 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                     future: SharedPrefs().getCurrency(),
                     builder: (context, sn) {
                       return Text(
-                        sn.hasData ? '${sn.data!} ${total.toString()}' : total.toString(),
+                        sn.hasData
+                            ? '${sn.data!} ${total.toString()}'
+                            : total.toString(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: AppSizes.normalFontSize.sp,
@@ -151,7 +153,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               const Divider(),
               CheckboxListTile(
                   activeColor: Colors.greenAccent,
-                  value: remider,
+                  value: reminder,
                   title: Text('Set reminder on',
                       style: TextStyle(fontSize: 35.sp)),
                   subtitle: Text(
@@ -160,11 +162,11 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                   onChanged: (val) {
                     _focusNode.unfocus();
                     setState(() {
-                      remider = val!;
+                      reminder = val!;
                     });
                   }),
               Opacity(
-                opacity: remider ? 1 : 0.5,
+                opacity: reminder ? 1 : 0.5,
                 child: ListTile(
                   leading: const Icon(Icons.calendar_month_outlined),
                   title: Text(
@@ -173,24 +175,16 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                   ),
                   trailing: DateServices(context: context)
                       .dayDateTimeText(_selectedDate!),
-                  onTap: remider
+                  onTap: reminder
                       ? () async {
                           _focusNode.unfocus();
-                          var now =
-                              DateTime.now().add(const Duration(hours: 1));
                           final dateResult =
                               await DateServices(context: context)
                                   .getDateAndTime(_selectedDate!);
-                          if (dateResult != null &&
-                              dateResult.millisecondsSinceEpoch >
-                                  now.millisecondsSinceEpoch) {
+                          if (dateResult != null) {
                             setState(() {
                               _selectedDate = dateResult;
                             });
-                          } else if (dateResult!.millisecondsSinceEpoch <
-                              now.millisecondsSinceEpoch) {
-                            ToastService(context: context).showSuccessToast(
-                                'Reminders can only be set an hour from now');
                           }
                         }
                       : null,
@@ -216,9 +210,17 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       });
                       return;
                     }
+                    if (_selectedDate!.millisecondsSinceEpoch <
+                        DateTime.now()
+                            .add(const Duration(minutes: 5))
+                            .millisecondsSinceEpoch&&reminder) {
+                      ToastService(context: context).showSuccessToast(
+                          'Reminders need to be a minimum of 5 minutes from now');
+                      return;
+                    }
                     if (_formKey.currentState!.validate()) {
                       String id =
-                      DateTime.now().millisecondsSinceEpoch.toString();
+                          DateTime.now().millisecondsSinceEpoch.toString();
                       SpendingPlan plan = SpendingPlan(
                         ///If in edit mode use the items id and not new one
                         id: editMode ? widget.plan!.id : id,
@@ -226,16 +228,22 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                         reminderDate: _selectedDate!,
                         creationDate: DateTime.now(),
                         title: _titleC.value.text,
-                        reminder: DateServices(context: context).isPastDate(_selectedDate!) ?false:remider,
+                        reminder: DateServices(context: context)
+                                .isPastDate(_selectedDate!)
+                            ? false
+                            : reminder,
                         expenses: _expenses,
                       );
                       try {
-                        await BudgetPlanService(context: context,appState:_appState)
+                        await BudgetPlanService(
+                                context: context, appState: _appState)
                             .saveBudgetPlan(budgetPlan: plan)
                             .then((value) async {
                           if (value) {
                             ///only set reminder if user sets so
-                            if (plan.reminder&&!DateServices(context: context).isPastDate(_selectedDate!)) {
+                            if (plan.reminder &&
+                                !DateServices(context: context)
+                                    .isPastDate(_selectedDate!)) {
                               await NotificationService().zonedScheduleNotification(
                                   id: int.parse(plan.id.substring(8)),
                                   payload:
