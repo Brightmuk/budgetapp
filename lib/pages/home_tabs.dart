@@ -126,7 +126,7 @@ class _BudgetListTabState extends State<BudgetListTab> {
                   ),
                   Image.asset(
                     'assets/images/no_spending_plan.png',
-                    width: 700.sp,
+                    width: 500.sp,
                   ),
                   SizedBox(
                     height: 50.sp,
@@ -263,7 +263,7 @@ class _WishListTabState extends State<WishListTab> {
                   ),
                   Image.asset(
                     'assets/images/no_wish.png',
-                    width: 700.sp,
+                    width: 500.sp,
                   ),
                   SizedBox(
                     height: 50.sp,

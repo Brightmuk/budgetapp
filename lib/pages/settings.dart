@@ -3,7 +3,6 @@ import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/pages/settings/about_us.dart';
 import 'package:budgetapp/pages/settings/help.dart';
-import 'package:budgetapp/pages/settings/remove_ads.dart';
 import 'package:budgetapp/pages/tour.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
@@ -28,7 +27,8 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final Uri _playStoreUrl =
       Uri.parse('market://details?id=com.brightdesigns.expenditurebuddy');
-
+  final Uri _donateUrl = Uri.parse(
+      "https://www.paypal.com/donate/?hosted_button_id=Q2HUSVA4CCTTN");
   @override
   Widget build(BuildContext context) {
     final AppState _appState = Provider.of<AppState>(context);
@@ -155,18 +155,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     size: AppSizes.iconSize.sp),
                 title: Text('Rate Us',
                     style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
-                onTap: _launchUrl),
-            // ListTile(
-            //   leading: Icon(Icons.ads_click_sharp, size: AppSizes.iconSize.sp),
-            //   title: Text('Remove Ads Forever',
-            //       style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
-            //   onTap: () {
-            //     showCupertinoModalPopup(
-            //       barrierDismissible: false,
-            //       context: context, builder: (context) => const Center(child: RemoveAds())
-            //       );
-            //   },
-            // ),
+                onTap: () {
+                  _launchUrl(_playStoreUrl);
+                }),
+            ListTile(
+                leading: Icon(Icons.card_giftcard_outlined,
+                    size: AppSizes.iconSize.sp),
+                title: Text('Leave a gift',
+                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
+                onTap: () {
+                   _launchUrl(_donateUrl);
+                }),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.6,
             ),
@@ -192,8 +191,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _launchUrl() async {
-    if (!await launchUrl(_playStoreUrl))
-      throw 'Could not launch $_playStoreUrl';
+  void _launchUrl(Uri url) async {
+    if (!await launchUrl(url)) throw 'Could not launch $_playStoreUrl';
   }
 }

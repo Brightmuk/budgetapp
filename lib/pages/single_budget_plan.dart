@@ -294,8 +294,8 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                                 contentPadding: EdgeInsets.zero,
                                 title: Text(
                                   plan.expenses[index].name.toUpperCase(),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,fontSize: 30.sp),
                                 ),
                                 subtitle: Text(
                                   plan.expenses[index].quantity.toString() +

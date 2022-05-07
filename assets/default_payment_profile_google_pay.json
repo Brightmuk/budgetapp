@@ -1,42 +1,38 @@
+
 {
-    "provider": "google_pay",
-    "data": {
-      "environment": "TEST",
-      "apiVersion": 2,
-      "apiVersionMinor": 0,
-      "shippingAddressRequired":false,
-      "emailRequired":true,
-      "allowedPaymentMethods": [
-        {
-          "type": "CARD",
-          "tokenizationSpecification": {
-            "type": "PAYMENT_GATEWAY",
-            "parameters": {
-                "gateway": "braintree",
-                "braintree:apiVersion": "v1",
-                "braintree:sdkVersion": "braintree.client.VERSION",
-                "braintree:merchantId": "dvk5vcs7ppmrdwk4",
-                "braintree:clientKey": "ba94806ebf88cba3184d1b77c2aa56db"
-            }
-          },
+  "provider": "google_pay",
+  "data": {
+    "environment": "TEST",
+    "apiVersion": 2,
+    "apiVersionMinor": 0,
+    "allowedPaymentMethods": [
+      {
+        "type": "CARD",
+        "tokenizationSpecification": {
+          "type": "PAYMENT_GATEWAY",
           "parameters": {
-            "allowedCardNetworks": ["VISA", "MASTERCARD"],
-            "allowedAuthMethods": ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-            "billingAddressRequired": false
+            "gateway": "example",
+            "gatewayMerchantId": "gatewayMerchantId"
+          }
+        },
+        "parameters": {
+          "allowedCardNetworks": ["VISA", "MASTERCARD"],
+          "allowedAuthMethods": ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+          "billingAddressRequired": true,
+          "billingAddressParameters": {
+            "format": "FULL",
+            "phoneNumberRequired": true
           }
         }
-      ],
-      "merchantInfo": {
-        "merchantId": "dvk5vcs7ppmrdwk4",
-        "merchantName": "Braintree"
-      },
-      "transactionInfo": {
-        "countryCode": "US",
-        "transactionId":"1234-5678-90",
-        "totalPrice":"3.00",
-        "totalPriceLabel":"Remove Ads",
-        "totalPriceStatus":"FINAL",
-        "currencyCode": "USD"
       }
+    ],
+    "merchantInfo": {
+      "merchantId": "01234567890123456789",
+      "merchantName": "Example Merchant Name"
+    },
+    "transactionInfo": {
+      "countryCode": "US",
+      "currencyCode": "USD"
     }
   }
+}

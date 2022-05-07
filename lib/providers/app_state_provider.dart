@@ -1,5 +1,4 @@
 import 'package:budgetapp/models/budget_plan.dart';
-import 'package:budgetapp/models/gPayResult.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
@@ -7,7 +6,6 @@ import 'package:budgetapp/services/wish_service.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/foundation.dart';
 
-enum AdPaymentState { initial, summary, complete, failed }
 
 class AppState extends ChangeNotifier {
   String? currentCurrency;
@@ -45,17 +43,4 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  AdPaymentState adPaymentState = AdPaymentState.initial;
-  GPayResult? gPayResult;
-
-  void updateAdPaymentState(AdPaymentState state) {
-    adPaymentState = state;
-    notifyListeners();
-  }
-
-  void setInitialResult({Map<String, dynamic>? result, AdPaymentState? state}) {
-    adPaymentState = state!;
-    gPayResult = GPayResult.fromMap(result!);
-    notifyListeners();
-  }
 }

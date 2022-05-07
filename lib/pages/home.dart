@@ -161,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         dayDate.format(DateTime.now()),
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 70.sp,
+                            fontSize: 50.sp,
                             fontWeight: FontWeight.w300),
                       ),
                     ],
