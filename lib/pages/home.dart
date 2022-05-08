@@ -327,6 +327,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 backgroundColor: AppColors.themeColor,
               ),
               FloatingActionButton(
+                
                 heroTag: 'New',
                 backgroundColor: AppColors.themeColor,
                 onPressed: newItem,

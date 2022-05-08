@@ -10,7 +10,6 @@ import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
-import 'package:budgetapp/widgets/share_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
@@ -30,16 +29,48 @@ class _CreateListState extends State<CreateList> {
   final TextEditingController _nameC = TextEditingController();
   final TextEditingController _quantityC = TextEditingController();
   final TextEditingController _priceC = TextEditingController();
+  final TextEditingController _amountToSpendC = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
 
   List<Expense> expenses = [];
+  bool reverseMode = false;
+  int amountToSpend = 0;
 
   late AdmobInterstitial interstitialAd;
+
+  void hasViewedReverse() async {
+    bool? hasSeen = await SharedPrefs().seenReverseMode();
+    if (!hasSeen!) {
+      Future.delayed(const Duration(seconds: 1), () {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: const Text('Reverse mode feature'),
+                  content: const Text(
+                      'In reverse mode, you specify the amount of money you wish to spend and each expense added deducts its price from the specified amount.'),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          SharedPrefs().setSeenReverseMode();
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          'OKAY',
+                          style: TextStyle(color: AppColors.themeColor),
+                        ))
+                  ],
+                ));
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    hasViewedReverse();
+
     expenses.addAll(widget.expenses!);
 
     _quantityC.text = '1';
@@ -64,108 +95,15 @@ class _CreateListState extends State<CreateList> {
     return sum;
   }
 
-  Widget expense() => Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-          key: _formKey,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: TextFormField(
-                  focusNode: _focusNode,
-                  controller: _nameC,
-                  cursorColor: AppColors.themeColor,
-                  onFieldSubmitted: (val) {
-                    if (_formKey.currentState!.validate()) {
-                      Expense exp = Expense(
-                          price: int.parse(_priceC.value.text),
-                          index: 0,
-                          quantity: int.parse(_quantityC.value.text),
-                          name: _nameC.value.text);
-                      setState(() {
-                        expenses.add(exp);
-                      });
-                      _nameC.clear();
-                      _quantityC.text = '1';
-                      _priceC.clear();
-                      _focusNode.requestFocus();
-                    }
-                  },
-                  decoration: AppStyles()
-                      .textFieldDecoration(label: 'Name', hintText: 'Food'),
-                  validator: (val) {
-                    if (val!.isEmpty) {
-                      return 'Name is required';
-                    }
-                  },
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2,
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  controller: _quantityC,
-                  onFieldSubmitted: (val) {
-                    if (_formKey.currentState!.validate()) {
-                      Expense exp = Expense(
-                          price: int.parse(val),
-                          index: 0,
-                          quantity: int.parse(_quantityC.value.text),
-                          name: _nameC.value.text);
-                      setState(() {
-                        expenses.add(exp);
-                      });
-                      _nameC.clear();
-                      _quantityC.text = '1';
-                      _priceC.clear();
-                      _focusNode.requestFocus();
-                    }
-                  },
-                  cursorColor: AppColors.themeColor,
-                  decoration: AppStyles().textFieldDecoration(
-                    label: 'Quantity',
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2,
-                child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    controller: _priceC,
-                    onFieldSubmitted: (val) {
-                      if (_formKey.currentState!.validate()) {
-                        Expense exp = Expense(
-                            price: int.parse(val),
-                            index: 0,
-                            quantity: int.parse(_quantityC.value.text),
-                            name: _nameC.value.text);
-                        setState(() {
-                          expenses.add(exp);
-                        });
-                        _nameC.clear();
-                        _quantityC.text = '1';
-                        _priceC.clear();
-                        _focusNode.requestFocus();
-                      }
-                    },
-                    cursorColor: AppColors.themeColor,
-                    decoration: AppStyles().textFieldDecoration(
-                        label: 'Unit Price', hintText: '300'),
-                    validator: (val) {
-                      if (val!.isEmpty) {
-                        return 'Price is required';
-                      }
-                      return null;
-                    }),
-              ),
-            ],
-          ),
-        ),
-      );
+  int get _balance {
+    int sum = amountToSpend;
+    for (Expense val in expenses) {
+      sum -= val.quantity * val.price;
+    }
+
+    return sum;
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppState _appState = Provider.of<AppState>(context);
@@ -177,7 +115,7 @@ class _CreateListState extends State<CreateList> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: Container(),
-          toolbarHeight: AppSizes.midToolBarHeight,
+          toolbarHeight: AppSizes.midToolBarHeight + 60,
           flexibleSpace: AnimatedContainer(
             padding: const EdgeInsets.all(15),
             duration: const Duration(seconds: 2),
@@ -207,21 +145,70 @@ class _CreateListState extends State<CreateList> {
                     ),
                   ],
                 ),
+                const Divider(
+                  height: 5,
+                ),
+                Row(
+                  children: [
+                    const Text('Reverse Mode'),
+                    Switch(
+                        value: reverseMode,
+                        onChanged: (val) {
+                          if (val) {
+                            showAmountInput();
+                          } else {
+                            setState(() {
+                              amountToSpend = 0;
+                            });
+                          }
+                          setState(() {
+                            reverseMode = val;
+                          });
+                        }),
+                  ],
+                ),
+                const Divider(
+                  height: 5,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Total',
+                      reverseMode ? 'Balance' : 'Total',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 40.sp,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      '${AppFormatters.moneyCommaStr(_total)} ${_appState.currentCurrency} ',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: AppSizes.normalFontSize.sp,
+                    SizedBox(
+                      width: AppSizes(context: context).screenWidth * 0.5,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            '${AppFormatters.moneyCommaStr(reverseMode ? _balance : _total)} ${_appState.currentCurrency} ',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppSizes.normalFontSize.sp,
+                                color: reverseMode && _balance < 0
+                                    ? Colors.redAccent
+                                    : Colors.white),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Visibility(
+                              visible: reverseMode,
+                              child: GestureDetector(
+                                child: const Icon(
+                                  Icons.edit_outlined,
+                                  size: 15,
+                                ),
+                                onTap: () {
+                                  showAmountInput();
+                                },
+                              ))
+                        ],
                       ),
                     ),
                   ],
@@ -367,6 +354,160 @@ class _CreateListState extends State<CreateList> {
                   color: Colors.white,
                   size: 50.sp,
                 ),
+        ),
+      ),
+    );
+  }
+
+  Widget expense() => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Form(
+          key: _formKey,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: TextFormField(
+                  focusNode: _focusNode,
+                  controller: _nameC,
+                  cursorColor: AppColors.themeColor,
+                  onFieldSubmitted: (val) {
+                    if (_formKey.currentState!.validate()) {
+                      Expense exp = Expense(
+                          price: int.parse(_priceC.value.text),
+                          index: 0,
+                          quantity: int.parse(_quantityC.value.text),
+                          name: _nameC.value.text);
+                      setState(() {
+                        expenses.add(exp);
+                      });
+                      _nameC.clear();
+                      _quantityC.text = '1';
+                      _priceC.clear();
+                      _focusNode.requestFocus();
+                    }
+                  },
+                  decoration: AppStyles()
+                      .textFieldDecoration(label: 'Name', hintText: 'Food'),
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return 'Name is required';
+                    }
+                  },
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.2,
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  controller: _quantityC,
+                  onFieldSubmitted: (val) {
+                    if (_formKey.currentState!.validate()) {
+                      Expense exp = Expense(
+                          price: int.parse(val),
+                          index: 0,
+                          quantity: int.parse(_quantityC.value.text),
+                          name: _nameC.value.text);
+                      setState(() {
+                        expenses.add(exp);
+                      });
+                      _nameC.clear();
+                      _quantityC.text = '1';
+                      _priceC.clear();
+                      _focusNode.requestFocus();
+                    }
+                  },
+                  cursorColor: AppColors.themeColor,
+                  decoration: AppStyles().textFieldDecoration(
+                    label: 'Quantity',
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.2,
+                child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    controller: _priceC,
+                    onFieldSubmitted: (val) {
+                      if (_formKey.currentState!.validate()) {
+                        Expense exp = Expense(
+                            price: int.parse(val),
+                            index: 0,
+                            quantity: int.parse(_quantityC.value.text),
+                            name: _nameC.value.text);
+                        setState(() {
+                          expenses.add(exp);
+                        });
+                        _nameC.clear();
+                        _quantityC.text = '1';
+                        _priceC.clear();
+                        _focusNode.requestFocus();
+                      }
+                    },
+                    cursorColor: AppColors.themeColor,
+                    decoration: AppStyles().textFieldDecoration(
+                        label: 'Unit Price', hintText: '300'),
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        return 'Price is required';
+                      }
+                      return null;
+                    }),
+              ),
+            ],
+          ),
+        ),
+      );
+
+  void showAmountInput() {
+    if (amountToSpend > 0) _amountToSpendC.text = amountToSpend.toString();
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => WillPopScope(
+        onWillPop: () async {
+          if (_amountToSpendC.value.text.isEmpty) {
+            setState(() {
+              reverseMode = false;
+            });
+          }
+          _amountToSpendC.clear();
+          return true;
+        },
+        child: AlertDialog(
+          title: const Text('Amount to be spent'),
+          content: TextFormField(
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            controller: _amountToSpendC,
+            onFieldSubmitted: (val) {
+              setState(() {
+                amountToSpend = int.parse(val);
+              });
+              _amountToSpendC.clear();
+              Navigator.pop(context);
+            },
+            cursorColor: AppColors.themeColor,
+            decoration: AppStyles()
+                .textFieldDecoration(label: 'Amount', hintText: '10000'),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  setState(() {
+                    amountToSpend = int.parse(_amountToSpendC.value.text);
+                  });
+                  _amountToSpendC.clear();
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'OKAY',
+                  style: TextStyle(color: AppColors.themeColor),
+                ))
+          ],
         ),
       ),
     );
