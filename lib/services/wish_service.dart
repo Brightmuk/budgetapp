@@ -76,20 +76,4 @@ class WishService {
     LoadService(context: context!).hideLoader();
   }
 
-  ///Edit a wish
-  Future<void> editWish(
-      {required String field,
-      required dynamic value,
-      required String wishId}) async {
-    LoadService(context: context!).showLoader();
-    await db
-        .collection(wishCollection)
-        .doc(wishId)
-        .set({field: value}, SetOptions(merge: true))
-        .then((value) =>
-            ToastService(context: context!).showSuccessToast('Wish edited!'))
-        .catchError((e) => ToastService(context: context!)
-            .showSuccessToast('An error occurred!'));
-    LoadService(context: context!).hideLoader();
-  }
 }

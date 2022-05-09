@@ -29,12 +29,12 @@ class BudgetPlanService {
         .set(budgetPlan.toMap())
         .then((value) {
       LoadService(context: context!).hideLoader();
-      // ToastService(context: context!).showSuccessToast('Spending plan saved!');
+      ToastService(context: context!).showSuccessToast('Spending plan saved!');
 
       returnValue = true;
     }).catchError((e) {
       LoadService(context: context!).hideLoader();
-      // ToastService(context: context!).showSuccessToast('An error occurred!');
+      ToastService(context: context!).showSuccessToast('An error occurred!');
       returnValue = false;
     });
     return returnValue;
@@ -93,20 +93,5 @@ class BudgetPlanService {
     LoadService(context: context!).hideLoader();
   }
 
-  ///Edit a budget plan
-  Future<void> editBudgetPlan(
-      {required String field,
-      required dynamic value,
-      required String budgetPlanId}) async {
-    LoadService(context: context!).showLoader();
-    await db
-        .collection(budgetPlanCollection)
-        .doc(budgetPlanId)
-        .set({field: value}, SetOptions(merge: true))
-        .then((value) => ToastService(context: context!)
-            .showSuccessToast('Spending plan edited!'))
-        .catchError((e) => ToastService(context: context!)
-            .showSuccessToast('An error occurred!'));
-    LoadService(context: context!).hideLoader();
-  }
+
 }
