@@ -72,102 +72,100 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
               borderRadius: BorderRadius.circular(10),
               color: AppColors.themeColor,
             ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      FloatingActionButton.extended(
-                        elevation: 0,
-                        heroTag: 'print',
-                        label: Text(
-                          'Print',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: AppSizes.normalFontSize.sp),
-                        ),
-                        icon: Icon(
-                          Icons.print_outlined,
-                          color: Colors.white,
-                          size: AppSizes.iconSize.sp,
-                        ),
-                        onPressed: () async {
-                          SpendingPlan plan = await BudgetPlanService(
-                                  context: context, appState: _appState)
-                              .singleBudgetPlan(widget.budgetPlanId);
-                          File pdf = await PDFService.createPdf(plan);
-                          await Printing.layoutPdf(
-                              name: '${plan.title}.pdf',
-                              onLayout: (format) async => pdf.readAsBytes());
-                          if (!_appState.adShown) {
-                            interstitialAd.show();
-                            _appState.changeAdView();
-                          }else{
-                            _appState.changeAdView();
-                          }
-                        },
-                        backgroundColor: AppColors.themeColor,
-                      ),
-                      FloatingActionButton.extended(
-                        elevation: 0,
-                        heroTag: 'share',
-                        label: Text(
-                          'Share',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: AppSizes.normalFontSize.sp),
-                        ),
-                        icon: Icon(
-                          Icons.share_outlined,
-                          color: Colors.white,
-                          size: AppSizes.iconSize.sp,
-                        ),
-                        onPressed: () async {
-                          SpendingPlan plan = await BudgetPlanService(
-                                  context: context, appState: _appState)
-                              .singleBudgetPlan(widget.budgetPlanId);
-                          File pdf = await PDFService.createPdf(plan);
-                          await Printing.sharePdf(
-                              bytes: pdf.readAsBytesSync(),
-                              filename: '${plan.title}.pdf');
-                           if (!_appState.adShown) {
-                            interstitialAd.show();
-                            _appState.changeAdView();
-                          }else{
-                            _appState.changeAdView();
-                          }
-                        },
-                        backgroundColor: AppColors.themeColor,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Spending plan',
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    FloatingActionButton.extended(
+                      elevation: 0,
+                      heroTag: 'print',
+                      label: Text(
+                        'Print',
                         style: TextStyle(
-                            fontSize: AppSizes.titleFont.sp,
-                            fontWeight: FontWeight.bold),
+                            color: Colors.white,
+                            fontSize: AppSizes.normalFontSize.sp),
                       ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.clear_outlined,
-                          size: AppSizes.iconSize.sp,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
+                      icon: Icon(
+                        Icons.print_outlined,
+                        color: Colors.white,
+                        size: AppSizes.iconSize.sp,
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                      onPressed: () async {
+                        SpendingPlan plan = await BudgetPlanService(
+                                context: context, appState: _appState)
+                            .singleBudgetPlan(widget.budgetPlanId);
+                        File pdf = await PDFService.createPdf(plan);
+                        await Printing.layoutPdf(
+                            name: '${plan.title}.pdf',
+                            onLayout: (format) async => pdf.readAsBytes());
+                        if (!_appState.adShown) {
+                          interstitialAd.show();
+                          _appState.changeAdView();
+                        } else {
+                          _appState.changeAdView();
+                        }
+                      },
+                      backgroundColor: AppColors.themeColor,
+                    ),
+                    FloatingActionButton.extended(
+                      elevation: 0,
+                      heroTag: 'share',
+                      label: Text(
+                        'Share',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: AppSizes.normalFontSize.sp),
+                      ),
+                      icon: Icon(
+                        Icons.share_outlined,
+                        color: Colors.white,
+                        size: AppSizes.iconSize.sp,
+                      ),
+                      onPressed: () async {
+                        SpendingPlan plan = await BudgetPlanService(
+                                context: context, appState: _appState)
+                            .singleBudgetPlan(widget.budgetPlanId);
+                        File pdf = await PDFService.createPdf(plan);
+                        await Printing.sharePdf(
+                            bytes: pdf.readAsBytesSync(),
+                            filename: '${plan.title}.pdf');
+                        if (!_appState.adShown) {
+                          interstitialAd.show();
+                          _appState.changeAdView();
+                        } else {
+                          _appState.changeAdView();
+                        }
+                      },
+                      backgroundColor: AppColors.themeColor,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Spending plan',
+                      style: TextStyle(
+                          fontSize: AppSizes.titleFont.sp,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.clear_outlined,
+                        size: AppSizes.iconSize.sp,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -185,15 +183,19 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
 
                 return Padding(
                   padding: const EdgeInsets.all(20),
-                  child: Column(children: <Widget>[
+                  child: ListView(
+                    
+                    children: <Widget>[
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      plan!.title,
-                      style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,
-                          fontWeight: FontWeight.bold),
+                    Center(
+                      child: Text(
+                        plan!.title,
+                        style: TextStyle(
+                            fontSize: AppSizes.normalFontSize.sp,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -275,46 +277,48 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      'Expenses',
-                      style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,
-                          fontWeight: FontWeight.bold),
+                    Center(
+                      child: Text(
+                        'Expenses',
+                        style: TextStyle(
+                            fontSize: AppSizes.normalFontSize.sp,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
                     const Divider(),
-                    Expanded(
-                        child: ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: plan.expenses.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                title: Text(
-                                  plan.expenses[index].name.toUpperCase(),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,fontSize: 30.sp),
-                                ),
-                                subtitle: Text(
-                                  plan.expenses[index].quantity.toString() +
-                                      ' unit(s) @' +
-                                      plan.expenses[index].price.toString() +
-                                      ' ${_appState.currentCurrency}',
-                                  style: TextStyle(
-                                    fontSize: AppSizes.normalFontSize.sp,
-                                  ),
-                                ),
-                                trailing: Text(
-                                  '${AppFormatters.moneyCommaStr((plan.expenses[index].quantity * plan.expenses[index].price))} ${_appState.currentCurrency}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: AppSizes.normalFontSize.sp,
-                                  ),
-                                ),
-                              );
-                            })),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: plan.expenses.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              plan.expenses[index].name.toUpperCase(),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 30.sp),
+                            ),
+                            subtitle: Text(
+                              plan.expenses[index].quantity.toString() +
+                                  ' unit(s) @' +
+                                  plan.expenses[index].price.toString() +
+                                  ' ${_appState.currentCurrency}',
+                              style: TextStyle(
+                                fontSize: AppSizes.normalFontSize.sp,
+                              ),
+                            ),
+                            trailing: Text(
+                              '${AppFormatters.moneyCommaStr((plan.expenses[index].quantity * plan.expenses[index].price))} ${_appState.currentCurrency}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppSizes.normalFontSize.sp,
+                              ),
+                            ),
+                          );
+                        }),
                     SizedBox(
                       height: 150.sp,
                     ),

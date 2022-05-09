@@ -4,7 +4,7 @@ import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
-import 'package:budgetapp/pages/single_budget_plan.dart';
+import 'package:budgetapp/pages/single_spending_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
@@ -17,6 +17,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:budgetapp/constants/formatters.dart';
 
 class AddBudgetPlan extends StatefulWidget {
   ///This is parsed when in edit mode
@@ -107,7 +108,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
               ListTile(
                 title: const Text('Edit list'),
                 subtitle: Text('${_expenses.length} expense(s) in list'),
-                trailing: Text( ' ${total.toString()} ${_appState.currentCurrency}',
+                trailing: Text( ' ${AppFormatters.moneyCommaStr(total)} ${_appState.currentCurrency}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: AppSizes.normalFontSize.sp,

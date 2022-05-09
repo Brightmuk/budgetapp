@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart' as pp;
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:budgetapp/models/string_modified.dart';
+import 'package:budgetapp/constants/formatters.dart';
 
 
 class PDFService {
@@ -26,6 +27,7 @@ class PDFService {
 
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
+        
         build: (pw.Context context) {
           return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -66,8 +68,8 @@ class PDFService {
                         child: pw.Text(el.name.sentenceCase()),
                       ),
                       pw.Text(el.quantity.toString()),
-                      pw.Text(el.price.toString()),
-                      pw.Text((el.price * el.quantity).toString()),
+                      pw.Text(AppFormatters.moneyCommaStr(el.price)),
+                      pw.Text(AppFormatters.moneyCommaStr(el.price * el.quantity)),
                     ]),
                   pw.TableRow(children: [pw.SizedBox(height: 50)]),
 
@@ -78,7 +80,7 @@ class PDFService {
                             fontWeight: pw.FontWeight.bold, fontSize: 14)),
                     pw.Text(''),
                     pw.Text(''),
-                    pw.Text('${plan.total} $currency',
+                    pw.Text('${AppFormatters.moneyCommaStr(plan.total)} $currency',
                         style: pw.TextStyle(
                             fontWeight: pw.FontWeight.bold, fontSize: 14)),
                   ]),
@@ -94,20 +96,4 @@ class PDFService {
     return await file.writeAsBytes(await pdf.save());
   }
 
-  static Future saveInStorage(
-      String fileName, Uint8List file, BuildContext context) async {
-    if (await Permission.manageExternalStorage.request().isGranted) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Okay')));
-      final directory = (await pp.getExternalStorageDirectories(
-          type: pp.StorageDirectory.documents));
-
-      File path = File("${directory?.first.path}/$fileName");
-      path.writeAsBytes(file);
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Issue')));
-      await Permission.manageExternalStorage.request();
-    }
-  }
 }

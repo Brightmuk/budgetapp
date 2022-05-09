@@ -1,6 +1,6 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/pages/home.dart';
-import 'package:budgetapp/pages/single_budget_plan.dart';
+import 'package:budgetapp/pages/single_spending_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/notification_service.dart';

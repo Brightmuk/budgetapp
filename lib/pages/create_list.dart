@@ -43,31 +43,6 @@ class _CreateListState extends State<CreateList> {
 
   late AdmobInterstitial interstitialAd;
 
-  void hasViewedReverse() async {
-    bool? hasSeen = await SharedPrefs().seenReverseMode();
-    if (!hasSeen!) {
-      Future.delayed(const Duration(seconds: 1), () {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: const Text('Reverse mode feature'),
-                  content: const Text(
-                      'In reverse mode, you specify the amount of money you wish to spend and each expense added deducts its price from the specified amount.'),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          SharedPrefs().setSeenReverseMode();
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          'OKAY',
-                          style: TextStyle(color: AppColors.themeColor),
-                        ))
-                  ],
-                ));
-      });
-    }
-  }
 
   @override
   void initState() {
@@ -393,10 +368,10 @@ class _CreateListState extends State<CreateList> {
                     }
                   },
                   decoration: AppStyles()
-                      .textFieldDecoration(label: 'Name', hintText: 'Food'),
+                      .textFieldDecoration(label: 'Item', hintText: 'Food'),
                   validator: (val) {
                     if (val!.isEmpty) {
-                      return 'Name is required';
+                      return 'Item name is required';
                     }
                   },
                 ),
@@ -519,4 +494,30 @@ class _CreateListState extends State<CreateList> {
       ),
     );
   }
+    void hasViewedReverse() async {
+    bool? hasSeen = await SharedPrefs().seenReverseMode();
+    if (!hasSeen!) {
+      Future.delayed(const Duration(seconds: 1), () {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: const Text('Reverse mode feature'),
+                  content: const Text(
+                      'In reverse mode, you specify the amount of money you wish to spend and each expense added deducts its price from the specified amount.'),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          SharedPrefs().setSeenReverseMode();
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          'OKAY',
+                          style: TextStyle(color: AppColors.themeColor),
+                        ))
+                  ],
+                ));
+      });
+    }
+  }
+
 }

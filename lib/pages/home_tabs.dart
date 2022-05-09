@@ -6,7 +6,7 @@ import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/add_budget_plan.dart';
 import 'package:budgetapp/pages/add_wish.dart';
-import 'package:budgetapp/pages/single_budget_plan.dart';
+import 'package:budgetapp/pages/single_spending_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
