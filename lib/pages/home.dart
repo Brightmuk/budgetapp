@@ -89,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void newItem() async {
     // NotificationService().showTimeoutNotification(1000);
     await showModalBottomSheet(
+    
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         context: context,
         builder: (context) => const ExpenseType());
@@ -101,6 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
       length: 2,
       child: Scaffold(
         key: _scaffoldKey,
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,

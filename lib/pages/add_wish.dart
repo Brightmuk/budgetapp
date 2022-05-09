@@ -49,7 +49,7 @@ class _AddWishState extends State<AddWish> {
   Widget build(BuildContext context) {
         final AppState _appState = Provider.of<AppState>(context);
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.6,
       child: Padding(
         padding: EdgeInsets.all(AppSizes.pagePading.sp),
         child: Stack(
