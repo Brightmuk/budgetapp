@@ -7,9 +7,12 @@ import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/expense.dart';
+import 'package:budgetapp/pages/add_budget_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
+import 'package:budgetapp/services/toast_service.dart';
+import 'package:budgetapp/widgets/share_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
@@ -31,8 +34,8 @@ class _CreateListState extends State<CreateList> {
   final TextEditingController _priceC = TextEditingController();
   final TextEditingController _amountToSpendC = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-
   final _formKey = GlobalKey<FormState>();
+  final ScrollController _sc = ScrollController();
 
   List<Expense> expenses = [];
   bool reverseMode = false;
@@ -218,6 +221,7 @@ class _CreateListState extends State<CreateList> {
           ),
         ),
         body: SingleChildScrollView(
+          controller: _sc,
           child: Column(children: <Widget>[
             const SizedBox(
               height: 20,
@@ -278,7 +282,7 @@ class _CreateListState extends State<CreateList> {
             ),
             expense(),
             SizedBox(
-              height: 150.sp,
+              height: 100.sp,
             ),
             Text('Hit enter to save item',
                 style: TextStyle(fontSize: 13, color: Colors.grey[500])),
@@ -299,12 +303,6 @@ class _CreateListState extends State<CreateList> {
                     if (expenses.isEmpty) {
                       return;
                     }
-                    // bool asPdf = await showModalBottomSheet(
-                    //     shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(20)),
-                    //     context: context,
-                    //     builder: (context) => const ShareType());
-                    // if (asPdf) {
                     SpendingPlan plan = SpendingPlan(
                         id: DateTime.now().millisecondsSinceEpoch.toString(),
                         total: _total,
@@ -313,22 +311,25 @@ class _CreateListState extends State<CreateList> {
                         reminderDate: DateTime.now(),
                         reminder: false,
                         expenses: expenses);
-                    File pdf = await PDFService.createPdf(plan);
-                    await Printing.sharePdf(
-                        bytes: pdf.readAsBytesSync(),
-                        filename: '${plan.title}.pdf');
-                    // }
-                    // } else {
-                    //   File pdf = await PDFService.createPdf('new');
-                    //   await for (var page in Printing.raster(pdf.readAsBytesSync(),
-                    //       pages: [0, 1], dpi: 72)) {
-                    //     final image = await page.toImage();
-                    //     image.toByteData();
-                    //   }
+                    bool share = await showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        context: context,
+                        builder: (context) => const QuickListoptions());
 
-                    //   await Printing.sharePdf(
-                    //       bytes: pdf.readAsBytesSync(), filename: 'my-document.pdf');
-                    // }
+                    if (share) {
+                      File pdf = await PDFService.createPdf(plan);
+                      await Printing.sharePdf(
+                          bytes: pdf.readAsBytesSync(),
+                          filename: '${plan.title}.pdf');
+                    } else {
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          context: context,
+                          builder: (context) => AddBudgetPlan(plan: plan));
+                    }
                     if (!_appState.adShown) {
                       interstitialAd.show();
                       _appState.changeAdView();
@@ -338,29 +339,31 @@ class _CreateListState extends State<CreateList> {
                   }
                 }
               : null,
-          tooltip: 'Share',
-          label: Text(
-            widget.title != null ? 'Done' : 'Share',
+          tooltip: 'Done',
+          label: Text( 'Done' ,
             style: TextStyle(color: Colors.white, fontSize: 35.sp),
           ),
-          icon: widget.title != null
-              ? Icon(
+          icon: Icon(
                   Icons.done,
                   color: Colors.white,
                   size: 50.sp,
                 )
-              : Icon(
-                  Icons.receipt_outlined,
-                  color: Colors.white,
-                  size: 50.sp,
-                ),
+              
         ),
       ),
     );
   }
+  // WidgetsBinding.instance!.window.viewInsets.bottom > 0.0?null:
+
+  void scrollOnSave() {
+    Future.delayed(Duration(milliseconds: 100), () {
+      _sc.animateTo(_sc.position.maxScrollExtent,
+          duration: Duration(milliseconds: 100), curve: Curves.fastOutSlowIn);
+    });
+  }
 
   Widget expense() => Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(5.0),
         child: Form(
           key: _formKey,
           child: Row(
@@ -386,6 +389,7 @@ class _CreateListState extends State<CreateList> {
                       _quantityC.text = '1';
                       _priceC.clear();
                       _focusNode.requestFocus();
+                      scrollOnSave();
                     }
                   },
                   decoration: AppStyles()
@@ -401,6 +405,7 @@ class _CreateListState extends State<CreateList> {
                 width: MediaQuery.of(context).size.width * 0.2,
                 child: TextFormField(
                   keyboardType: TextInputType.number,
+                  scrollPadding: const EdgeInsets.only(bottom: 40),
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   controller: _quantityC,
                   onFieldSubmitted: (val) {
@@ -417,6 +422,7 @@ class _CreateListState extends State<CreateList> {
                       _quantityC.text = '1';
                       _priceC.clear();
                       _focusNode.requestFocus();
+                      scrollOnSave();
                     }
                   },
                   cursorColor: AppColors.themeColor,
@@ -445,6 +451,7 @@ class _CreateListState extends State<CreateList> {
                         _quantityC.text = '1';
                         _priceC.clear();
                         _focusNode.requestFocus();
+                        scrollOnSave();
                       }
                     },
                     cursorColor: AppColors.themeColor,

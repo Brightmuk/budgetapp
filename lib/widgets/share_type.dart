@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ShareType extends StatelessWidget {
-  const ShareType({Key? key}) : super(key: key);
+class QuickListoptions extends StatelessWidget {
+  const QuickListoptions({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,13 +13,13 @@ class ShareType extends StatelessWidget {
         child: ListView(
           children: [
             const Text(
-              'Select share type',
+              'Select option',
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.receipt),
-              title: const Text('PDF'),
+              title: const Text('Export PDF'),
               subtitle: const Text('Share list as a document'),
               onTap: () {
                 Navigator.pop(context,true);
@@ -27,9 +27,9 @@ class ShareType extends StatelessWidget {
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.image_outlined),
-              title: const Text('Image'),
-              subtitle: const Text('Share  list as an image'),
+              leading: const Icon(Icons.save_outlined),
+              title: const Text('Save'),
+              subtitle: const Text('Save as Spending plan'),
               onTap: () {
                  Navigator.pop(context,false);
               },
