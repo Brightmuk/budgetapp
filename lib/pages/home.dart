@@ -6,12 +6,10 @@ import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/home_tabs.dart';
 import 'package:budgetapp/pages/create_list.dart';
+import 'package:budgetapp/pages/info_screen.dart';
 import 'package:budgetapp/pages/settings.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
-import 'package:budgetapp/services/notification_service.dart';
-import 'package:budgetapp/services/shared_prefs.dart';
-import 'package:budgetapp/services/toast_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/widgets/expense_type.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +17,7 @@ import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:animations/animations.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -89,7 +88,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void newItem() async {
     // NotificationService().showTimeoutNotification(1000);
     await showModalBottomSheet(
-    
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         context: context,
         builder: (context) => const ExpenseType());
@@ -119,18 +117,25 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 SizedBox(
-                  height: 10.sp,
+                  height: 20.sp,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        width: 80.sp,
-                      ),
-                    ),
+                    OpenContainer(
+                      closedColor: AppColors.themeColor,
+                      closedElevation: 0,
+                      closedBuilder: (_, openContainer) {
+                      return Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          width: 80.sp,
+                        ),
+                      );
+                    }, openBuilder: (_, closedContainer) {
+                      return const InfoScreen();
+                    }),
                     Container(
                       padding: EdgeInsets.all(10.sp),
                       decoration: BoxDecoration(
@@ -139,19 +144,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const SettingsPage()));
-                      },
-                      child: Padding(
+                    IconButton(
                         padding: const EdgeInsets.all(20),
-                        child: Icon(
-                          Icons.settings_outlined,
-                          size: AppSizes.iconSize.sp,
-                        ),
-                      ),
-                    )
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const SettingsPage()));
+                        },
+                        icon: Icon(Icons.settings_outlined,
+                            size: AppSizes.iconSize.sp))
                   ],
                 ),
                 Center(
@@ -210,14 +210,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                          _appState.currentCurrency!,
-                                          style: TextStyle(
-                                            color:
-                                                Colors.white.withOpacity(0.6),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10,
-                                          ),
-                                        ),
+                                    _appState.currentCurrency!,
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.6),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10,
+                                    ),
+                                  ),
                                   Text(
                                     snapshot.hasData
                                         ? bPTotal(snapshot.data!)
@@ -252,14 +251,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                          _appState.currentCurrency!,
-                                          style: TextStyle(
-                                            color:
-                                                Colors.white.withOpacity(0.6),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10,
-                                          ),
-                                        ),
+                                    _appState.currentCurrency!,
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.6),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10,
+                                    ),
+                                  ),
                                   Text(
                                     snapshot.hasData
                                         ? wishTotal(snapshot.data!)
@@ -329,7 +327,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 backgroundColor: AppColors.themeColor,
               ),
               FloatingActionButton(
-                
                 heroTag: 'New',
                 backgroundColor: AppColors.themeColor,
                 onPressed: newItem,

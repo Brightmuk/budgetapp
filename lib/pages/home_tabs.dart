@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class BudgetListTab extends StatefulWidget {
   const BudgetListTab({Key? key}) : super(key: key);
@@ -52,63 +53,70 @@ class _BudgetListTabState extends State<BudgetListTab> {
             if (snapshot.hasData) {
               List<SpendingPlan>? plans = snapshot.data;
               return ListView.separated(
+                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                   controller: _controller,
-                  itemCount: plans!.length + 1,
+                  itemCount: plans!.length ,
                   separatorBuilder: (context, index) {
                     return const SizedBox(
                       height: 3,
                     );
                   },
                   itemBuilder: (context, index) {
-                    if (index == plans.length) {
-                      return AdmobBanner(
-                        adUnitId: 'ca-app-pub-1360540534588513/9843905660',
-                        adSize: AdmobBannerSize.FULL_BANNER,
-                        listener:
-                            (AdmobAdEvent event, Map<String, dynamic>? args) {
-                          debugPrint(args.toString());
-                        },
-                        onBannerCreated: (AdmobBannerController controller) {},
-                      );
-                    } else {
-                      return InkWell(
-                        child: Ink(
-                            child: ListTile(
-                          tileColor: AppColors.themeColor.withOpacity(0.03),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => SingleBudgetPlan(
-                                      budgetPlanId: plans[index].id,
-                                    )));
-                          },
-                          leading: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.receipt_long_outlined,
-                              size: AppSizes.iconSize.sp,
-                              color: Colors.pinkAccent,
-                            ),
-                          ),
-                          title: Text(
-                            plans[index].title,
-                            style:
-                                TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                          ),
-                          subtitle: Text(
-                              dayDate.format(
-                                plans[index].creationDate,
-                              ),
-                              style: TextStyle(
-                                  fontSize: AppSizes.normalFontSize.sp)),
-                          trailing: Text('${_appState.currentCurrency} ${AppFormatters.moneyCommaStr(plans[index].total)}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: AppSizes.normalFontSize.sp,
+
+                      return AnimationConfiguration.staggeredList(
+                        position: index,
+                        delay: Duration(milliseconds: 100),
+                        child: SlideAnimation(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.fastLinearToSlowEaseIn,
+                          horizontalOffset: 30,
+                          verticalOffset: 300,
+                          child: FlipAnimation(
+                            duration: Duration(milliseconds: 3000),
+                            curve: Curves.fastLinearToSlowEaseIn,
+                            flipAxis: FlipAxis.y,
+                            child: InkWell(
+                              child: Ink(
+                                  child: ListTile(
+                                tileColor: AppColors.themeColor.withOpacity(0.03),
+                                onTap: () {
+                                  
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => SingleBudgetPlan(
+                                            budgetPlanId: plans[index].id,
+                                          )));
+                                },
+                                leading: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.receipt_long_outlined,
+                                    size: AppSizes.iconSize.sp,
+                                    color: Colors.pinkAccent,
                                   ),
                                 ),
-                        )),
+                                title: Text(
+                                  plans[index].title,
+                                  style:
+                                      TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                                ),
+                                subtitle: Text(
+                                    dayDate.format(
+                                      plans[index].creationDate,
+                                    ),
+                                    style: TextStyle(
+                                        fontSize: AppSizes.normalFontSize.sp)),
+                                trailing: Text('${_appState.currentCurrency} ${AppFormatters.moneyCommaStr(plans[index].total)}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: AppSizes.normalFontSize.sp,
+                                        ),
+                                      ),
+                              )),
+                            ),
+                          ),
+                        ),
                       );
-                    }
+        
                   });
             } else {
               return Column(
@@ -191,24 +199,24 @@ class _WishListTabState extends State<WishListTab> {
               List<Wish>? wishes = snapshot.data;
               return ListView.separated(
                   controller: _controller,
-                  itemCount: wishes!.length + 1,
+                  itemCount: wishes!.length ,
                   separatorBuilder: (context, index) {
                     return const SizedBox(
                       height: 3,
                     );
                   },
                   itemBuilder: (context, index) {
-                    if (index == wishes.length) {
-                      return AdmobBanner(
-                        adUnitId: 'ca-app-pub-1360540534588513/3235895594',
-                        adSize: AdmobBannerSize.FULL_BANNER,
-                        listener:
-                            (AdmobAdEvent event, Map<String, dynamic>? args) {
-                          debugPrint(args.toString());
-                        },
-                        onBannerCreated: (AdmobBannerController controller) {},
-                      );
-                    } else {
+                    // if (index == wishes.length) {
+                    //   return AdmobBanner(
+                    //     adUnitId: 'ca-app-pub-1360540534588513/3235895594',
+                    //     adSize: AdmobBannerSize.FULL_BANNER,
+                    //     listener:
+                    //         (AdmobAdEvent event, Map<String, dynamic>? args) {
+                    //       debugPrint(args.toString());
+                    //     },
+                    //     onBannerCreated: (AdmobBannerController controller) {},
+                    //   );
+                    // } else {
                       return InkWell(
                         child: Ink(
                           child: ListTile(
@@ -245,7 +253,7 @@ class _WishListTabState extends State<WishListTab> {
                           ),
                         ),
                       );
-                    }
+                    // }
                   });
             } else {
               return Column(

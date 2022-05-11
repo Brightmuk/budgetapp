@@ -2,10 +2,7 @@ import 'package:budgetapp/models/notification_model.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:just_audio/just_audio.dart';
 
-
-final player = AudioPlayer();
 
 ///Stream to get info about notification while app is in background or foreground
 final BehaviorSubject<String?> selectNotificationSubject =

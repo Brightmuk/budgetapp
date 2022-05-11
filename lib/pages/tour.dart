@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TourScreen extends StatefulWidget {
   final bool isFirstTime;
@@ -21,11 +22,13 @@ class _TourScreenState extends State<TourScreen> {
     'assets/images/welcome_slide.png',
     'assets/images/quick_list_slide.png',
     'assets/images/wish_list_slide.png',
-    'assets/images/spending_list_slide.png'
+    'assets/images/spending_list_slide.png',
+    'assets/images/done_slide.png'
   ];
 
   int viewIndex = 0;
-
+  final Uri _introVideo = Uri.parse(
+      "https://www.youtube.com/watch?v=qcvBxIzlSwc&t=4s");
   Widget indicator(currentIndex) {
     return SizedBox(
         height: 30.sp,
@@ -70,10 +73,33 @@ class _TourScreenState extends State<TourScreen> {
           ],
         )),
         child: Padding(
-          padding: EdgeInsets.fromLTRB(10.sp, 200.sp, 10.sp, 10.sp),
+          padding: EdgeInsets.fromLTRB(10.sp, 100.sp, 10.sp, 10.sp),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  MaterialButton(
+                    elevation: 0,
+                    color: Colors.transparent,
+                    onPressed: () {
+                      widget.isFirstTime
+                          ? SharedPrefs().setSeenTour().then((value) =>
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const MyHomePage())))
+                          : Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Skip',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 50.sp,
+              ),
               CarouselSlider.builder(
                   options: CarouselOptions(
                     onPageChanged: (index, reason) {
@@ -96,33 +122,60 @@ class _TourScreenState extends State<TourScreen> {
                             pages[index],
                           )),
               SizedBox(
+                height: 50.sp,
+              ),
+              Visibility(
+                  visible: viewIndex == pages.length - 1,
+                  child: MaterialButton(
+                    color: Colors.black,
+                    child: SizedBox(
+                      width: 100,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: const [
+                            Text('Watch Video'),
+                            Icon(Icons.play_arrow_outlined)
+                          ]),
+                    ),
+                    onPressed: () {
+                      _launchUrl(_introVideo);
+                    },
+                  )),
+              SizedBox(
                 height: 200.sp,
               ),
-              indicator(viewIndex)
+              indicator(viewIndex),
             ],
           ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.extended(
-        label: Text(
-          'Done',
-          style: TextStyle(color: Colors.white, fontSize: 35.sp),
+      floatingActionButton: Visibility(
+        visible: viewIndex == pages.length - 1,
+        child: FloatingActionButton.extended(
+          label: Text(
+            'Done',
+            style: TextStyle(color: Colors.white, fontSize: 35.sp),
+          ),
+          icon: Icon(
+            Icons.done,
+            color: Colors.white,
+            size: AppSizes.iconSize.sp,
+          ),
+          onPressed: () {
+            widget.isFirstTime
+                ? SharedPrefs().setSeenTour().then((value) =>
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const MyHomePage())))
+                : Navigator.pop(context);
+          },
+          backgroundColor: AppColors.themeColor,
         ),
-        icon: Icon(
-          Icons.done,
-          color: Colors.white,
-          size: AppSizes.iconSize.sp,
-        ),
-        onPressed: () {
-          widget.isFirstTime
-              ? SharedPrefs().setSeenTour().then((value) =>
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const MyHomePage())))
-              : Navigator.pop(context);
-        },
-        backgroundColor: AppColors.themeColor,
       ),
     );
+  }
+
+  void _launchUrl(Uri url) async {
+    if (!await launchUrl(url)) throw 'Could not launch url';
   }
 }
