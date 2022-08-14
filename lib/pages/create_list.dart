@@ -36,13 +36,13 @@ class _CreateListState extends State<CreateList> {
   final FocusNode _focusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
   final ScrollController _sc = ScrollController();
+  final _amountFormKey = GlobalKey<FormState>();
 
   List<Expense> expenses = [];
   bool reverseMode = false;
   int amountToSpend = 0;
 
   late AdmobInterstitial interstitialAd;
-
 
   @override
   void initState() {
@@ -267,64 +267,63 @@ class _CreateListState extends State<CreateList> {
           ]),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          heroTag: 'Share',
-          backgroundColor: AppColors.themeColor,
-          onPressed: expenses.isNotEmpty
-              ? () async {
-                  if (widget.title != null) {
-                    Navigator.pop(
-                        context, {'expenses': expenses, 'total': _total});
-                  } else {
-                    if (expenses.isEmpty) {
-                      return;
-                    }
-                    SpendingPlan plan = SpendingPlan(
-                        id: DateTime.now().millisecondsSinceEpoch.toString(),
-                        total: _total,
-                        title: 'Quick Spending Plan',
-                        creationDate: DateTime.now(),
-                        reminderDate: DateTime.now(),
-                        reminder: false,
-                        expenses: expenses);
-                    bool share = await showModalBottomSheet(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        context: context,
-                        builder: (context) => const QuickListoptions());
-
-                    if (share) {
-                      File pdf = await PDFService.createPdf(plan);
-                      await Printing.sharePdf(
-                          bytes: pdf.readAsBytesSync(),
-                          filename: '${plan.title}.pdf');
+            heroTag: 'Share',
+            backgroundColor: AppColors.themeColor,
+            onPressed: expenses.isNotEmpty
+                ? () async {
+                    if (widget.title != null) {
+                      Navigator.pop(
+                          context, {'expenses': expenses, 'total': _total});
                     } else {
-                      showModalBottomSheet(
-                          isScrollControlled: true,
+                      if (expenses.isEmpty) {
+                        return;
+                      }
+                      SpendingPlan plan = SpendingPlan(
+                          id: DateTime.now().millisecondsSinceEpoch.toString(),
+                          total: _total,
+                          title: 'Quick Spending Plan',
+                          creationDate: DateTime.now(),
+                          reminderDate: DateTime.now(),
+                          reminder: false,
+                          expenses: expenses);
+                      bool share = await showModalBottomSheet(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
                           context: context,
-                          builder: (context) => AddBudgetPlan(plan: plan));
-                    }
-                    if (!_appState.adShown) {
-                      interstitialAd.show();
-                      _appState.changeAdView();
-                    } else {
-                      _appState.changeAdView();
+                          builder: (context) => const QuickListoptions());
+
+                      if (share) {
+                        File pdf = await PDFService.createPdf(plan);
+                        await Printing.sharePdf(
+                            bytes: pdf.readAsBytesSync(),
+                            filename: '${plan.title}.pdf');
+                      } else {
+                        showModalBottomSheet(
+                            isScrollControlled: true,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            context: context,
+                            builder: (context) => AddBudgetPlan(plan: plan));
+                      }
+                      if (!_appState.adShown) {
+                        interstitialAd.show();
+                        _appState.changeAdView();
+                      } else {
+                        _appState.changeAdView();
+                      }
                     }
                   }
-                }
-              : null,
-          tooltip: 'Done',
-          label: Text( 'Done' ,
-            style: TextStyle(color: Colors.white, fontSize: 35.sp),
-          ),
-          icon: Icon(
-                  Icons.done,
-                  color: Colors.white,
-                  size: 50.sp,
-                )
-              
-        ),
+                : null,
+            tooltip: 'Done',
+            label: Text(
+              'Done',
+              style: TextStyle(color: Colors.white, fontSize: 35.sp),
+            ),
+            icon: Icon(
+              Icons.done,
+              color: Colors.white,
+              size: 50.sp,
+            )),
       ),
     );
   }
@@ -461,29 +460,43 @@ class _CreateListState extends State<CreateList> {
         },
         child: AlertDialog(
           title: const Text('Amount to be spent'),
-          content: TextFormField(
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            controller: _amountToSpendC,
-            onFieldSubmitted: (val) {
-              setState(() {
-                amountToSpend = int.parse(val);
-              });
-              _amountToSpendC.clear();
-              Navigator.pop(context);
-            },
-            cursorColor: AppColors.themeColor,
-            decoration: AppStyles()
-                .textFieldDecoration(label: 'Amount', hintText: '10000'),
+          content: Form(
+            key: _amountFormKey,
+            child: TextFormField(
+              validator: (val) {
+                if (val!.isEmpty) {
+                  return 'Amount is required';
+                }
+              },
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              controller: _amountToSpendC,
+              onFieldSubmitted: (val) {
+              
+                if (_amountFormKey.currentState!.validate()) {
+                  setState(() {
+                    amountToSpend = int.parse(val);
+                  });
+                  _amountToSpendC.clear();
+                  Navigator.pop(context);
+                }
+              },
+              cursorColor: AppColors.themeColor,
+              decoration: AppStyles()
+                  .textFieldDecoration(label: 'Amount', hintText: '10000'),
+            ),
           ),
           actions: [
             TextButton(
                 onPressed: () {
+              
+                if (_amountFormKey.currentState!.validate()) {
                   setState(() {
                     amountToSpend = int.parse(_amountToSpendC.value.text);
                   });
                   _amountToSpendC.clear();
                   Navigator.pop(context);
+                }
                 },
                 child: const Text(
                   'OKAY',
@@ -494,7 +507,8 @@ class _CreateListState extends State<CreateList> {
       ),
     );
   }
-    void hasViewedReverse() async {
+
+  void hasViewedReverse() async {
     bool? hasSeen = await SharedPrefs().seenReverseMode();
     if (!hasSeen!) {
       Future.delayed(const Duration(seconds: 1), () {
@@ -519,5 +533,4 @@ class _CreateListState extends State<CreateList> {
       });
     }
   }
-
 }

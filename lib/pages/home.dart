@@ -4,7 +4,8 @@ import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
-import 'package:budgetapp/pages/home_tabs.dart';
+import 'package:budgetapp/pages/homeTabs/spending_list_tab.dart';
+import 'package:budgetapp/pages/homeTabs/wishlist_tab.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/pages/info_screen.dart';
 import 'package:budgetapp/pages/settings.dart';
@@ -298,7 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
         body: const Padding(
           padding: EdgeInsets.only(bottom: 50),
           child: TabBarView(
-            children: [BudgetListTab(), WishListTab()],
+            children: [SpendingListTab(), WishListTab()],
           ),
         ),
         floatingActionButton: Padding(
