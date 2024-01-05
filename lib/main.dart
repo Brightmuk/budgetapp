@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
         designSize: const Size(1080, 2340),
-        builder: (context) {
+        builder: (context,child) {
           return OverlaySupport.global(
             child: MaterialApp(
               initialRoute: payload==null?'/': payload!.route,

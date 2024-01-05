@@ -8,7 +8,7 @@ import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+// import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -169,22 +169,22 @@ class _SettingsPageState extends State<SettingsPage> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.6,
             ),
-            FutureBuilder<PackageInfo>(
-                future: PackageInfo.fromPlatform(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    String version = snapshot.data!.version;
-                    return Text(
-                      'VERSION $version',
-                      style: TextStyle(
-                          color: AppColors.themeColor,
-                          fontSize: AppSizes.normalFontSize.sp,
-                          fontWeight: FontWeight.w300),
-                    );
-                  } else {
-                    return Container();
-                  }
-                })
+            // FutureBuilder<PackageInfo>(
+            //     future: PackageInfo.fromPlatform(),
+            //     builder: (context, snapshot) {
+            //       if (snapshot.hasData) {
+            //         String version = snapshot.data!.version;
+            //         return Text(
+            //           'VERSION $version',
+            //           style: TextStyle(
+            //               color: AppColors.themeColor,
+            //               fontSize: AppSizes.normalFontSize.sp,
+            //               fontWeight: FontWeight.w300),
+            //         );
+            //       } else {
+            //         return Container();
+            //       }
+            //     })
           ]),
         ),
       ),
