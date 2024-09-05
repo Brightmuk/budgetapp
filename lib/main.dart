@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+// import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:budgetapp/models/notification_model.dart';
 
@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
 
 ///Configure timezones
 Future<void> configureLocalTimeZone() async {
-  tz.initializeTimeZones();
-  final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(timeZoneName!));
+  // tz.initializeTimeZones();
+  // final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+  // tz.setLocalLocation(tz.getLocation(timeZoneName!));
 }

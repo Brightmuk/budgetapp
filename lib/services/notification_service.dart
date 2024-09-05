@@ -31,17 +31,16 @@ class NotificationService {
 
     var initializationSettingsAndroid =
         const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOS = IOSInitializationSettings(
-        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    var initializationSettingsIOS;;
 
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onSelectNotification: (String? payload) {
-        selectedNotificationPayload = NotificationPayload.fromJson(payload!);
-      },
+      // onSelectNotification: (String? payload) {
+      //   selectedNotificationPayload = NotificationPayload.fromJson(payload!);
+      // },
     );
     return selectedNotificationPayload;
   }
