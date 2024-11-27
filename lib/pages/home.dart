@@ -4,8 +4,8 @@ import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
-import 'package:budgetapp/pages/homeTabs/spending_list_tab.dart';
-import 'package:budgetapp/pages/homeTabs/wishlist_tab.dart';
+import 'package:budgetapp/pages/home_tabs/spending_list_tab.dart';
+import 'package:budgetapp/pages/home_tabs/wishlist_tab.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/pages/info_screen.dart';
 import 'package:budgetapp/pages/settings.dart';
@@ -137,14 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     }, openBuilder: (_, closedContainer) {
                       return const InfoScreen();
                     }),
-                    Container(
-                      padding: EdgeInsets.all(10.sp),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        border: Border.all(color: Colors.white, width: 0.5),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
+                   
                     IconButton(
                         padding: const EdgeInsets.all(20),
                         onPressed: () {
@@ -152,6 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               builder: (context) => const SettingsPage()));
                         },
                         icon: Icon(Icons.settings_outlined,
+                        color:Colors.white,
                             size: AppSizes.iconSize.sp))
                   ],
                 ),
@@ -173,9 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Divider(
-                  height: 0,
-                ),
+               
                 Text(
                   'TOTALS',
                   style: TextStyle(
@@ -183,9 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontSize: 35.sp,
                       fontWeight: FontWeight.w300),
                 ),
-                const Divider(
-                  height: 0,
-                ),
+               
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -203,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     AppColors.themeColor
                                   ]),
                               animateFromLastPercent: true,
-                              radius: 150.0.sp,
+                              radius: 70.0.sp,
                               lineWidth: 5.0.sp,
                               percent: 1,
                               backgroundColor: Colors.white.withOpacity(0.1),
@@ -244,7 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Colors.orangeAccent,
                                     AppColors.themeColor
                                   ]),
-                              radius: 150.0.sp,
+                              radius: 70.0.sp,
                               lineWidth: 5.0.sp,
                               percent: 1,
                               backgroundColor: Colors.white.withOpacity(0.1),
@@ -276,10 +266,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 TabBar(
                     indicatorSize: TabBarIndicatorSize.label,
                     indicatorColor: Colors.white,
+                    unselectedLabelColor: Color.fromARGB(255, 230, 230, 230),
                     labelStyle: TextStyle(
+                      
                         color: Colors.white,
                         fontSize: 30.sp,
-                        fontWeight: FontWeight.w300),
+                        fontWeight: FontWeight.w400),
                     tabs: const [
                       // Tab(
                       //   text: 'OVERVIEW',

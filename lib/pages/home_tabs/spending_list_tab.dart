@@ -125,21 +125,7 @@ class SpendingListTile extends StatelessWidget {
     final DateFormat dayDate = DateFormat('EEE dd, yyy');
     final AppState _appState = Provider.of<AppState>(context);
 
-    return AnimationConfiguration.staggeredList(
-      position: index,
-      delay: const Duration(milliseconds: 100),
-      child: SlideAnimation(
-        duration: Duration(milliseconds: 200),
-        curve: Curves.fastLinearToSlowEaseIn,
-        horizontalOffset: 30,
-        verticalOffset: 300,
-        child: FlipAnimation(
-          duration: Duration(milliseconds: 3000),
-          curve: Curves.fastLinearToSlowEaseIn,
-          flipAxis: FlipAxis.y,
-          child: InkWell(
-            child: Ink(
-                child: ListTile(
+    return ListTile(
               tileColor: AppColors.themeColor.withOpacity(0.03),
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -171,10 +157,6 @@ class SpendingListTile extends StatelessWidget {
                   fontSize: AppSizes.normalFontSize.sp,
                 ),
               ),
-            )),
-          ),
-        ),
-      ),
-    );
+            );
   }
 }

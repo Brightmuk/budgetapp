@@ -21,7 +21,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   payload = await NotificationService().init();
 
-  Admob.initialize();
+  Admob.initialize(testDeviceIds: ["660d9cc2-2f05-4d59-9aa6-7b7b3fa8d56b"]);
   await configureLocalTimeZone();
   await ScreenUtil.ensureScreenSize();
 

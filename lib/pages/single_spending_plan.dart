@@ -152,11 +152,13 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                       'Spending plan',
                       style: TextStyle(
                           fontSize: AppSizes.titleFont.sp,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),
                     IconButton(
                       icon: Icon(
                         Icons.clear_outlined,
+                        color: Colors.white,
                         size: AppSizes.iconSize.sp,
                       ),
                       onPressed: () {

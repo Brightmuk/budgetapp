@@ -59,11 +59,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     Text(
                       'Settings',
                       style: TextStyle(
+                        color: Colors.white,
                           fontSize: AppSizes.titleFont.sp,
                           fontWeight: FontWeight.bold),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.clear_outlined),
+                      icon: const Icon(Icons.clear_outlined,color: Colors.white,),
                       onPressed: () {
                         Navigator.pop(context);
                       },

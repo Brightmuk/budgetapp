@@ -128,7 +128,7 @@ class _TourScreenState extends State<TourScreen> {
                   visible: viewIndex == pages.length - 1,
                   child: MaterialButton(
                     color: Colors.black,
-                    child: SizedBox(
+                    child: const SizedBox(
                       width: 100,
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,

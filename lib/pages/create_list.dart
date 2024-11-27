@@ -111,43 +111,42 @@ class _CreateListState extends State<CreateList> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
+                      
                       widget.title ?? 'Quick Spending Plan',
                       style: TextStyle(
+                        color: Colors.white,
                           fontSize: 40.sp, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.clear_outlined),
+                      icon: const Icon(Icons.clear_outlined,color: Colors.white,),
                       onPressed: () {
                         Navigator.pop(context);
                       },
                     ),
                   ],
                 ),
-                const Divider(
-                  height: 5,
-                ),
-                Row(
-                  children: [
-                    const Text('Reverse Mode'),
-                    Switch(
-                        value: reverseMode,
-                        onChanged: (val) {
-                          if (val) {
-                            showAmountInput();
-                          } else {
-                            setState(() {
-                              amountToSpend = 0;
-                            });
-                          }
-                          setState(() {
-                            reverseMode = val;
-                          });
-                        }),
-                  ],
-                ),
-                const Divider(
-                  height: 5,
-                ),
+                
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Reverse Mode',style: TextStyle(color: Colors.white),),
+                 inactiveTrackColor: const Color.fromARGB(255, 33, 136, 84),
+                  activeColor: Colors.white,
+                 
+                  inactiveThumbColor: const Color.fromARGB(255, 231, 231, 231),
+                  activeTrackColor: Color.fromARGB(255, 123, 209, 166),
+                  value: reverseMode, onChanged: (val) {
+                      if (val) {
+                        showAmountInput();
+                      } else {
+                        setState(() {
+                          amountToSpend = 0;
+                        });
+                      }
+                      setState(() {
+                        reverseMode = val;
+                      });
+                    } ),
+                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
