@@ -43,6 +43,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
 
   List<Expense> _expenses = [];
 
+  @override
   void initState() {
     super.initState();
     editMode = widget.plan != null;

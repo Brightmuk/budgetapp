@@ -36,23 +36,6 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
   bool exportAsPdf = true;
   List<Expense> items = [];
 
-  late AdmobInterstitial interstitialAd;
-  @override
-  void initState() {
-    super.initState();
-
-    Admob.requestTrackingAuthorization();
-
-    interstitialAd = AdmobInterstitial(
-      adUnitId: 'ca-app-pub-1360540534588513/6335620084',
-      listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
-        if (event == AdmobAdEvent.closed) interstitialAd.load();
-        debugPrint(args.toString());
-      },
-    );
-    interstitialAd.load();
-  }
-
   @override
   Widget build(BuildContext context) {
     final AppState _appState = Provider.of<AppState>(context);
@@ -104,7 +87,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                             name: '${plan.title}.pdf',
                             onLayout: (format) async => pdf.readAsBytes());
                         if (!_appState.adShown) {
-                          interstitialAd.show();
+                         
                           _appState.changeAdView();
                         } else {
                           _appState.changeAdView();
@@ -135,7 +118,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                             bytes: pdf.readAsBytesSync(),
                             filename: '${plan.title}.pdf');
                         if (!_appState.adShown) {
-                          interstitialAd.show();
+                        
                           _appState.changeAdView();
                         } else {
                           _appState.changeAdView();

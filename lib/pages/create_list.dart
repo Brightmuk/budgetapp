@@ -214,8 +214,8 @@ class _CreateListState extends State<CreateList> {
                       background: Container(
                         padding: const EdgeInsets.all(10),
                         color: Colors.redAccent,
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Icon(Icons.delete_outline),
                           ],
                         ),
@@ -231,10 +231,7 @@ class _CreateListState extends State<CreateList> {
                           expenses[index].name.toUpperCase(),
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        subtitle: Text(expenses[index].quantity.toString() +
-                            ' unit(s) @' +
-                            AppFormatters.moneyCommaStr(expenses[index].price) +
-                            ' ${_appState.currentCurrency} '),
+                        subtitle: Text('${expenses[index].quantity} unit(s) @${AppFormatters.moneyCommaStr(expenses[index].price)} ${_appState.currentCurrency} '),
                         trailing: Text(
                           '${AppFormatters.moneyCommaStr((expenses[index].quantity * expenses[index].price))} ${_appState.currentCurrency}',
                           style: const TextStyle(fontWeight: FontWeight.bold),
