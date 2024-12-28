@@ -274,7 +274,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                           }
                         });
                       } catch (e) {
-                        print(e.toString());
+                        debugPrint(e.toString());
                         ToastService(context: context)
                             .showSuccessToast('Sorry, there was an error!');
                       }
