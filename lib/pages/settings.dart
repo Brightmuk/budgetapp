@@ -29,6 +29,7 @@ class _SettingsPageState extends State<SettingsPage> {
       Uri.parse('market://details?id=com.brightdesigns.expenditurebuddy');
   final Uri _donateUrl = Uri.parse(
       "https://www.paypal.com/donate/?hosted_button_id=Q2HUSVA4CCTTN");
+  final Uri _pricacyUrl = Uri.parse('https://brightmuk.org/privacy.html');
   @override
   Widget build(BuildContext context) {
     final AppState _appState = Provider.of<AppState>(context);
@@ -139,6 +140,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     barrierDismissible: false,
                     context: context,
                     builder: (context) => const AboutUs());
+              },
+            ),
+                        ListTile(
+              leading: Icon(Icons.info_outline, size: AppSizes.iconSize.sp),
+              title: Text(
+                'Privacy Policy',
+                style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+              ),
+              onTap: () {
+               
+                   _launchUrl(_pricacyUrl);
               },
             ),
             ListTile(
