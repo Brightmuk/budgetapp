@@ -228,6 +228,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 TabBar(
                     indicatorSize: TabBarIndicatorSize.label,
                     indicatorColor: Colors.white,
+                    dividerColor: AppColors.themeColor,
                     unselectedLabelColor: Color.fromARGB(255, 230, 230, 230),
                     labelStyle: TextStyle(
                       
