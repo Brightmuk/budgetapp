@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:730070630892:android:a66f2623bdd32e99abc0c9",
+        "mobilesdk_app_id": "1:730070630892:android:29d9df216adf665fabc0c9",
         "android_client_info": {
-          "package_name": "com.brimukon.expenditurebuddy"
+          "package_name": "com.brimukon.spenditize"
         }
       },
       "oauth_client": [],

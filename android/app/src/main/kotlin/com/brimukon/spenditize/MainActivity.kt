@@ -1,4 +1,4 @@
-package com.brimukon.expenditurebuddy
+package com.brimukon.spenditize
 
 import io.flutter.embedding.android.FlutterActivity
 
