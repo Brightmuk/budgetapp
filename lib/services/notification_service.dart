@@ -54,6 +54,7 @@ class NotificationService {
       tz.TZDateTime? scheduling}) async {
         
     await flutterLocalNotificationsPlugin.zonedSchedule(
+     
         id!,
         title,
         description,
@@ -65,10 +66,8 @@ class NotificationService {
                 sound: RawResourceAndroidNotificationSound('marimba'),
                 channelDescription: 'Reminds you to perform a task')),
         payload: payload,
-        
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+         androidScheduleMode: AndroidScheduleMode.inexact,
+        );
   }
 
   ///Remove a reminder

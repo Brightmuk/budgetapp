@@ -2,22 +2,17 @@
   "project_info": {
     "project_number": "730070630892",
     "project_id": "expenditure-buddy",
-    "storage_bucket": "expenditure-buddy.appspot.com"
+    "storage_bucket": "expenditure-buddy.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:730070630892:android:3f0a0ca353293ad2abc0c9",
+        "mobilesdk_app_id": "1:730070630892:android:a66f2623bdd32e99abc0c9",
         "android_client_info": {
-          "package_name": "com.brightdesigns.expenditurebuddy"
+          "package_name": "com.brimukon.expenditurebuddy"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "730070630892-5pmipeabcqp47popi6cbm2bm4i0usv2a.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyC9mBdU8M794niKnGLF1PbzD1a8c6193xA"
@@ -25,12 +20,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "730070630892-5pmipeabcqp47popi6cbm2bm4i0usv2a.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
