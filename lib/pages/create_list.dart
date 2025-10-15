@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
@@ -42,7 +40,7 @@ class _CreateListState extends State<CreateList> {
   bool reverseMode = false;
   int amountToSpend = 0;
 
-  late AdmobInterstitial interstitialAd;
+  // late AdmobInterstitial interstitialAd;
 
   @override
   void initState() {
@@ -53,16 +51,16 @@ class _CreateListState extends State<CreateList> {
 
     _quantityC.text = '1';
 
-    Admob.requestTrackingAuthorization();
+    // Admob.requestTrackingAuthorization();
 
-    interstitialAd = AdmobInterstitial(
-      adUnitId: 'ca-app-pub-1360540534588513/6335620084',
-      listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
-        if (event == AdmobAdEvent.closed) interstitialAd.load();
-        debugPrint(args.toString());
-      },
-    );
-    interstitialAd.load();
+    // interstitialAd = AdmobInterstitial(
+    //   adUnitId: 'ca-app-pub-1360540534588513/6335620084',
+    //   listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
+    //     if (event == AdmobAdEvent.closed) interstitialAd.load();
+    //     debugPrint(args.toString());
+    //   },
+    // );
+    // interstitialAd.load();
   }
 
   int get _total {
@@ -84,7 +82,7 @@ class _CreateListState extends State<CreateList> {
 
   @override
   Widget build(BuildContext context) {
-    final AppState _appState = Provider.of<AppState>(context);
+    final ApplicationState _appState = Provider.of<ApplicationState>(context);
 
     return SizedBox(
       height: MediaQuery.of(context).size.height,
@@ -302,7 +300,7 @@ class _CreateListState extends State<CreateList> {
                             builder: (context) => AddBudgetPlan(plan: plan));
                       }
                       if (!_appState.adShown) {
-                        interstitialAd.show();
+                        // interstitialAd.show();
                         _appState.changeAdView();
                       } else {
                         _appState.changeAdView();

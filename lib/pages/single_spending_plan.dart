@@ -1,18 +1,15 @@
 import 'dart:io';
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/pages/add_budget_plan.dart';
-import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/pdf_service.dart';
-import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/widgets/action_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -38,7 +35,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
 
   @override
   Widget build(BuildContext context) {
-    final AppState _appState = Provider.of<AppState>(context);
+    final ApplicationState _appState = Provider.of<ApplicationState>(context);
 
     return SizedBox(
       height: MediaQuery.of(context).size.height,

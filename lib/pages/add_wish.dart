@@ -47,7 +47,7 @@ class _AddWishState extends State<AddWish> {
 
   @override
   Widget build(BuildContext context) {
-        final AppState _appState = Provider.of<AppState>(context);
+        final ApplicationState _appState = Provider.of<ApplicationState>(context);
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.63,
       child: Padding(

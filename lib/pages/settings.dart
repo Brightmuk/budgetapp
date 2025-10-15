@@ -32,7 +32,7 @@ class _SettingsPageState extends State<SettingsPage> {
   final Uri _pricacyUrl = Uri.parse('https://brightmuk.org/privacy.html');
   @override
   Widget build(BuildContext context) {
-    final AppState _appState = Provider.of<AppState>(context);
+    final ApplicationState _appState = Provider.of<ApplicationState>(context);
 
     return SizedBox(
       child: Scaffold(

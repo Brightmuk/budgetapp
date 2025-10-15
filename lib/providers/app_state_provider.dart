@@ -7,14 +7,14 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/foundation.dart';
 
 
-class AppState extends ChangeNotifier {
+class ApplicationState extends ChangeNotifier {
   String? currentCurrency;
   bool adShown = false;
 
   final List<SpendingPlan> budgetPlans = [];
   final List<Wish> wishes = [];
 
-  AppState() {
+  ApplicationState() {
     init();
   }
 

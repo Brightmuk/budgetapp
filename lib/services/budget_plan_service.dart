@@ -11,7 +11,7 @@ import 'package:localstore/localstore.dart';
 
 class BudgetPlanService {
   final BuildContext? context;
-  final AppState appState;
+  final ApplicationState appState;
   BudgetPlanService({this.context, required this.appState});
 
   static const String budgetPlanCollection = 'budgetPlanCollection';

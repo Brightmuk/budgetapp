@@ -1,4 +1,3 @@
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
@@ -58,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppState _appState = Provider.of<AppState>(context);
+    final ApplicationState _appState = Provider.of<ApplicationState>(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(

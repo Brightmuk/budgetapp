@@ -1,4 +1,4 @@
-import 'package:admob_flutter/admob_flutter.dart';
+
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
@@ -27,7 +27,7 @@ class _WishListTabState extends State<WishListTab> {
 
   @override
   Widget build(BuildContext context) {
-    final AppState _appState = Provider.of<AppState>(context);
+    final ApplicationState _appState = Provider.of<ApplicationState>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: StreamBuilder<List<Wish>>(
@@ -55,14 +55,7 @@ class _WishListTabState extends State<WishListTab> {
             } else {
               return Column(
                 children: [
-                  AdmobBanner(
-                    adUnitId: 'ca-app-pub-1360540534588513/3235895594',
-                    adSize: AdmobBannerSize.FULL_BANNER,
-                    listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
-                      debugPrint(args.toString());
-                    },
-                    onBannerCreated: (AdmobBannerController controller) {},
-                  ),
+                  
                   SizedBox(
                     height: 20.sp,
                   ),
@@ -112,7 +105,7 @@ class WishTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateFormat dayDate = DateFormat('EEE dd, yyy');
-    final AppState _appState = Provider.of<AppState>(context);
+    final ApplicationState _appState = Provider.of<ApplicationState>(context);
 
 
     return ListTile(

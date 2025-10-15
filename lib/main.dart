@@ -1,5 +1,4 @@
-import 'package:admob_flutter/admob_flutter.dart';
-import 'package:budgetapp/pages/home.dart';
+
 import 'package:budgetapp/pages/single_spending_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
@@ -8,10 +7,9 @@ import 'package:budgetapp/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-// import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+
 import 'package:overlay_support/overlay_support.dart';
 import 'package:budgetapp/models/notification_model.dart';
 
@@ -21,7 +19,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   payload = await NotificationService().init();
 
-  Admob.initialize(testDeviceIds: ["660d9cc2-2f05-4d59-9aa6-7b7b3fa8d56b"]);
+  MobileAds.instance.initialize();
+
   await configureLocalTimeZone();
   await ScreenUtil.ensureScreenSize();
 
@@ -31,8 +30,8 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<AppState>.value(
-        value: AppState()
+      ChangeNotifierProvider<ApplicationState>.value(
+        value: ApplicationState()
         )
     ],
     child: const MyApp()

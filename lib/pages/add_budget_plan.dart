@@ -58,7 +58,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
 
   @override
   Widget build(BuildContext context) {
-    final AppState _appState = Provider.of<AppState>(context);
+    final ApplicationState _appState = Provider.of<ApplicationState>(context);
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
       child: Padding(
