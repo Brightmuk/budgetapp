@@ -21,12 +21,12 @@ class AboutUs extends StatelessWidget {
           height: 100.sp,
           
           child: const Center(
-              child: Text('About Expenditure Buddy',
+              child: Text('About Spenditize',
                   style: TextStyle(fontWeight: FontWeight.bold)))),
       content: const Padding(
         padding: EdgeInsets.all(10.0),
         child: Text(
-            'Expenditure Buddy is an app that assists you to keep record of your future expenditures in form of spending plans and wishes, and remind you to fulfil them on the date set. Expenditure Buddy does not however help you to manage your money neither does it offer you financial advice. We are just here to remind you what you wanted to buy or spend on and when you will do it.'),
+            'Spenditize is an app that assists you to keep record of your future expenditures in form of spending plans and wishes, and remind you to fulfil them on the date set. Spenditize does not however help you to manage your money neither does it offer you financial advice. We are just here to remind you what you wanted to buy or spend on and when you will do it.'),
       ),
       actions: [
         MaterialButton(

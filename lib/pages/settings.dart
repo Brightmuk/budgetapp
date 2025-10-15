@@ -26,7 +26,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final Uri _playStoreUrl =
-      Uri.parse('market://details?id=com.brimukon.expenditurebuddy');
+      Uri.parse('market://details?id=com.brimukon.spenditize');
   final Uri _donateUrl = Uri.parse(
       "https://www.paypal.com/donate/?hosted_button_id=Q2HUSVA4CCTTN");
   final Uri _pricacyUrl = Uri.parse('https://brimukon.com/privacy.html');
