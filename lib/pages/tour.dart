@@ -126,17 +126,9 @@ class _TourScreenState extends State<TourScreen> {
               ),
               Visibility(
                   visible: viewIndex == pages.length - 1,
-                  child: MaterialButton(
-                    color: Colors.black,
-                    child: const SizedBox(
-                      width: 100,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: const [
-                            Text('Watch Video'),
-                            Icon(Icons.play_arrow_outlined)
-                          ]),
-                    ),
+                  child: OutlinedButton(
+                   
+                    child: Text('Watch Video'),
                     onPressed: () {
                       _launchUrl(_introVideo);
                     },
@@ -152,16 +144,7 @@ class _TourScreenState extends State<TourScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Visibility(
         visible: viewIndex == pages.length - 1,
-        child: FloatingActionButton.extended(
-          label: Text(
-            'Done',
-            style: TextStyle(color: Colors.white, fontSize: 35.sp),
-          ),
-          icon: Icon(
-            Icons.done,
-            color: Colors.white,
-            size: AppSizes.iconSize.sp,
-          ),
+        child: FilledButton(
           onPressed: () {
             widget.isFirstTime
                 ? SharedPrefs().setSeenTour().then((value) =>
@@ -169,7 +152,8 @@ class _TourScreenState extends State<TourScreen> {
                         builder: (context) => const MyHomePage())))
                 : Navigator.pop(context);
           },
-          backgroundColor: AppColors.themeColor,
+         
+          child: const Text('Get Started'),
         ),
       ),
     );

@@ -10,7 +10,7 @@ class AppSizes {
 
   static double maxToolBarHeight = 680.sp;
   static const double midToolBarHeight = 140.0;
-  static  double minToolBarHeight = 250.sp;
+  static  double minToolBarHeight = 280.sp;
   static const pagePading = 20.0;
 
   static const iconSize = 50.0;

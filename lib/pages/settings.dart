@@ -26,10 +26,11 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final Uri _playStoreUrl =
-      Uri.parse('market://details?id=com.brightdesigns.expenditurebuddy');
+      Uri.parse('market://details?id=com.brimukon.expenditurebuddy');
   final Uri _donateUrl = Uri.parse(
       "https://www.paypal.com/donate/?hosted_button_id=Q2HUSVA4CCTTN");
-  final Uri _pricacyUrl = Uri.parse('https://brightmuk.org/privacy.html');
+  final Uri _pricacyUrl = Uri.parse('https://brimukon.com/privacy.html');
+  final Uri _helpUrl = Uri.parse('https://brimukon.com/#contact');
   @override
   Widget build(BuildContext context) {
     final ApplicationState _appState = Provider.of<ApplicationState>(context);
@@ -159,8 +160,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: Text('Help',
                   style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
               onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (ctx) => const Help()));
+                 _launchUrl(_helpUrl);
               },
             ),
             ListTile(
@@ -171,14 +171,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 onTap: () {
                   _launchUrl(_playStoreUrl);
                 }),
-            ListTile(
-                leading: Icon(Icons.card_giftcard_outlined,
-                    size: AppSizes.iconSize.sp),
-                title: Text('Leave a gift',
-                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
-                onTap: () {
-                   _launchUrl(_donateUrl);
-                }),
+            // ListTile(
+            //     leading: Icon(Icons.card_giftcard_outlined,
+            //         size: AppSizes.iconSize.sp),
+            //     title: Text('Leave a gift',
+            //         style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
+            //     onTap: () {
+            //        _launchUrl(_donateUrl);
+            //     }),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.6,
             ),
