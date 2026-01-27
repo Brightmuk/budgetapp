@@ -3,16 +3,17 @@ import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
+import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/pages/home_tabs/spending_list_tab.dart';
 import 'package:budgetapp/pages/home_tabs/wishlist_tab.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/pages/info_screen.dart';
-import 'package:budgetapp/pages/settings.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/widgets/expense_type.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -85,29 +86,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     OpenContainer(
-                      closedColor: AppColors.themeColor,
-                      closedElevation: 0,
-                      closedBuilder: (_, openContainer) {
-                      return Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Image.asset(
-                          'assets/images/logo.png',
-                          width: 80.sp,
-                        ),
-                      );
-                    }, openBuilder: (_, closedContainer) {
-                      return const InfoScreen();
-                    }),
-                   
+                        closedColor: AppColors.themeColor,
+                        closedElevation: 0,
+                        closedBuilder: (_, openContainer) {
+                          return Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Image.asset(
+                              'assets/images/logo.png',
+                              width: 80.sp,
+                            ),
+                          );
+                        },
+                        openBuilder: (_, closedContainer) {
+                          return const InfoScreen();
+                        }),
                     IconButton(
                         padding: const EdgeInsets.all(20),
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const SettingsPage()));
+                          context.go(AppLinks.settings);
                         },
                         icon: Icon(Icons.settings_outlined,
-                        color:Colors.white,
-                            size: AppSizes.iconSize.sp))
+                            color: Colors.white, size: AppSizes.iconSize.sp))
                   ],
                 ),
                 Center(
@@ -128,7 +127,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(
                   height: 20,
                 ),
-               
                 Text(
                   'TOTALS',
                   style: TextStyle(
@@ -136,7 +134,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontSize: 35.sp,
                       fontWeight: FontWeight.w300),
                 ),
-               
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -230,7 +227,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     dividerColor: AppColors.themeColor,
                     unselectedLabelColor: Color.fromARGB(255, 230, 230, 230),
                     labelStyle: TextStyle(
-                      
                         color: Colors.white,
                         fontSize: 30.sp,
                         fontWeight: FontWeight.w400),

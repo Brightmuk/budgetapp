@@ -23,26 +23,25 @@ class NotificationService {
   }
 
   ///Initialise method thats called when the service starts
-  Future<NotificationPayload?> init() async {
+  Future<void> init() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
+    final DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings();
 
-    NotificationPayload? selectedNotificationPayload =
-        NotificationPayload(itemId: '', route: '/');
-
-    var initializationSettingsAndroid =
-        const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOS;;
-
-    var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      // onSelectNotification: (String? payload) {
-      //   selectedNotificationPayload = NotificationPayload.fromJson(payload!);
-      // },
+      onDidReceiveNotificationResponse: (details) {
+        selectNotificationSubject.add(details.payload);
+      },
     );
-    return selectedNotificationPayload;
   }
 
   ///Schedule a notification to a certain time or date

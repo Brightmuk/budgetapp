@@ -2,17 +2,17 @@ import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/budget_plan.dart';
+import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
-import 'package:budgetapp/pages/single_spending_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/notification_service.dart';
-import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +77,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                   ),
                   IconButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.pop();
                       },
                       icon: Icon(
                         Icons.clear_outlined,
@@ -259,18 +259,14 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
 
                             ///If in edit mode pop twice
                             if (editMode) {
-                              Navigator.pop(context);
+                              context.pop();
                             }
 
-                            Navigator.pop(context);
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-
-                                    ///If in edit mode use the items id and not new one
-                                    SingleBudgetPlan(
-                                      budgetPlanId:
-                                          editMode ? widget.plan!.id : id,
-                                    )));
+                            context.pop();
+                            context.push(
+                              AppLinks.singleBudgetPlan,
+                              extra: editMode ? widget.plan!.id : id,
+                            );
                           }
                         });
                       } catch (e) {
