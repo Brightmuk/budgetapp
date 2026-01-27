@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:budgetapp/models/notification_model.dart';
+import 'package:budgetapp/navigation/router.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -42,7 +47,9 @@ class NotificationService {
         selectNotificationSubject.add(details.payload);
       },
     );
+    _initNotificationListeners();
   }
+
 
   ///Schedule a notification to a certain time or date
   Future<void> zonedScheduleNotification(
@@ -98,5 +105,41 @@ class NotificationService {
 
   Future<void> removeReminder(int notificationId) async {
     flutterLocalNotificationsPlugin.cancel(notificationId);
+  }
+        void _initNotificationListeners() {
+    // Handle background/terminated notification taps
+    selectNotificationSubject.stream.listen((String? payload) async {
+      if (payload != null) {
+        final notificationPayload = NotificationPayload.fromJson(jsonDecode(payload));
+        router.go(notificationPayload.route, extra: notificationPayload.itemId);
+      }
+    });
+
+    // Handle foreground notifications with M3 Overlay
+    didReceiveLocalNotificationSubject.stream.listen((ReceivedNotification notification) {
+      showOverlayNotification(
+        (context) => SafeArea(
+      child: Card(
+        margin: const EdgeInsets.all(12),
+        elevation: 6,
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: Icon(Icons.notifications_active, color: Theme.of(context).colorScheme.onPrimary, size: 20),
+          ),
+          title: Text(notification.title ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text(notification.body ?? '', maxLines: 2, overflow: TextOverflow.ellipsis),
+          trailing: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => OverlaySupportEntry.of(context)?.dismiss(),
+          ),
+        ),
+      ),
+    ),
+        duration: const Duration(seconds: 4),
+      );
+    });
   }
 }

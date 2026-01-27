@@ -1,5 +1,4 @@
 
-import 'package:budgetapp/bloc/app_bloc.dart';
 import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/pages/add_budget_plan.dart';
@@ -19,9 +18,6 @@ final getIt = GetIt.instance;
 
 NotificationPayload? payload;
 
-void setUp() {
-  getIt.registerSingleton<AppBloc>(AppBloc());
-}
 
 final router = GoRouter(
   initialLocation: AppLinks.home,
@@ -30,11 +26,7 @@ final router = GoRouter(
       path: AppLinks.home,
       builder: (context, state) => const Wrapper(),
     ),
-    GoRoute(
-        path: AppLinks.splash,
-        builder: (context, state) {
-          return const SplashScreen();
-        }),
+
     GoRoute(
       path: AppLinks.singleBudgetPlan,
       builder: (context, state) =>
@@ -61,13 +53,4 @@ final router = GoRouter(
   ],
 );
 
-Widget buildApp(Widget child) {
-  return MultiBlocProvider(
-    providers: [
-      BlocProvider(
-        create: (context) => getIt<AppBloc>(),
-      ),
-    ],
-    child: child,
-  );
-}
+

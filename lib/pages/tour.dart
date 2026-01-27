@@ -1,7 +1,9 @@
+import 'package:budgetapp/cubit/app_setup_cubit.dart';
 import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OnboardingItem {
@@ -49,18 +51,13 @@ class _TourScreenState extends State<TourScreen> {
     super.dispose();
   }
 
-  void _finishTour() {
-    if (widget.isFirstTime) {
-      SharedPrefs().setSeenTour().then((value) => context.go(AppLinks.home));
-    } else {
-      context.pop();
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    AppSetupCubit cubit = Provider.of<AppSetupCubit>(context);
+    
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -79,10 +76,7 @@ class _TourScreenState extends State<TourScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    TextButton(
-                      onPressed: _finishTour,
-                      child: const Text('Skip', style: TextStyle(color: Colors.white70)),
-                    ),
+                   
                   ],
                 ),
               ),
@@ -144,12 +138,11 @@ class _TourScreenState extends State<TourScreen> {
                         child: OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.white24),
                             padding: const EdgeInsets.all(16),
                           ),
-                          onPressed: () => _launchUrl(Uri.parse("https://www.youtube.com/watch?v=qcvBxIzlSwc")),
-                          icon: const Icon(Icons.play_circle_outline),
-                          label: const Text('Watch Tutorial Video'),
+                          onPressed: () => _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
+                         
+                          label: const Text('Next'),
                         ),
                       ),
                       secondChild: SizedBox(
@@ -160,7 +153,7 @@ class _TourScreenState extends State<TourScreen> {
                             foregroundColor: const Color(0xFF325443),
                             padding: const EdgeInsets.all(16),
                           ),
-                          onPressed: _finishTour,
+                          onPressed: ()=> cubit.viewTour(),
                           child: const Text('Get Started', style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                       ),
