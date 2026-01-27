@@ -3,11 +3,12 @@ import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
+import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/pages/add_budget_plan.dart';
-import 'package:budgetapp/pages/single_spending_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -121,10 +122,10 @@ class SpendingListTile extends StatelessWidget {
     return ListTile(
               tileColor: AppColors.themeColor.withOpacity(0.03),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => SingleBudgetPlan(
-                          budgetPlanId: plan.id,
-                        )));
+                context.push(
+                  AppLinks.singleBudgetPlan,
+                  extra: plan.id,
+                );
               },
               leading: Padding(
                 padding: const EdgeInsets.all(8.0),

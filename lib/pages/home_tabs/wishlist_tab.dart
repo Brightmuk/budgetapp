@@ -3,12 +3,13 @@ import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/wish.dart';
+import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/pages/add_wish.dart';
-import 'package:budgetapp/pages/single_wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -111,10 +112,10 @@ class WishTile extends StatelessWidget {
     return ListTile(
               tileColor: AppColors.themeColor.withOpacity(0.03),
               onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => SingleWish(
-                      wishId: wish.id,
-                    )));
+            context.push(
+              AppLinks.singleWish,
+              extra: wish.id,
+            );
               },
           leading: Padding(
             padding: const EdgeInsets.all(8.0),

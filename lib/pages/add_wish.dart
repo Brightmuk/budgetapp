@@ -3,7 +3,7 @@ import 'package:budgetapp/constants/formatters.dart';
 import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/wish.dart';
-import 'package:budgetapp/pages/single_wish.dart';
+import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/notification_service.dart';
@@ -12,6 +12,7 @@ import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -67,7 +68,7 @@ class _AddWishState extends State<AddWish> {
                   ),
                   IconButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.pop();
                       },
                       icon: Icon(
                         Icons.clear_outlined,
@@ -229,12 +230,10 @@ class _AddWishState extends State<AddWish> {
                             }
 
                             Navigator.pop(context);
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    ////If in edit mode use the items id and not new one
-                                    SingleWish(
-                                      wishId: editMode ? widget.wish!.id : id,
-                                    )));
+                            context.push(
+                              AppLinks.singleWish,
+                              extra: editMode ? widget.wish!.id : id,
+                            );
                           }
                         });
                       } catch (e) {

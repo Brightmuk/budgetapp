@@ -1,12 +1,11 @@
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
-import 'package:budgetapp/constants/style.dart';
-import 'package:budgetapp/pages/home.dart';
+import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TourScreen extends StatefulWidget {
@@ -86,9 +85,8 @@ class _TourScreenState extends State<TourScreen> {
                     onPressed: () {
                       widget.isFirstTime
                           ? SharedPrefs().setSeenTour().then((value) =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => const MyHomePage())))
-                          : Navigator.pop(context);
+                              context.go(AppLinks.home))
+                          : context.pop();
                     },
                     child: const Text(
                       'Skip',
@@ -148,9 +146,8 @@ class _TourScreenState extends State<TourScreen> {
           onPressed: () {
             widget.isFirstTime
                 ? SharedPrefs().setSeenTour().then((value) =>
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MyHomePage())))
-                : Navigator.pop(context);
+                    context.go(AppLinks.home))
+                : context.pop();
           },
          
           child: const Text('Get Started'),

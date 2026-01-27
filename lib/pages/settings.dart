@@ -1,19 +1,16 @@
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/sizes.dart';
-import 'package:budgetapp/constants/style.dart';
+import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/pages/settings/about_us.dart';
-import 'package:budgetapp/pages/settings/help.dart';
 import 'package:budgetapp/pages/tour.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
-import 'package:budgetapp/services/shared_prefs.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:currency_picker/currency_picker.dart';
-import 'package:pay/pay.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
@@ -61,14 +58,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     Text(
                       'Settings',
                       style: TextStyle(
-                        color: Colors.white,
+                          color: Colors.white,
                           fontSize: AppSizes.titleFont.sp,
                           fontWeight: FontWeight.bold),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.clear_outlined,color: Colors.white,),
+                      icon: const Icon(
+                        Icons.clear_outlined,
+                        color: Colors.white,
+                      ),
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.pop();
                       },
                     ),
                   ],
@@ -124,10 +124,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
               ),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (ctx) => const TourScreen(
-                          isFirstTime: false,
-                        )));
+                context.go(AppLinks.splash);
               },
             ),
             ListTile(
@@ -143,15 +140,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     builder: (context) => const AboutUs());
               },
             ),
-                        ListTile(
+            ListTile(
               leading: Icon(Icons.info_outline, size: AppSizes.iconSize.sp),
               title: Text(
                 'Privacy Policy',
                 style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
               ),
               onTap: () {
-               
-                   _launchUrl(_pricacyUrl);
+                _launchUrl(_pricacyUrl);
               },
             ),
             ListTile(
@@ -160,7 +156,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: Text('Help',
                   style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
               onTap: () {
-                 _launchUrl(_helpUrl);
+                _launchUrl(_helpUrl);
               },
             ),
             ListTile(
