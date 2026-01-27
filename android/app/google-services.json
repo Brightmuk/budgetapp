@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "730070630892",
-    "project_id": "expenditure-buddy",
-    "storage_bucket": "expenditure-buddy.firebasestorage.app"
+    "project_number": "235583510723",
+    "project_id": "spenditize",
+    "storage_bucket": "spenditize.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:730070630892:android:29d9df216adf665fabc0c9",
+        "mobilesdk_app_id": "1:235583510723:android:f7c6dce2871311d4e62a76",
         "android_client_info": {
           "package_name": "com.brimukon.spenditize"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC9mBdU8M794niKnGLF1PbzD1a8c6193xA"
+          "current_key": "AIzaSyAczO2nUKZYy5oWTGRnDa__V_dwTkDDkr8"
         }
       ],
       "services": {
