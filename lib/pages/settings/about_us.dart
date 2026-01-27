@@ -26,7 +26,7 @@ class AboutUs extends StatelessWidget {
       content: const Padding(
         padding: EdgeInsets.all(10.0),
         child: Text(
-            'Spenditize is an app that assists you to keep record of your future expenditures in form of spending plans and wishes, and remind you to fulfil them on the date set. Spenditize does not however help you to manage your money neither does it offer you financial advice. We are just here to remind you what you wanted to buy or spend on and when you will do it.'),
+            'Spenditize helps you plan your future spending and keeps your wishlist in one place. Tell us what you want to buy and when, and we’ll handle the reminders!'),
       ),
       actions: [
         MaterialButton(

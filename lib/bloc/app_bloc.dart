@@ -8,7 +8,7 @@ class AppState {}
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(AppState()) {
     on<AppEvent>((event, emit) {
-      // TODO: implement event handler
+      
     });
   }
 }

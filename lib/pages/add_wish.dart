@@ -1,7 +1,4 @@
 import 'package:budgetapp/constants/colors.dart';
-import 'package:budgetapp/constants/formatters.dart';
-import 'package:budgetapp/constants/sizes.dart';
-import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
@@ -11,7 +8,6 @@ import 'package:budgetapp/services/toast_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -28,17 +24,18 @@ class _AddWishState extends State<AddWish> {
   final TextEditingController _nameC = TextEditingController();
   final TextEditingController _priceC = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final FocusNode _focusNode = FocusNode();
-  final FocusNode _focusNode2 = FocusNode();
-  bool editMode = false;
-
+  final FocusNode _nameNode = FocusNode();
+  final FocusNode _priceNode = FocusNode();
+  
   late DateTime _selectedDate = DateTime.now().add(const Duration(hours: 1));
-  late bool reminder = false;
+  bool reminder = false;
+  late bool editMode;
+
   @override
   void initState() {
     super.initState();
     editMode = widget.wish != null;
-    if (widget.wish != null) {
+    if (editMode) {
       reminder = widget.wish!.reminder;
       _selectedDate = widget.wish!.reminderDate;
       _nameC.text = widget.wish!.name;
@@ -47,205 +44,206 @@ class _AddWishState extends State<AddWish> {
   }
 
   @override
+  void dispose() {
+    // FIX: Cleanup controllers and nodes
+    _nameC.dispose();
+    _priceC.dispose();
+    _nameNode.dispose();
+    _priceNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-        final ApplicationState _appState = Provider.of<ApplicationState>(context);
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.63,
-      child: Padding(
-        padding: EdgeInsets.all(AppSizes.pagePading.sp),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    editMode ? 'Edt wish' : 'Add a new Wish',
-                    style: TextStyle(
-                        fontSize: AppSizes.titleFont.sp,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        context.pop();
-                      },
-                      icon: Icon(
-                        Icons.clear_outlined,
-                        size: AppSizes.iconSize.sp,
-                      ))
-                ],
+    final theme = Theme.of(context);
+    final _appState = Provider.of<ApplicationState>(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: EdgeInsets.only(
+        top: 12,
+        left: 20,
+        right: 20,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // M3 Bottom Sheet Handle
+          Container(
+            width: 32,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.outlineVariant,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                editMode ? 'Edit Wish' : 'Add New Wish',
+                style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              Form(
+              IconButton.filledTonal(
+                onPressed: () => context.pop(),
+                icon: const Icon(Icons.close),
+              )
+            ],
+          ),
+          const SizedBox(height: 24),
+          // Form content
+          Flexible(
+            child: SingleChildScrollView(
+              child: Form(
                 key: _formKey,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
                   children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      child: TextFormField(
-                        focusNode: _focusNode,
-                        controller: _nameC,
-                        cursorColor: AppColors.themeColor,
-                        decoration: AppStyles().textFieldDecoration(
-                            label: 'Name', hintText: 'Air Jordans'),
-                        validator: (val) {
-                          if (val!.isEmpty) {
-                            return 'Name is required';
-                          }
-                        },
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Name Field (Takes up remaining space)
+                        Expanded(
+                          flex: 3,
+                          child: TextFormField(
+                            focusNode: _nameNode,
+                            controller: _nameC,
+                            decoration: InputDecoration(
+                              labelText: 'Item Name',
+                              hintText: 'Air Jordans',
+                              prefixIcon: const Icon(Icons.shopping_bag_outlined),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            validator: (val) => (val == null || val.isEmpty) ? 'Required' : null,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Price Field
+                        Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            focusNode: _priceNode,
+                            controller: _priceC,
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              labelText: 'Price',
+                              hintText: '300',
+                              prefixText: '${_appState.currentCurrency} ',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            validator: (val) => (val == null || val.isEmpty) ? 'Required' : null,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      child: TextFormField(
-                          focusNode: _focusNode2,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          keyboardType: TextInputType.number,
-                          controller: _priceC,
-                          cursorColor: AppColors.themeColor,
-                          decoration: AppStyles().textFieldDecoration(
-                              label: 'Price', hintText: '300'),
-                          validator: (val) {
-                            if (val!.isEmpty) {
-                              return 'Price is required';
-                            }
-                            return null;
-                          }),
+                    const SizedBox(height: 24),
+                    const Divider(),
+                    // M3 Toggle for Reminders
+                    SwitchListTile(
+                      secondary: Icon(reminder ? Icons.notifications_active : Icons.notifications_none),
+                      title: const Text('Set Reminder'),
+                      subtitle: const Text('Get notified to purchase this item'),
+                      value: reminder,
+                      onChanged: (val) {
+                        _nameNode.unfocus();
+                        _priceNode.unfocus();
+                        setState(() => reminder = val);
+                      },
+                    ),
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 200),
+                      opacity: reminder ? 1.0 : 0.0,
+                      child: reminder
+                          ? ListTile(
+                              leading: const Icon(Icons.calendar_month_outlined),
+                              title: const Text('Target Purchase Date'),
+                              trailing: DateServices(context: context).dayDateTimeText(_selectedDate),
+                              onTap: () async {
+                                final dateResult = await DateServices(context: context).getDateAndTime(_selectedDate);
+                                if (dateResult != null) {
+                                  setState(() => _selectedDate = dateResult);
+                                }
+                              },
+                            )
+                          : const SizedBox.shrink(),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Divider(),
-               CheckboxListTile(
-                  activeColor: Colors.greenAccent,
-                  value: reminder,
-                  title: Text('Set reminder on',
-                      style: TextStyle(fontSize: 35.sp)),
-                  subtitle: Text('You will be reminded to fullfil the wish',
-                      style: TextStyle(fontSize: 35.sp)),
-                  onChanged: (val) {
-                    _focusNode.unfocus();
-                    _focusNode2.unfocus();
-                    setState(() {
-                      reminder = val!;
-                    });
-                  }),
-              Opacity(
-                opacity: reminder?1:0.5,
-                child: ListTile(
-                  leading: Icon(
-                    Icons.calendar_month_outlined,
-                    size: AppSizes.iconSize.sp,
-                  ),
-                  title: Text(
-                    'Reminder date',
-                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                  ),
-                  trailing: DateServices(context: context)
-                      .dayDateTimeText(_selectedDate),
-                  onTap: reminder?() async {
-                    _focusNode.unfocus();
-                    _focusNode2.unfocus();
-                          final dateResult =
-                              await DateServices(context: context)
-                                  .getDateAndTime(_selectedDate);
-                          if (dateResult != null) {
-                            setState(() {
-                              _selectedDate = dateResult;
-                            });
-                          } 
-                  }:null,
-                ),
-              ),
-
-
-            ]),
-            Positioned(
-              bottom: 10,
-              child: MaterialButton(
-                  padding: const EdgeInsets.all(20),
-                  minWidth: MediaQuery.of(context).size.width * 0.9,
-                  color: AppColors.themeColor,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)),
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: () async {
-
-                    if (_formKey.currentState!.validate()) {
-                     if (_selectedDate.millisecondsSinceEpoch <
-                        DateTime.now()
-                            .add(const Duration(minutes: 5))
-                            .millisecondsSinceEpoch&&reminder) {
-                      ToastService(context: context).showSuccessToast(
-                          'Reminders need to be a minimum of 5 minutes from now');
-                      return;
-                    }
-                      try {
-                        String id =
-                            DateTime.now().millisecondsSinceEpoch.toString();
-                        Wish wish = Wish(
-                          ////If in edit mode use the items id and not new one
-                          id: editMode ? widget.wish!.id : id,
-                          price: int.parse(_priceC.value.text),
-                          reminderDate: _selectedDate,
-                          creationDate: DateTime.now(),
-                          name: _nameC.value.text,
-                          reminder: DateServices(context: context).isPastDate(_selectedDate)?false:reminder,
-                        );
-                        await WishService(context: context,appState: _appState)
-                            .saveWish(wish: wish)
-                            .then((value) async {
-                          if (value) {
-                            ///only set reminder when user selects it
-                            if (wish.reminder&&!DateServices(context: context).isPastDate(_selectedDate)) {
-                              await NotificationService().zonedScheduleNotification(
-                                  id: int.parse(wish.id.substring(8)),
-                                  payload: '{"itemId":$id,"route":"/singlewish"}',
-                                  title: 'Wish fulfilment',
-                                  description:
-                                      'Remember to purchase your ${wish.name} Buddy!',
-                                  scheduling:
-                                      tz.TZDateTime.fromMillisecondsSinceEpoch(
-                                          tz.local,
-                                          wish.reminderDate
-                                              .millisecondsSinceEpoch));
-                            } else {
-                              ///Delete in case they are editing and seting reminder off
-                              await NotificationService().removeReminder(int.parse(wish.id.substring(8)));
-                            }
-
-                            ////If in edit mode pop twice
-                            if (editMode) {
-                              Navigator.pop(context);
-                            }
-
-                            Navigator.pop(context);
-                            context.push(
-                              AppLinks.singleWish,
-                              extra: editMode ? widget.wish!.id : id,
-                            );
-                          }
-                        });
-                      } catch (e) {
-                        ToastService(context: context)
-                            .showSuccessToast('Sorry, there was an error');
-                      }
-                    }
-                  }),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 24),
+          // Save Button
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: _handleSave,
+              icon: const Icon(Icons.check_circle_outline),
+              label: const Text('Save Wish', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  Future<void> _handleSave() async {
+    final _appState = Provider.of<ApplicationState>(context, listen: false);
+    
+    if (_formKey.currentState!.validate()) {
+      // Validate Reminder Time
+      if (reminder && _selectedDate.isBefore(DateTime.now().add(const Duration(minutes: 5)))) {
+        ToastService(context: context).showSuccessToast('Reminder must be at least 5 minutes from now');
+        return;
+      }
+
+      try {
+        String id = editMode ? widget.wish!.id : DateTime.now().millisecondsSinceEpoch.toString();
+        Wish wish = Wish(
+          id: id,
+          price: int.parse(_priceC.text),
+          reminderDate: _selectedDate,
+          creationDate: DateTime.now(),
+          name: _nameC.text,
+          reminder: !DateServices(context: context).isPastDate(_selectedDate) && reminder,
+        );
+
+        bool success = await WishService(context: context, appState: _appState).saveWish(wish: wish);
+        
+        if (success) {
+          // Handle Notifications
+          final notificationId = int.parse(id.substring(id.length - 8));
+          if (wish.reminder) {
+            await NotificationService().zonedScheduleNotification(
+              id: notificationId,
+              payload: '{"itemId":$id,"route":"/singlewish"}',
+              title: 'Wish fulfilment',
+              description: 'Don\'t forget your ${wish.name}!',
+              scheduling: tz.TZDateTime.fromMillisecondsSinceEpoch(tz.local, wish.reminderDate.millisecondsSinceEpoch),
+            );
+          } else {
+            await NotificationService().removeReminder(notificationId);
+          }
+
+          if (mounted) {
+            if (editMode) Navigator.pop(context);
+            Navigator.pop(context);
+            context.push(AppLinks.singleWish, extra: id);
+          }
+        }
+      } catch (e) {
+        ToastService(context: context).showSuccessToast('Error saving wish');
+      }
+    }
   }
 }

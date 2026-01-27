@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/formatters.dart';
-import 'package:budgetapp/constants/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/pages/add_budget_plan.dart';
-import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
@@ -12,373 +10,261 @@ import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/widgets/action_dialogue.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 class SingleBudgetPlan extends StatefulWidget {
   final String budgetPlanId;
-  const SingleBudgetPlan({Key? key, required this.budgetPlanId})
-      : super(key: key);
+  const SingleBudgetPlan({Key? key, required this.budgetPlanId}) : super(key: key);
 
   @override
   _SingleBudgetPlanState createState() => _SingleBudgetPlanState();
 }
 
 class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
-  final DateFormat dayDate = DateFormat('EEE dd, yyy');
-  late bool remider = true;
-  late bool save = true;
-  bool exportAsPdf = true;
-  List<Expense> items = [];
+  late Future<SpendingPlan> _planFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPlan();
+  }
+
+  void _loadPlan() {
+    final appState = Provider.of<ApplicationState>(context, listen: false);
+    _planFuture = BudgetPlanService(context: context, appState: appState)
+        .singleBudgetPlan(widget.budgetPlanId);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final ApplicationState _appState = Provider.of<ApplicationState>(context);
+    final appState = Provider.of<ApplicationState>(context);
+    final theme = Theme.of(context);
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          leading: Container(),
-          toolbarHeight: AppSizes.minToolBarHeight,
-          flexibleSpace: AnimatedContainer(
-            padding: const EdgeInsets.all(15),
-            duration: const Duration(seconds: 2),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: AppColors.themeColor,
+    return Scaffold(
+      body: FutureBuilder<SpendingPlan>(
+        future: _planFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: Text('Plan not found'));
+          }
+
+          final plan = snapshot.data!;
+
+          return CustomScrollView(
+            slivers: [
+              // M3 App Bar with Action Buttons
+              SliverAppBar.large(
+                title: Text(plan.title),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.print_outlined),
+                    onPressed: () => _handlePrint(plan),
+                    tooltip: 'Print',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.share_outlined),
+                    onPressed: () => _handleShare(plan),
+                    tooltip: 'Share',
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              ),
+              
+              // Summary & Details Section
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      _buildSummaryCard(theme, plan, appState),
+                      const SizedBox(height: 16),
+                      _buildDetailsCard(theme, plan),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Expenses List Header
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 16, 8),
+                  child: Text(
+                    'Expenses',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Expenses List
+              SliverPadding(
+                padding: const EdgeInsets.only(bottom: 100),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final item = plan.expenses[index];
+                      return ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                        title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                        subtitle: Text('${item.quantity} units × ${item.price} ${appState.currentCurrency}'),
+                        trailing: Text(
+                          '${AppFormatters.moneyCommaStr(item.quantity * item.price)} ${appState.currentCurrency}',
+                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      );
+                    },
+                    childCount: plan.expenses.length,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      
+      // Bottom Action Bar for Edit/Delete
+      bottomNavigationBar: _buildBottomActions(theme, appState),
+    );
+  }
+
+  Widget _buildSummaryCard(ThemeData theme, SpendingPlan plan, ApplicationState appState) {
+    return Card(
+      elevation: 0,
+      color: theme.colorScheme.primaryContainer,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: theme.colorScheme.primary,
+              child: Icon(Icons.monetization_on, color: theme.colorScheme.onPrimary),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    FloatingActionButton.extended(
-                      elevation: 0,
-                      heroTag: 'print',
-                      label: Text(
-                        'Print',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: AppSizes.normalFontSize.sp),
-                      ),
-                      icon: Icon(
-                        Icons.print_outlined,
-                        color: Colors.white,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      onPressed: () async {
-                        SpendingPlan plan = await BudgetPlanService(
-                                context: context, appState: _appState)
-                            .singleBudgetPlan(widget.budgetPlanId);
-                        File pdf = await PDFService.createPdf(plan);
-                        await Printing.layoutPdf(
-                            name: '${plan.title}.pdf',
-                            onLayout: (format) async => pdf.readAsBytes());
-                        if (!_appState.adShown) {
-                         
-                          _appState.changeAdView();
-                        } else {
-                          _appState.changeAdView();
-                        }
-                      },
-                      backgroundColor: AppColors.themeColor,
-                    ),
-                    FloatingActionButton.extended(
-                      elevation: 0,
-                      heroTag: 'share',
-                      label: Text(
-                        'Share',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: AppSizes.normalFontSize.sp),
-                      ),
-                      icon: Icon(
-                        Icons.share_outlined,
-                        color: Colors.white,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      onPressed: () async {
-                        SpendingPlan plan = await BudgetPlanService(
-                                context: context, appState: _appState)
-                            .singleBudgetPlan(widget.budgetPlanId);
-                        File pdf = await PDFService.createPdf(plan);
-                        await Printing.sharePdf(
-                            bytes: pdf.readAsBytesSync(),
-                            filename: '${plan.title}.pdf');
-                        if (!_appState.adShown) {
-                        
-                          _appState.changeAdView();
-                        } else {
-                          _appState.changeAdView();
-                        }
-                      },
-                      backgroundColor: AppColors.themeColor,
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Spending plan',
-                      style: TextStyle(
-                          fontSize: AppSizes.titleFont.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.clear_outlined,
-                        color: Colors.white,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
+                Text('Total Spent', style: theme.textTheme.labelLarge),
+                Text(
+                  '${AppFormatters.moneyCommaStr(plan.total)} ${appState.currentCurrency}',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onPrimaryContainer,
+                  ),
                 ),
               ],
             ),
-          ),
-        ),
-        body: FutureBuilder<SpendingPlan>(
-            future: BudgetPlanService(context: context, appState: _appState)
-                .singleBudgetPlan(widget.budgetPlanId),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(snapshot.error.toString()),
-                );
-              }
-              if (snapshot.hasData) {
-                SpendingPlan? plan = snapshot.data;
-
-                return Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: ListView(
-                    
-                    children: <Widget>[
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: Text(
-                        plan!.title,
-                        style: TextStyle(
-                            fontSize: AppSizes.normalFontSize.sp,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Divider(),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(
-                        Icons.monetization_on_outlined,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      title: Text(
-                        'Total',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: AppSizes.normalFontSize.sp,
-                        ),
-                      ),
-                      trailing: Text(
-                        ' ${AppFormatters.moneyCommaStr(plan.total)} ${_appState.currentCurrency}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: AppSizes.normalFontSize.sp,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(
-                        Icons.calendar_month_outlined,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      title: Text(
-                        'Created on',
-                        style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,
-                        ),
-                      ),
-                      trailing: DateServices(context: context)
-                          .dayDateTimeText(plan.creationDate),
-                    ),
-                    Visibility(
-                      visible: plan.reminder,
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(
-                          Icons.calendar_month_outlined,
-                          size: AppSizes.iconSize.sp,
-                        ),
-                        title: Text(
-                          'Reminder Date',
-                          style: TextStyle(
-                            fontSize: AppSizes.normalFontSize.sp,
-                          ),
-                        ),
-                        trailing: DateServices(context: context)
-                            .dayDateTimeText(plan.reminderDate),
-                      ),
-                    ),
-                    CheckboxListTile(
-                        contentPadding: EdgeInsets.zero,
-                        activeColor: Colors.greenAccent,
-                        value: plan.reminder,
-                        title: Text(
-                          'Reminder ',
-                          style: TextStyle(
-                            fontSize: AppSizes.normalFontSize.sp,
-                          ),
-                        ),
-                        subtitle: Text(
-                          plan.reminder
-                              ? 'You will be reminded to fullfil the Spending list'
-                              : 'You will not be reminded to fullfil the Spending list',
-                          style: TextStyle(
-                            fontSize: AppSizes.normalFontSize.sp,
-                          ),
-                        ),
-                        onChanged: null),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: Text(
-                        'Expenses',
-                        style: TextStyle(
-                            fontSize: AppSizes.normalFontSize.sp,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Divider(),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        physics: ClampingScrollPhysics(),
-                        itemCount: plan.expenses.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              plan.expenses[index].name.toUpperCase(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 30.sp),
-                            ),
-                            subtitle: Text(
-                              plan.expenses[index].quantity.toString() +
-                                  ' unit(s) @' +
-                                  plan.expenses[index].price.toString() +
-                                  ' ${_appState.currentCurrency}',
-                              style: TextStyle(
-                                fontSize: AppSizes.normalFontSize.sp,
-                              ),
-                            ),
-                            trailing: Text(
-                              '${AppFormatters.moneyCommaStr((plan.expenses[index].quantity * plan.expenses[index].price))} ${_appState.currentCurrency}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: AppSizes.normalFontSize.sp,
-                              ),
-                            ),
-                          );
-                        }),
-                    SizedBox(
-                      height: 150.sp,
-                    ),
-                  ]),
-                );
-              } else {
-                return LoadService.dataLoader;
-              }
-            }),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(left: 25),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const SizedBox(),
-              FloatingActionButton.extended(
-                heroTag: 'edit',
-                label: Text(
-                  'Edit',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: AppSizes.normalFontSize.sp),
-                ),
-                icon: Icon(
-                  Icons.edit_outlined,
-                  color: Colors.white,
-                  size: AppSizes.iconSize.sp,
-                ),
-                onPressed: () async {
-                  SpendingPlan _plan = await BudgetPlanService(
-                          context: context, appState: _appState)
-                      .singleBudgetPlan(widget.budgetPlanId);
-                  showModalBottomSheet(
-                      isScrollControlled: true,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      context: context,
-                      builder: (context) => AddBudgetPlan(plan: _plan));
-                },
-                backgroundColor: AppColors.themeColor,
-              ),
-              FloatingActionButton.extended(
-                heroTag: 'delete',
-                label: Text(
-                  'Delete',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: AppSizes.normalFontSize.sp),
-                ),
-                icon: Icon(
-                  Icons.delete_outline,
-                  color: Colors.white,
-                  size: AppSizes.iconSize.sp,
-                ),
-                onPressed: () async {
-                  showModalBottomSheet(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      context: context,
-                      builder: (context) => ActionDialogue(
-                            infoText:
-                                'Are you sure you want to delete this Spending plan?',
-                            action: () {
-                              BudgetPlanService(
-                                      context: context, appState: _appState)
-                                  .deleteBudgetPlan(
-                                      budgetPlanId: widget.budgetPlanId);
-                            },
-                            actionBtnText: 'Delete',
-                          ));
-                },
-                backgroundColor: AppColors.themeColor,
-              ),
-              const SizedBox(),
-            ],
-          ),
+          ],
         ),
       ),
     );
   }
+
+  Widget _buildDetailsCard(ThemeData theme, SpendingPlan plan) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.calendar_today_outlined, size: 20),
+            title: const Text('Created'),
+            trailing: DateServices(context: context).dayDateTimeText(plan.creationDate),
+          ),
+          if (plan.reminder)
+            ListTile(
+              leading: const Icon(Icons.alarm_on_outlined, size: 20),
+              title: const Text('Reminder Set'),
+              trailing: DateServices(context: context).dayDateTimeText(plan.reminderDate),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomActions(ThemeData theme, ApplicationState appState) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () => _handleDelete(appState),
+                icon: const Icon(Icons.delete_outline),
+                label: const Text('Delete'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () => _handleEdit(appState),
+                icon: const Icon(Icons.edit_outlined),
+                label: const Text('Edit Plan'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- Logic Handlers ---
+
+  Future<void> _handlePrint(SpendingPlan plan) async {
+    File pdf = await PDFService.createPdf(plan);
+    await Printing.layoutPdf(name: '${plan.title}.pdf', onLayout: (_) => pdf.readAsBytes());
+  }
+
+  Future<void> _handleShare(SpendingPlan plan) async {
+    File pdf = await PDFService.createPdf(plan);
+    await Printing.sharePdf(bytes: pdf.readAsBytesSync(), filename: '${plan.title}.pdf');
+  }
+
+  void _handleEdit(ApplicationState appState) async {
+    final plan = await snapshotData; // Helper to get latest data
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) => AddBudgetPlan(plan: plan),
+    ).then((_) => setState(() => _loadPlan())); // Refresh on return
+  }
+
+  void _handleDelete(ApplicationState appState) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => ActionDialogue(
+        infoText: 'Delete this Spending plan permanently?',
+        action: () async {
+          await BudgetPlanService(context: context, appState: appState)
+              .deleteBudgetPlan(budgetPlanId: widget.budgetPlanId);
+          if (mounted) context.pop();
+        },
+        actionBtnText: 'Delete',
+      ),
+    );
+  }
+
+  Future<SpendingPlan> get snapshotData async => await _planFuture;
 }

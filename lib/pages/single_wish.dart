@@ -1,27 +1,13 @@
-import 'dart:io';
-import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/formatters.dart';
-import 'package:budgetapp/constants/sizes.dart';
-import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/add_wish.dart';
-import 'package:budgetapp/pages/create_list.dart';
-import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
-import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
-import 'package:budgetapp/services/load_service.dart';
-import 'package:budgetapp/services/pdf_service.dart';
-import 'package:budgetapp/services/shared_prefs.dart';
-import 'package:budgetapp/services/toast_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/widgets/action_dialogue.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:printing/printing.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 class SingleWish extends StatefulWidget {
   final String wishId;
@@ -32,243 +18,194 @@ class SingleWish extends StatefulWidget {
 }
 
 class _SingleWishState extends State<SingleWish> {
-  final DateFormat dayDate = DateFormat('EEE dd, yyy');
-  late bool remider = true;
-  late bool save = true;
-  bool exportAsPdf = true;
+  late Future<Wish> _wishFuture;
 
-  List<Expense> items = [];
+  @override
   void initState() {
     super.initState();
+    _loadWish();
+  }
+
+  void _loadWish() {
+    final appState = Provider.of<ApplicationState>(context, listen: false);
+    _wishFuture = WishService(context: context, appState: appState).singleWish(widget.wishId);
   }
 
   @override
   Widget build(BuildContext context) {
-    final ApplicationState _appState = Provider.of<ApplicationState>(context);
+    final appState = Provider.of<ApplicationState>(context);
+    final theme = Theme.of(context);
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: Container(),
-          toolbarHeight: AppSizes.minToolBarHeight,
-          flexibleSpace: AnimatedContainer(
-            height: AppSizes.minToolBarHeight,
-            padding: const EdgeInsets.all(15),
-            duration: const Duration(seconds: 2),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: AppColors.themeColor,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Scaffold(
+      body: FutureBuilder<Wish>(
+        future: _wishFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: Text('Wish not found'));
+          }
+
+          final wish = snapshot.data!;
+
+          return CustomScrollView(
+            slivers: [
+              // M3 Large App Bar
+              SliverAppBar.large(
+                title: Text(wish.name),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => context.pop(),
+                ),
+              ),
+              
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
                     children: [
-                      Text(
-                        'Wish',
-                        style: TextStyle(
-                            fontSize: AppSizes.titleFont.sp,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.clear_outlined,
-                          color: Colors.white,
-                          size: AppSizes.iconSize.sp,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
+                      // Price Card
+                      _buildPriceCard(theme, wish, appState),
+                      const SizedBox(height: 16),
+                      // Details List Card
+                      _buildDetailsCard(theme, wish),
                     ],
                   ),
-                ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      // M3 Bottom Action Bar
+      bottomNavigationBar: _buildBottomActions(theme, appState),
+    );
+  }
+
+  Widget _buildPriceCard(ThemeData theme, Wish wish, ApplicationState appState) {
+    return Card(
+      elevation: 0,
+      color: theme.colorScheme.tertiaryContainer,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: theme.colorScheme.tertiary,
+              child: Icon(Icons.star, color: theme.colorScheme.onTertiary),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Estimated Price', style: theme.textTheme.labelLarge),
+                Text(
+                  '${AppFormatters.moneyCommaStr(wish.price)} ${appState.currentCurrency}',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onTertiaryContainer,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailsCard(ThemeData theme, Wish wish) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.calendar_month_outlined, size: 20),
+            title: const Text('Wish Created'),
+            trailing: DateServices(context: context).dayDateTimeText(wish.creationDate),
+          ),
+          ListTile(
+            leading: Icon(
+              wish.reminder ? Icons.alarm_on : Icons.alarm_off,
+              size: 20,
+              color: wish.reminder ? theme.colorScheme.primary : theme.colorScheme.outline,
+            ),
+            title: const Text('Reminder Status'),
+            subtitle: Text(wish.reminder ? 'Notification active' : 'Notifications disabled'),
+            trailing: wish.reminder 
+              ? DateServices(context: context).dayDateTimeText(wish.reminderDate)
+              : null,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomActions(ThemeData theme, ApplicationState appState) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => _handleDelete(appState),
+                icon: const Icon(Icons.delete_outline),
+                label: const Text('Delete'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
               ),
             ),
-          ),
-        ),
-        body: FutureBuilder<Wish>(
-            future: WishService(context: context,appState: _appState).singleWish(widget.wishId),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Center(
-                  child: Text('An error occurred'),
-                );
-              }
-              if (snapshot.hasData) {
-                Wish? wish = snapshot.data;
-
-                return Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(children: <Widget>[
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      wish!.name,
-                      style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Divider(),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(
-                        Icons.calendar_month_outlined,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      title: Text(
-                        'Creation Date',
-                        style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,
-                        ),
-                      ),
-                      trailing: DateServices(context: context)
-                          .dayDateTimeText(wish.creationDate),
-                    ),
-                    Visibility(
-                      visible: wish.reminder,
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(
-                          Icons.calendar_month_outlined,
-                          size: AppSizes.iconSize.sp,
-                        ),
-                        title: Text(
-                          'Reminder Date',
-                          style: TextStyle(
-                            fontSize: AppSizes.normalFontSize.sp,
-                          ),
-                        ),
-                        trailing: DateServices(context: context)
-                            .dayDateTimeText(wish.reminderDate),
-                      ),
-                    ),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(
-                        Icons.monetization_on_outlined,
-                        size: AppSizes.iconSize.sp,
-                      ),
-                      title: Text(
-                        'Price',
-                        style: TextStyle(
-                          fontSize: AppSizes.normalFontSize.sp,
-                        ),
-                      ),
-                      trailing: Text(
-                               '${AppFormatters.moneyCommaStr(wish.price)} ${_appState.currentCurrency}'
-                                  ,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: AppSizes.normalFontSize.sp,
-                              ),
-                            ),
-                    ),
-                    CheckboxListTile(
-                        contentPadding: EdgeInsets.zero,
-                        activeColor: Colors.greenAccent,
-                        value: wish.reminder,
-                        title: Text(
-                          'Reminder ',
-                          style: TextStyle(
-                            fontSize: AppSizes.normalFontSize.sp,
-                          ),
-                        ),
-                        subtitle: Text(
-                          wish.reminder
-                              ? 'You will be reminded to fullfil this wish'
-                              : 'You will not be reminded to fullfil this wish',
-                          style: TextStyle(
-                            fontSize: AppSizes.normalFontSize.sp,
-                          ),
-                        ),
-                        onChanged: null),
-                    const Divider(),
-                  ]),
-                );
-              } else {
-                return LoadService.dataLoader;
-              }
-            }),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(left: 25),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const SizedBox(),
-              FloatingActionButton.extended(
-                heroTag: 'edit',
-                label: Text(
-                  'Edit',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: AppSizes.normalFontSize.sp),
+            const SizedBox(width: 12),
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: () => _handleEdit(appState),
+                icon: const Icon(Icons.edit_outlined),
+                label: const Text('Edit Wish'),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                icon: Icon(
-                  Icons.edit_outlined,
-                  color: Colors.white,
-                  size: AppSizes.iconSize.sp,
-                ),
-                onPressed: () async {
-                  Wish _wish = await WishService(context: context,appState: _appState)
-                      .singleWish(widget.wishId);
-                  showModalBottomSheet(
-                      isScrollControlled: true,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      context: context,
-                      builder: (context) => AddWish(wish: _wish));
-                },
-                backgroundColor: AppColors.themeColor,
               ),
-              FloatingActionButton.extended(
-                heroTag: 'delete',
-                label: Text(
-                  'Delete',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: AppSizes.normalFontSize.sp),
-                ),
-                icon: Icon(
-                  Icons.delete_outline,
-                  color: Colors.white,
-                  size: AppSizes.iconSize.sp,
-                ),
-                onPressed: () async {
-                  showModalBottomSheet(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      context: context,
-                      builder: (context) => ActionDialogue(
-                            infoText:
-                                'Are you sure you want to delete this wish?',
-                            action: () {
-                              WishService(context: context,appState: _appState)
-                                  .deleteWish(wishId: widget.wishId);
-                            },
-                            actionBtnText: 'Delete',
-                          ));
-
-                },
-                backgroundColor: AppColors.themeColor,
-              ),
-              const SizedBox(),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  // --- Logic Handlers ---
+
+  void _handleEdit(ApplicationState appState) async {
+    final wish = await _wishFuture;
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) => AddWish(wish: wish),
+    ).then((_) => setState(() => _loadWish()));
+  }
+
+  void _handleDelete(ApplicationState appState) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => ActionDialogue(
+        infoText: 'Delete this wish from your list?',
+        action: () async {
+          await WishService(context: context, appState: appState).deleteWish(wishId: widget.wishId);
+          if (mounted) context.pop();
+        },
+        actionBtnText: 'Delete',
       ),
     );
   }

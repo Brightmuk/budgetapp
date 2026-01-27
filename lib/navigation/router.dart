@@ -24,6 +24,7 @@ void setUp() {
 }
 
 final router = GoRouter(
+  initialLocation: AppLinks.home,
   routes: [
     GoRoute(
       path: AppLinks.home,
@@ -52,10 +53,7 @@ final router = GoRouter(
       path: AppLinks.addWish,
       builder: (context, state) => const AddWish(),
     ),
-    GoRoute(
-      path: AppLinks.home,
-      builder: (context, state) => const MyHomePage(),
-    ),
+
     GoRoute(
       path: AppLinks.settings,
       builder: (context, state) => const SettingsPage(),

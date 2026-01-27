@@ -54,42 +54,38 @@ class _WishListTabState extends State<WishListTab> {
                     return WishTile(wish: wishes[index], index: index);
                   });
             } else {
-              return Column(
-                children: [
-                  
-                  SizedBox(
-                    height: 20.sp,
-                  ),
-                  Image.asset(
-                    'assets/images/no_wish.png',
-                    width: 500.sp,
-                  ),
-                  SizedBox(
-                    height: 50.sp,
-                  ),
-                  Text(
-                    'No wishes yet',
-                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                  ),
-                  SizedBox(
-                    height: 30.sp,
-                  ),
-                  MaterialButton(
-                      elevation: 0,
-                      color: AppColors.themeColor.withOpacity(0.3),
-                      onPressed: () {
-                        showModalBottomSheet(
-                            isScrollControlled: true,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                            context: context,
-                            builder: (context) => const AddWish());
-                      },
-                      child: const Text(
-                        'CREAT ONE',
-                        style: TextStyle(color: AppColors.themeColor),
-                      )),
-                ],
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    
+                    
+                   
+                    Text(
+                      'No wishes yet',
+                      style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                    ),
+                    SizedBox(
+                      height: 30.sp,
+                    ),
+                    MaterialButton(
+                        elevation: 0,
+                        color: AppColors.themeColor.withOpacity(0.3),
+                        onPressed: () {
+                          showModalBottomSheet(
+                              isScrollControlled: true,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              context: context,
+                              builder: (context) => const AddWish());
+                        },
+                        child: const Text(
+                          'CREAT ONE',
+                          style: TextStyle(color: AppColors.themeColor),
+                        )),
+                  ],
+                ),
               );
             }
           }),

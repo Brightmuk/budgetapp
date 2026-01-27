@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/constants/formatters.dart';
-import 'package:budgetapp/constants/sizes.dart';
-import 'package:budgetapp/constants/style.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/pages/add_budget_plan.dart';
@@ -14,7 +12,6 @@ import 'package:budgetapp/widgets/share_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class CreateList extends StatefulWidget {
@@ -28,503 +25,334 @@ class CreateList extends StatefulWidget {
 
 class _CreateListState extends State<CreateList> {
   final TextEditingController _nameC = TextEditingController();
-  final TextEditingController _quantityC = TextEditingController();
+  final TextEditingController _quantityC = TextEditingController(text: '1');
   final TextEditingController _priceC = TextEditingController();
   final TextEditingController _amountToSpendC = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
+  final FocusNode _nameNode = FocusNode();
+  final FocusNode _quantityNode = FocusNode();
+  final FocusNode _priceNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
-  final ScrollController _sc = ScrollController();
   final _amountFormKey = GlobalKey<FormState>();
 
   List<Expense> expenses = [];
   bool reverseMode = false;
   int amountToSpend = 0;
 
-  // late AdmobInterstitial interstitialAd;
-
   @override
   void initState() {
     super.initState();
     hasViewedReverse();
-
-    expenses.addAll(widget.expenses!);
-
-    _quantityC.text = '1';
-
-    // Admob.requestTrackingAuthorization();
-
-    // interstitialAd = AdmobInterstitial(
-    //   adUnitId: 'ca-app-pub-1360540534588513/6335620084',
-    //   listener: (AdmobAdEvent event, Map<String, dynamic>? args) {
-    //     if (event == AdmobAdEvent.closed) interstitialAd.load();
-    //     debugPrint(args.toString());
-    //   },
-    // );
-    // interstitialAd.load();
-  }
-
-  int get _total {
-    int sum = 0;
-    for (Expense val in expenses) {
-      sum += val.quantity * val.price;
+    if (widget.expenses != null) {
+      expenses.addAll(widget.expenses!);
     }
-    return sum;
-  }
-
-  int get _balance {
-    int sum = amountToSpend;
-    for (Expense val in expenses) {
-      sum -= val.quantity * val.price;
-    }
-
-    return sum;
   }
 
   @override
-  Widget build(BuildContext context) {
-    final ApplicationState _appState = Provider.of<ApplicationState>(context);
+  void dispose() {
+    // FIX: Memory management
+    _nameC.dispose();
+    _quantityC.dispose();
+    _priceC.dispose();
+    _amountToSpendC.dispose();
+    _nameNode.dispose();
+    _quantityNode.dispose();
+    _priceNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
+  int get _total => expenses.fold(0, (sum, item) => sum + (item.quantity * item.price));
+  int get _balance => amountToSpend - _total;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final appState = Provider.of<ApplicationState>(context);
+
+    return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          leading: Container(),
-          toolbarHeight: AppSizes.midToolBarHeight + 60,
-          flexibleSpace: AnimatedContainer(
-            padding: const EdgeInsets.all(15),
-            duration: const Duration(seconds: 2),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: AppColors.themeColor,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      
-                      widget.title ?? 'Quick Spending Plan',
-                      style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 40.sp, fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.clear_outlined,color: Colors.white,),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-                
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Reverse Mode',style: TextStyle(color: Colors.white),),
-                 inactiveTrackColor: const Color.fromARGB(255, 33, 136, 84),
-                  activeColor: Colors.white,
-                 
-                  inactiveThumbColor: const Color.fromARGB(255, 231, 231, 231),
-                  activeTrackColor: Color.fromARGB(255, 123, 209, 166),
-                  value: reverseMode, onChanged: (val) {
-                      if (val) {
-                        showAmountInput();
-                      } else {
-                        setState(() {
-                          amountToSpend = 0;
-                        });
-                      }
-                      setState(() {
-                        reverseMode = val;
-                      });
-                    } ),
-                
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      reverseMode ? 'Balance' : 'Total',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 40.sp,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      width: AppSizes(context: context).screenWidth * 0.5,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            '${AppFormatters.moneyCommaStr(reverseMode ? _balance : _total)} ${_appState.currentCurrency} ',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: AppSizes.normalFontSize.sp,
-                                color: reverseMode && _balance < 0
-                                    ? Colors.redAccent
-                                    : Colors.white),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Visibility(
-                              visible: reverseMode,
-                              child: GestureDetector(
-                                child: const Icon(
-                                  Icons.edit_outlined,
-                                  size: 15,
-                                ),
-                                onTap: () {
-                                  showAmountInput();
-                                },
-                              ))
-                        ],
-                      ),
-                    ),
-                  ],
-                )
+        
+        body: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverAppBar(leading: Container(),),
+            // M3 Large App Bar
+            SliverAppBar.large(
+              title: Text(widget.title ?? 'Quick Spending Plan'),
+              actions: [
+                FloatingActionButton.extended(
+          onPressed: expenses.isEmpty ? null : _onDone,
+          label: const Text('Finish Plan'),
+          icon: const Icon(Icons.check),
+        ),
+        SizedBox(width: 10,)
               ],
             ),
-          ),
-        ),
-        body: SingleChildScrollView(
-          controller: _sc,
-          child: Column(children: <Widget>[
-            const SizedBox(
-              height: 20,
-            ),
-            SizedBox(
-              height: expenses.length * 73,
-              child: ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: expenses.length,
-                  itemBuilder: (context, index) {
-                    return Dismissible(
-                      dismissThresholds: const {
-                        DismissDirection.startToEnd: 0.7,
-                      },
-                      direction: DismissDirection.startToEnd,
-                      background: Container(
-                        padding: const EdgeInsets.all(10),
-                        color: Colors.redAccent,
-                        child: const Row(
+            
+            // Header Stats (Total/Balance)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Card(
+                  elevation: 0,
+                  color: theme.colorScheme.secondaryContainer,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Icon(Icons.delete_outline),
+                            Text(reverseMode ? 'Balance Remaining' : 'Estimated Total',
+                                style: theme.textTheme.titleMedium),
+                            Switch(
+                              value: reverseMode,
+                              onChanged: (val) {
+                                if (val) showAmountInput();
+                                setState(() => reverseMode = val);
+                              },
+                            ),
                           ],
                         ),
-                      ),
-                      key: UniqueKey(),
-                      onDismissed: (val) {
-                        setState(() {
-                          expenses.removeAt(index);
-                        });
-                      },
-                      child: ListTile(
-                        title: Text(
-                          expenses[index].name.toUpperCase(),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${AppFormatters.moneyCommaStr(reverseMode ? _balance : _total)} ${appState.currentCurrency}',
+                              style: theme.textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: reverseMode && _balance < 0 ? theme.colorScheme.error : theme.colorScheme.onSecondaryContainer,
+                              ),
+                            ),
+                            if (reverseMode)
+                              IconButton.filledTonal(
+                                onPressed: showAmountInput,
+                                icon: const Icon(Icons.edit, size: 18),
+                              ),
+                          ],
                         ),
-                        subtitle: Text('${expenses[index].quantity} unit(s) @${AppFormatters.moneyCommaStr(expenses[index].price)} ${_appState.currentCurrency} '),
-                        trailing: Text(
-                          '${AppFormatters.moneyCommaStr((expenses[index].quantity * expenses[index].price))} ${_appState.currentCurrency}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    );
-                  }),
-            ),
-            SizedBox(
-              height: 10.sp,
-            ),
-            Visibility(
-              visible: expenses.isNotEmpty,
-              child: Text('Swipe right on item to delete',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[500])),
-            ),
-            SizedBox(
-              height: 10.sp,
-            ),
-            expense(),
-            SizedBox(
-              height: 100.sp,
-            ),
-            Text('Hit enter to save item',
-                style: TextStyle(fontSize: 13, color: Colors.grey[500])),
-            SizedBox(
-              height: 150.sp,
-            ),
-          ]),
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-            heroTag: 'Share',
-            backgroundColor: AppColors.themeColor,
-            onPressed: expenses.isNotEmpty
-                ? () async {
-                    if (widget.title != null) {
-                      Navigator.pop(
-                          context, {'expenses': expenses, 'total': _total});
-                    } else {
-                      if (expenses.isEmpty) {
-                        return;
-                      }
-                      SpendingPlan plan = SpendingPlan(
-                          id: DateTime.now().millisecondsSinceEpoch.toString(),
-                          total: _total,
-                          title: 'Quick Spending Plan',
-                          creationDate: DateTime.now(),
-                          reminderDate: DateTime.now(),
-                          reminder: false,
-                          expenses: expenses);
-                      bool share = await showModalBottomSheet(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          context: context,
-                          builder: (context) => const QuickListoptions());
-
-                      if (share) {
-                        File pdf = await PDFService.createPdf(plan);
-                        await Printing.sharePdf(
-                            bytes: pdf.readAsBytesSync(),
-                            filename: '${plan.title}.pdf');
-                      } else {
-                        showModalBottomSheet(
-                            isScrollControlled: true,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                            context: context,
-                            builder: (context) => AddBudgetPlan(plan: plan));
-                      }
-                      if (!_appState.adShown) {
-                        // interstitialAd.show();
-                        _appState.changeAdView();
-                      } else {
-                        _appState.changeAdView();
-                      }
-                    }
-                  }
-                : null,
-            tooltip: 'Done',
-            label: Text(
-              'Done',
-              style: TextStyle(color: Colors.white, fontSize: 35.sp),
-            ),
-            icon: Icon(
-              Icons.done,
-              color: Colors.white,
-              size: 50.sp,
-            )),
-      ),
-    );
-  }
-  // WidgetsBinding.instance!.window.viewInsets.bottom > 0.0?null:
-
-  void scrollOnSave() {
-    Future.delayed(Duration(milliseconds: 100), () {
-      _sc.animateTo(_sc.position.maxScrollExtent,
-          duration: Duration(milliseconds: 100), curve: Curves.fastOutSlowIn);
-    });
-  }
-
-  Widget expense() => Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Form(
-          key: _formKey,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: TextFormField(
-                  focusNode: _focusNode,
-                  controller: _nameC,
-                  cursorColor: AppColors.themeColor,
-                  onFieldSubmitted: (val) {
-                    if (_formKey.currentState!.validate()) {
-                      Expense exp = Expense(
-                          price: int.parse(_priceC.value.text),
-                          index: 0,
-                          quantity: int.parse(_quantityC.value.text),
-                          name: _nameC.value.text);
-                      setState(() {
-                        expenses.add(exp);
-                      });
-                      _nameC.clear();
-                      _quantityC.text = '1';
-                      _priceC.clear();
-                      _focusNode.requestFocus();
-                      scrollOnSave();
-                    }
-                  },
-                  decoration: AppStyles()
-                      .textFieldDecoration(label: 'Item', hintText: 'Food'),
-                  validator: (val) {
-                    if (val!.isEmpty) {
-                      return 'Item name is required';
-                    }
-                  },
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2,
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  scrollPadding: const EdgeInsets.only(bottom: 40),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  controller: _quantityC,
-                  onFieldSubmitted: (val) {
-                    if (_formKey.currentState!.validate()) {
-                      Expense exp = Expense(
-                          price: int.parse(val),
-                          index: 0,
-                          quantity: int.parse(_quantityC.value.text),
-                          name: _nameC.value.text);
-                      setState(() {
-                        expenses.add(exp);
-                      });
-                      _nameC.clear();
-                      _quantityC.text = '1';
-                      _priceC.clear();
-                      _focusNode.requestFocus();
-                      scrollOnSave();
-                    }
-                  },
-                  cursorColor: AppColors.themeColor,
-                  decoration: AppStyles().textFieldDecoration(
-                    label: 'Quantity',
+                      ],
+                    ),
                   ),
                 ),
               ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2,
-                child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    controller: _priceC,
-                    onFieldSubmitted: (val) {
-                      if (_formKey.currentState!.validate()) {
-                        Expense exp = Expense(
-                            price: int.parse(val),
-                            index: 0,
-                            quantity: int.parse(_quantityC.value.text),
-                            name: _nameC.value.text);
-                        setState(() {
-                          expenses.add(exp);
-                        });
-                        _nameC.clear();
-                        _quantityC.text = '1';
-                        _priceC.clear();
-                        _focusNode.requestFocus();
-                        scrollOnSave();
-                      }
-                    },
-                    cursorColor: AppColors.themeColor,
-                    decoration: AppStyles().textFieldDecoration(
-                        label: 'Unit Price', hintText: '300'),
-                    validator: (val) {
-                      if (val!.isEmpty) {
-                        return 'Price is required';
-                      }
-                      return null;
-                    }),
-              ),
-            ],
-          ),
-        ),
-      );
-
-  void showAmountInput() {
-    if (amountToSpend > 0) _amountToSpendC.text = amountToSpend.toString();
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) => WillPopScope(
-        onWillPop: () async {
-          if (_amountToSpendC.value.text.isEmpty) {
-            setState(() {
-              reverseMode = false;
-            });
-          }
-          _amountToSpendC.clear();
-          return true;
-        },
-        child: AlertDialog(
-          title: const Text('Amount to be spent'),
-          content: Form(
-            key: _amountFormKey,
-            child: TextFormField(
-              validator: (val) {
-                if (val!.isEmpty) {
-                  return 'Amount is required';
-                }
-              },
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              controller: _amountToSpendC,
-              onFieldSubmitted: (val) {
-              
-                if (_amountFormKey.currentState!.validate()) {
-                  setState(() {
-                    amountToSpend = int.parse(val);
-                  });
-                  _amountToSpendC.clear();
-                  Navigator.pop(context);
-                }
-              },
-              cursorColor: AppColors.themeColor,
-              decoration: AppStyles()
-                  .textFieldDecoration(label: 'Amount', hintText: '10000'),
             ),
-          ),
-          actions: [
-            TextButton(
-                onPressed: () {
-              
-                if (_amountFormKey.currentState!.validate()) {
-                  setState(() {
-                    amountToSpend = int.parse(_amountToSpendC.value.text);
-                  });
-                  _amountToSpendC.clear();
-                  Navigator.pop(context);
-                }
-                },
-                child: const Text(
-                  'OKAY',
-                  style: TextStyle(color: AppColors.themeColor),
-                ))
+      
+            // Items List
+            SliverPadding(
+              padding: const EdgeInsets.only(top: 16, bottom: 100),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final item = expenses[index];
+                    return Dismissible(
+                      key: ValueKey(item.name + index.toString()),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 20),
+                        color: theme.colorScheme.errorContainer,
+                        child: Icon(Icons.delete_outline, color: theme.colorScheme.onErrorContainer),
+                      ),
+                      onDismissed: (_) {
+                        setState(() => expenses.removeAt(index));
+                      },
+                      child: ListTile(
+                        title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                        subtitle: Text('${item.quantity} × ${AppFormatters.moneyCommaStr(item.price)} ${appState.currentCurrency}'),
+                        trailing: Text(
+                          '${AppFormatters.moneyCommaStr(item.quantity * item.price)} ${appState.currentCurrency}',
+                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    );
+                  },
+                  childCount: expenses.length,
+                ),
+              ),
+            ),
+          ],
+        ),
+        
+        // Fixed Add Item Form at bottom
+        bottomSheet: _buildAddItemForm(theme, appState),
+        
+      
+      ),
+    );
+  }
+
+  Widget _buildAddItemForm(ThemeData theme, ApplicationState appState) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: TextFormField(
+                    controller: _nameC,
+                    focusNode: _nameNode,
+                    
+                    decoration:  InputDecoration(labelText: 'Item', hintText: 'Food', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                    onFieldSubmitted: (_) => _priceNode.requestFocus(),
+                    validator: (val) => val!.isEmpty ? 'Required' : null,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 1,
+                  child: TextFormField(
+                    controller: _quantityC,
+                    focusNode: _quantityNode,
+                    keyboardType: TextInputType.number,
+                    decoration:  InputDecoration(labelText: 'Qty',border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 2,
+                  child: TextFormField(
+                    controller: _priceC,
+                    focusNode: _priceNode,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(labelText: 'Price',border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                    onFieldSubmitted: (_) => _addItem(),
+                    validator: (val) => val!.isEmpty ? 'Required' : null,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton.filled(
+                  onPressed: _addItem,
+                  icon: const Icon(Icons.add),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text('Quick-add: fill fields and tap + or press enter', 
+                 style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline)),
           ],
         ),
       ),
     );
   }
 
+  void _addItem() {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        expenses.add(Expense(
+          name: _nameC.text,
+          quantity: int.tryParse(_quantityC.text) ?? 1,
+          price: int.parse(_priceC.text),
+          index: expenses.length,
+        ));
+      });
+      _nameC.clear();
+      _priceC.clear();
+      _quantityC.text = '1';
+      _nameNode.requestFocus();
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent + 100,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  Future<void> _onDone() async {
+    final appState = Provider.of<ApplicationState>(context, listen: false);
+    if (widget.title != null) {
+      Navigator.pop(context, {'expenses': expenses, 'total': _total});
+    } else {
+      SpendingPlan plan = SpendingPlan(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        total: _total,
+        title: 'Quick Plan',
+        creationDate: DateTime.now(),
+        reminderDate: DateTime.now(),
+        reminder: false,
+        expenses: expenses,
+      );
+
+      bool? share = await showModalBottomSheet<bool>(
+        context: context,
+        builder: (context) => const QuickListoptions(),
+      );
+
+      if (share == true) {
+        File pdf = await PDFService.createPdf(plan);
+        await Printing.sharePdf(bytes: pdf.readAsBytesSync(), filename: '${plan.title}.pdf');
+      } else {
+        showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          builder: (context) => AddBudgetPlan(plan: plan),
+        );
+      }
+    }
+  }
+
+  // --- Utility Dialogs ---
+  void showAmountInput() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Set Budget Limit'),
+        content: Form(
+          key: _amountFormKey,
+          child: TextFormField(
+            controller: _amountToSpendC,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            decoration: const InputDecoration(labelText: 'Amount', hintText: 'e.g. 5000'),
+            validator: (val) => val!.isEmpty ? 'Required' : null,
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () {
+              if (_amountFormKey.currentState!.validate()) {
+                setState(() => amountToSpend = int.parse(_amountToSpendC.text));
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Set'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void hasViewedReverse() async {
     bool? hasSeen = await SharedPrefs().seenReverseMode();
-    if (!hasSeen!) {
-      Future.delayed(const Duration(seconds: 1), () {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: const Text('Reverse mode feature'),
-                  content: const Text(
-                      'In reverse mode, you specify the amount of money you wish to spend and each expense added deducts its price from the specified amount.'),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          SharedPrefs().setSeenReverseMode();
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          'OKAY',
-                          style: TextStyle(color: AppColors.themeColor),
-                        ))
-                  ],
-                ));
-      });
+    if (hasSeen != true) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Reverse Mode'),
+          content: const Text('Specify a budget, and each item will deduct from that total.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                SharedPrefs().setSeenReverseMode();
+                Navigator.pop(context);
+              },
+              child: const Text('Got it'),
+            )
+          ],
+        ),
+      );
     }
   }
 }
