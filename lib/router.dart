@@ -14,7 +14,7 @@ import 'package:go_router/go_router.dart';
 
 class AppLinks {
   static const String home = '/';
-  static const String singleSpendingPlan = '/single-budget-plan';
+  static const String singleSpendingPlan = '/single-spending-plan';
   static const String singleWish = '/single-wish';
   static const String addSpendingPlan = '/add-budget';
   static const String addWish = '/add-wish';

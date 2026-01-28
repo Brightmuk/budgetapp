@@ -26,55 +26,17 @@ class DateServices {
       initialDate: selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              onSurface: AppColors.themeColor,
-
-              primary: AppColors.themeColor,
-              // header background color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (dateResult != null) {
       timeResult = await showTimePicker(
         context: context,
         initialTime:
             TimeOfDay(hour: selectedDate.hour, minute: selectedDate.minute),
-        builder: (context, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.dark(
-                brightness: Brightness.dark,
-                onSurface: AppColors.themeColor,
-                background: Colors.grey[900]!,
-                primary: AppColors.themeColor,
-
-                // header background color
-              ),
-              textButtonTheme: TextButtonThemeData(
-                style: TextButton.styleFrom(
-                  
-                ),
-              ),
-            ),
-            child: child!,
-          );
-        },
       );
     }
-
-    return DateTime(dateResult!.year, dateResult.month, dateResult.day,
-        timeResult!.hour, timeResult.minute);
+    if (timeResult == null || dateResult == null) return null;
+    return DateTime(dateResult.year, dateResult.month, dateResult.day,
+        timeResult.hour, timeResult.minute);
   }
 
   Widget dayDateTimeText(DateTime date) {

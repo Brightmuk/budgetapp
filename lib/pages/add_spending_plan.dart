@@ -2,6 +2,7 @@ import 'package:budgetapp/core/colors.dart';
 import 'package:budgetapp/core/sizes.dart';
 import 'package:budgetapp/core/style.dart';
 import 'package:budgetapp/models/budget_plan.dart';
+import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:budgetapp/core/formatters.dart';
@@ -141,9 +143,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                   style: TextStyle(fontSize: 35.sp)),
               onChanged: (val) {
                 _focusNode.unfocus();
-                setState(() {
-                  reminder = val!;
-                });
+                _handleReminderChange(val?? false);
               }),
           Opacity(
             opacity: reminder ? 1 : 0.5,
@@ -229,8 +229,10 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                                       .isPastDate(_selectedDate!)) {
                                 await NotificationService().zonedScheduleNotification(
                                     id: int.parse(plan.id.substring(8)),
-                                    payload:
-                                        '{"itemId":$id,"route":"/singlePlan"}',
+                                    payload: NotificationPayload(
+                                            itemId: plan.id,
+                                            route: AppLinks.singleSpendingPlan)
+                                        .toJson(),
                                     title: 'Spending list fulfilment',
                                     description:
                                         'Remember to fulfil ${plan.title}  Buddy!',
@@ -241,7 +243,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                                                 .millisecondsSinceEpoch));
                               } else {
                                 ///Delete in case they are editing and seting reminder off
-                                await NotificationService().removeReminder(
+                                await NotificationService().cancelReminder(
                                     int.parse(plan.id.substring(8)));
                               }
                   
@@ -271,4 +273,66 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
       ),
     );
   }
+  Future<void> _handleReminderChange(bool value) async {
+  if (value) {
+    // 1. Check current status
+    PermissionStatus status = await Permission.notification.status;
+    if(status.isGranted){
+      setState(() {
+        reminder = true;
+      });
+      return;
+    }
+    // 2. If not granted, request it
+    if (status.isDenied) {
+      status = await Permission.notification.request();
+    }
+
+    // 3. Handle the result
+    if (status.isPermanentlyDenied) {
+      // User tapped "Never ask again" - must go to OS settings
+      if (mounted) {
+        setState(() => reminder = false);
+        _showSettingsDialog();
+      }
+    } else if (!status.isGranted) {
+      // User tapped "Deny"
+      if (mounted) {
+        setState(() => reminder = false);
+      }
+    }
+        if(status.isGranted){
+      setState(() {
+        reminder = true;
+      });
+      return;
+    }
+  } else {
+    // If they are turning it OFF, we just let them
+    setState(() => reminder = false);
+  }
+}
+
+void _showSettingsDialog() {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Notifications Disabled'),
+      content: const Text('Please enable notifications in settings to use reminders.'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            openAppSettings();
+            Navigator.pop(context);
+          },
+          child: const Text('Open Settings'),
+        ),
+      ],
+    ),
+  );
+}
 }

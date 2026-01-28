@@ -7,6 +7,7 @@ import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
+import 'package:budgetapp/services/notification_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/core/widgets/expense_type.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) => const ExpenseType(),
     );
+    // NotificationService().showNotification(10, 'Test notification', 'This is a test notification');
   }
 
   @override

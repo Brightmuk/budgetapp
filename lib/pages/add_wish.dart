@@ -1,3 +1,4 @@
+import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -8,6 +9,7 @@ import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -121,7 +123,8 @@ class _AddWishState extends State<AddWish> {
                       onChanged: (val) {
                         _nameNode.unfocus();
                         _priceNode.unfocus();
-                        setState(() => reminder = val);
+                        _handleReminderChange(val);
+
                       },
                     ),
                     AnimatedOpacity(
@@ -190,23 +193,23 @@ class _AddWishState extends State<AddWish> {
         bool success = await WishService(context: context, appState: _appState).saveWish(wish: wish);
         
         if (success) {
-          // Handle Notifications
+          
           final notificationId = int.parse(id.substring(id.length - 8));
           if (wish.reminder) {
             await NotificationService().zonedScheduleNotification(
               id: notificationId,
-              payload: '{"itemId":$id,"route":"/singlewish"}',
+              payload: NotificationPayload(itemId: id, route: AppLinks.singleWish).toJson(),
               title: 'Wish fulfilment',
               description: 'Don\'t forget your ${wish.name}!',
               scheduling: tz.TZDateTime.fromMillisecondsSinceEpoch(tz.local, wish.reminderDate.millisecondsSinceEpoch),
             );
           } else {
-            await NotificationService().removeReminder(notificationId);
+            await NotificationService().cancelReminder(notificationId);
           }
 
           if (mounted) {
-            if (editMode) Navigator.pop(context);
-            Navigator.pop(context);
+            if (editMode) context.pop();
+            context.pop();
             context.push(AppLinks.singleWish, extra: id);
           }
         }
@@ -215,4 +218,67 @@ class _AddWishState extends State<AddWish> {
       }
     }
   }
+  Future<void> _handleReminderChange(bool value) async {
+  if (value) {
+    // 1. Check current status
+    PermissionStatus status = await Permission.notification.status;
+    if(status.isGranted){
+      setState(() {
+        reminder = true;
+      });
+      return;
+    }
+    // 2. If not granted, request it
+    if (status.isDenied) {
+      status = await Permission.notification.request();
+    }
+
+    // 3. Handle the result
+    if (status.isPermanentlyDenied) {
+      // User tapped "Never ask again" - must go to OS settings
+      if (mounted) {
+        setState(() => reminder = false);
+        _showSettingsDialog();
+      }
+    } else if (!status.isGranted) {
+      // User tapped "Deny"
+      if (mounted) {
+        setState(() => reminder = false);
+      }
+    }
+    if(status.isGranted){
+      setState(() {
+        reminder = true;
+      });
+      return;
+    }
+
+  } else {
+    // If they are turning it OFF, we just let them
+    setState(() => reminder = false);
+  }
+}
+
+void _showSettingsDialog() {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Notifications Disabled'),
+      content: const Text('Please enable notifications in settings to use reminders.'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            openAppSettings();
+            Navigator.pop(context);
+          },
+          child: const Text('Open Settings'),
+        ),
+      ],
+    ),
+  );
+}
 }

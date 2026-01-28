@@ -267,7 +267,7 @@ class _CreateListState extends State<CreateList> {
 
   Future<void> _onDone() async {
     if (widget.title != null) {
-      Navigator.pop(context, {'expenses': expenses, 'total': _total});
+      context.pop({'expenses': expenses, 'total': _total});
     } else {
       SpendingPlan plan = SpendingPlan(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -306,7 +306,7 @@ class _CreateListState extends State<CreateList> {
             controller: _amountToSpendC,
             keyboardType: TextInputType.number,
             autofocus: true,
-            decoration: const InputDecoration(labelText: 'Amount', hintText: 'e.g. 5000'),
+            decoration:  InputDecoration(labelText: 'Amount', hintText: 'e.g. 5000', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),),
             validator: (val) => val!.isEmpty ? 'Required' : null,
           ),
         ),

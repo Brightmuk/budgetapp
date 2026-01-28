@@ -35,7 +35,7 @@ dependencies:
   carousel_slider: ^5.0.0
   shared_preferences: ^2.0.13
   rxdart: ^0.28.0
-  # flutter_native_timezone: ^2.0.0
+  flutter_timezone: ^4.1.1
   overlay_support: ^2.1.0
   provider: ^6.0.2
   google_mobile_ads: ^6.0.0
