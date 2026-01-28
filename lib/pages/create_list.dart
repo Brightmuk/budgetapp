@@ -1,14 +1,12 @@
 import 'dart:io';
-import 'package:budgetapp/constants/colors.dart';
-import 'package:budgetapp/constants/formatters.dart';
+import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/expense.dart';
-import 'package:budgetapp/pages/add_budget_plan.dart';
+import 'package:budgetapp/pages/add_spending_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
-import 'package:budgetapp/services/toast_service.dart';
-import 'package:budgetapp/widgets/share_type.dart';
+import 'package:budgetapp/core/widgets/share_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
@@ -70,117 +68,113 @@ class _CreateListState extends State<CreateList> {
     final theme = Theme.of(context);
     final appState = Provider.of<ApplicationState>(context);
 
-    return SafeArea(
-      child: Scaffold(
-        
-        body: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            SliverAppBar(leading: Container(),),
-            // M3 Large App Bar
-            SliverAppBar.large(
-              title: Text(widget.title ?? 'Quick Spending Plan'),
-              actions: [
-                FloatingActionButton.extended(
-          onPressed: expenses.isEmpty ? null : _onDone,
-          label: const Text('Finish Plan'),
-          icon: const Icon(Icons.check),
-        ),
-        SizedBox(width: 10,)
-              ],
-            ),
-            
-            // Header Stats (Total/Balance)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Card(
-                  elevation: 0,
-                  color: theme.colorScheme.secondaryContainer,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(reverseMode ? 'Balance Remaining' : 'Estimated Total',
-                                style: theme.textTheme.titleMedium),
-                            Switch(
-                              value: reverseMode,
-                              onChanged: (val) {
-                                if (val) showAmountInput();
-                                setState(() => reverseMode = val);
-                              },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title ?? 'Quick Spending Plan'),
+        actions: [
+      FilledButton(
+        onPressed: expenses.isEmpty ? null : _onDone,
+      
+        child: const Icon(Icons.check),
+      ),
+      SizedBox(width: 10,)
+        ],
+      ),
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+
+          
+          // Header Stats (Total/Balance)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Card(
+                elevation: 0,
+                color: theme.colorScheme.secondaryContainer,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(reverseMode ? 'Balance Remaining' : 'Estimated Total',
+                              style: theme.textTheme.titleMedium),
+                          Switch(
+                            value: reverseMode,
+                            onChanged: (val) {
+                              if (val) showAmountInput();
+                              setState(() => reverseMode = val);
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${AppFormatters.moneyCommaStr(reverseMode ? _balance : _total)} ${appState.currentCurrency}',
+                            style: theme.textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: reverseMode && _balance < 0 ? theme.colorScheme.error : theme.colorScheme.onSecondaryContainer,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '${AppFormatters.moneyCommaStr(reverseMode ? _balance : _total)} ${appState.currentCurrency}',
-                              style: theme.textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: reverseMode && _balance < 0 ? theme.colorScheme.error : theme.colorScheme.onSecondaryContainer,
-                              ),
+                          ),
+                          if (reverseMode)
+                            IconButton.filledTonal(
+                              onPressed: showAmountInput,
+                              icon: const Icon(Icons.edit, size: 18),
                             ),
-                            if (reverseMode)
-                              IconButton.filledTonal(
-                                onPressed: showAmountInput,
-                                icon: const Icon(Icons.edit, size: 18),
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-      
-            // Items List
-            SliverPadding(
-              padding: const EdgeInsets.only(top: 16, bottom: 100),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final item = expenses[index];
-                    return Dismissible(
-                      key: ValueKey(item.name + index.toString()),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 20),
-                        color: theme.colorScheme.errorContainer,
-                        child: Icon(Icons.delete_outline, color: theme.colorScheme.onErrorContainer),
+          ),
+    
+          // Items List
+          SliverPadding(
+            padding: const EdgeInsets.only(top: 16, bottom: 100),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final item = expenses[index];
+                  return Dismissible(
+                    key: ValueKey(item.name + index.toString()),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 20),
+                      color: theme.colorScheme.errorContainer,
+                      child: Icon(Icons.delete_outline, color: theme.colorScheme.onErrorContainer),
+                    ),
+                    onDismissed: (_) {
+                      setState(() => expenses.removeAt(index));
+                    },
+                    child: ListTile(
+                      title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      subtitle: Text('${item.quantity} × ${AppFormatters.moneyCommaStr(item.price)} ${appState.currentCurrency}'),
+                      trailing: Text(
+                        '${AppFormatters.moneyCommaStr(item.quantity * item.price)} ${appState.currentCurrency}',
+                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
-                      onDismissed: (_) {
-                        setState(() => expenses.removeAt(index));
-                      },
-                      child: ListTile(
-                        title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                        subtitle: Text('${item.quantity} × ${AppFormatters.moneyCommaStr(item.price)} ${appState.currentCurrency}'),
-                        trailing: Text(
-                          '${AppFormatters.moneyCommaStr(item.quantity * item.price)} ${appState.currentCurrency}',
-                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    );
-                  },
-                  childCount: expenses.length,
-                ),
+                    ),
+                  );
+                },
+                childCount: expenses.length,
               ),
             ),
-          ],
-        ),
-        
-        // Fixed Add Item Form at bottom
-        bottomSheet: _buildAddItemForm(theme, appState),
-        
-      
+          ),
+        ],
       ),
+      
+      // Fixed Add Item Form at bottom
+      bottomSheet: _buildAddItemForm(theme, appState),
+      
+    
     );
   }
 
@@ -270,7 +264,6 @@ class _CreateListState extends State<CreateList> {
   }
 
   Future<void> _onDone() async {
-    final appState = Provider.of<ApplicationState>(context, listen: false);
     if (widget.title != null) {
       Navigator.pop(context, {'expenses': expenses, 'total': _total});
     } else {

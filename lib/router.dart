@@ -1,23 +1,25 @@
 
 import 'package:budgetapp/models/notification_model.dart';
-import 'package:budgetapp/navigation/routes.dart';
-import 'package:budgetapp/pages/add_budget_plan.dart';
+import 'package:budgetapp/pages/add_spending_plan.dart';
 import 'package:budgetapp/pages/add_wish.dart';
-import 'package:budgetapp/pages/home.dart';
 import 'package:budgetapp/pages/settings.dart';
 import 'package:budgetapp/pages/single_spending_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
-import 'package:budgetapp/pages/splash_screen.dart';
 import 'package:budgetapp/wrapper.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
+
+class AppLinks {
+  static const String home = '/';
+  static const String singleBudgetPlan = '/single-budget-plan';
+  static const String singleWish = '/single-wish';
+  static const String addBudget = '/add-budget';
+  static const String addWish = '/add-wish';
+  static const String settings = '/settings';
+}
 final getIt = GetIt.instance;
-
 NotificationPayload? payload;
-
 
 final router = GoRouter(
   initialLocation: AppLinks.home,

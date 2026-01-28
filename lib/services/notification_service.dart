@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:budgetapp/models/notification_model.dart';
-import 'package:budgetapp/navigation/router.dart';
+import 'package:budgetapp/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:overlay_support/overlay_support.dart';

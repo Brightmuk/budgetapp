@@ -1,8 +1,6 @@
-import 'dart:convert';
-
+import 'package:budgetapp/core/theme.dart';
 import 'package:budgetapp/cubit/app_setup_cubit.dart';
-import 'package:budgetapp/models/notification_model.dart';
-import 'package:budgetapp/navigation/router.dart';
+import 'package:budgetapp/router.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/notification_service.dart';
 import 'package:flutter/material.dart';
@@ -51,30 +49,9 @@ class _MyAppState extends State<MyApp> {
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'Spenditize',
-
-            // Material 3 Dark Theme Config
-            themeMode: ThemeMode.dark,
-            darkTheme: ThemeData(
-              useMaterial3: true,
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF48BF84), // Your brand green
-                brightness: Brightness.dark,
-                primary: const Color(0xFF48BF84),
-                surface: const Color(0xFF1A1C1A),
-              ),
-              // Global component overrides
-              appBarTheme: const AppBarTheme(
-                centerTitle: false,
-                elevation: 0,
-                backgroundColor: Colors.transparent,
-              ),
-              cardTheme: CardThemeData(
-                clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-            ),
+            themeMode: ThemeMode.system,
+            theme: lightTheme,
+            darkTheme: darkTheme,
             routerConfig: router,
           ),
         );

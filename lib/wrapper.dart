@@ -1,8 +1,6 @@
 import 'package:budgetapp/cubit/app_setup_cubit.dart';
 import 'package:budgetapp/pages/home.dart';
-import 'package:budgetapp/pages/splash_screen.dart';
 import 'package:budgetapp/pages/tour.dart';
-import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

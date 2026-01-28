@@ -1,7 +1,6 @@
-import 'package:budgetapp/constants/colors.dart';
 import 'package:budgetapp/models/wish.dart';
-import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
+import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/notification_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
@@ -55,51 +54,20 @@ class _AddWishState extends State<AddWish> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final _appState = Provider.of<ApplicationState>(context);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(editMode ? 'Edit Wish' : 'Add New Wish'),
       ),
-      padding: EdgeInsets.only(
-        top: 12,
-        left: 20,
-        right: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // M3 Bottom Sheet Handle
-          Container(
-            width: 32,
-            height: 4,
-            margin: const EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.outlineVariant,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                editMode ? 'Edit Wish' : 'Add New Wish',
-                style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              IconButton.filledTonal(
-                onPressed: () => context.pop(),
-                icon: const Icon(Icons.close),
-              )
-            ],
-          ),
-          const SizedBox(height: 24),
-          // Form content
-          Flexible(
-            child: SingleChildScrollView(
+      
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            
+            // Form content
+            SingleChildScrollView(
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -177,22 +145,23 @@ class _AddWishState extends State<AddWish> {
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 24),
-          // Save Button
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.all(16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+           Spacer(),
+            // Save Button
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.all(16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: _handleSave,
+                icon: const Icon(Icons.check_circle_outline),
+                label: const Text('Save Wish', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
-              onPressed: _handleSave,
-              icon: const Icon(Icons.check_circle_outline),
-              label: const Text('Save Wish', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
-          ),
-        ],
+            SizedBox(height: 10,)
+          ],
+        ),
       ),
     );
   }

@@ -1,14 +1,12 @@
 
-import 'package:budgetapp/constants/colors.dart';
-import 'package:budgetapp/constants/formatters.dart';
-import 'package:budgetapp/constants/sizes.dart';
+import 'package:budgetapp/core/colors.dart';
+import 'package:budgetapp/core/formatters.dart';
+import 'package:budgetapp/core/sizes.dart';
 import 'package:budgetapp/models/wish.dart';
-import 'package:budgetapp/navigation/routes.dart';
-import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
+import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -69,16 +67,11 @@ class _WishListTabState extends State<WishListTab> {
                     SizedBox(
                       height: 30.sp,
                     ),
-                    MaterialButton(
-                        elevation: 0,
-                        color: AppColors.themeColor.withOpacity(0.3),
+                    FilledButton.tonal(
+                        
                         onPressed: () {
-                          showModalBottomSheet(
-                              isScrollControlled: true,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              context: context,
-                              builder: (context) => const AddWish());
+                          context.push(AppLinks.addWish);
+                        
                         },
                         child: const Text(
                           'CREAT ONE',

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:budgetapp/models/budget_plan.dart';
-import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/toast_service.dart';

@@ -1,6 +1,6 @@
-import 'package:budgetapp/constants/colors.dart';
-import 'package:budgetapp/constants/sizes.dart';
-import 'package:budgetapp/constants/style.dart';
+import 'package:budgetapp/core/colors.dart';
+import 'package:budgetapp/core/sizes.dart';
+import 'package:budgetapp/core/style.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -85,6 +85,7 @@ class _HelpState extends State<Help> {
                   if (val!.isEmpty) {
                     return 'Your name is required';
                   }
+                  return null;
                 },
               ),
               const SizedBox(

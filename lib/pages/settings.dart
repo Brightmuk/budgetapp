@@ -1,9 +1,8 @@
-import 'package:budgetapp/navigation/routes.dart';
-import 'package:budgetapp/pages/settings/about_us.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:currency_picker/currency_picker.dart';
@@ -33,7 +32,8 @@ class _SettingsPageState extends State<SettingsPage> {
           onPressed: () => context.pop(),
         ),
       ),
-      body: ListView(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionHeader(theme, 'Preferences'),
           ListTile(
@@ -64,14 +64,7 @@ class _SettingsPageState extends State<SettingsPage> {
           //   title: const Text('Take a Tour'),
           //   onTap: () => context.go(AppLinks.splash),
           // ),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('About Us'),
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => const AboutUs(),
-            ),
-          ),
+
           ListTile(
             leading: const Icon(Icons.help_outline),
             title: const Text('Help & Contact'),
@@ -83,8 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
             onTap: () => _launchUrl(_privacyUrl),
           ),
           
-          const Divider(indent: 16, endIndent: 16),
-          _buildSectionHeader(theme, 'Community'),
+
           ListTile(
             leading: const Icon(Icons.star_outline),
             title: const Text('Rate Spenditize'),
@@ -92,15 +84,8 @@ class _SettingsPageState extends State<SettingsPage> {
             onTap: () => _launchUrl(_playStoreUrl),
           ),
           
-          const SizedBox(height: 40),
-          Center(
-            child: Text(
-              'Spenditize v1.2.0', // Replace with dynamic version if needed
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: theme.colorScheme.outline,
-              ),
-            ),
-          ),
+          Spacer(),
+          _buildVersionFooter(theme),
           const SizedBox(height: 20),
         ],
       ),
@@ -138,4 +123,35 @@ class _SettingsPageState extends State<SettingsPage> {
       ToastService(context: context).showSuccessToast('Could not open link');
     }
   }
+  Widget _buildVersionFooter(ThemeData theme) {
+  return FutureBuilder<PackageInfo>(
+    future: PackageInfo.fromPlatform(),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData) return const SizedBox.shrink();
+
+      final info = snapshot.data!;
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32),
+        child: Column(
+          children: [
+            Text(
+              'App Version: ${info.version}',
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '© ${DateTime.now().year} Brimukon Labs',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 }

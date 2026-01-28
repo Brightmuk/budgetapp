@@ -1,14 +1,12 @@
 import 'dart:io';
-import 'package:budgetapp/constants/colors.dart';
-import 'package:budgetapp/constants/formatters.dart';
+import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/budget_plan.dart';
-import 'package:budgetapp/pages/add_budget_plan.dart';
+import 'package:budgetapp/pages/add_spending_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
-import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/pdf_service.dart';
-import 'package:budgetapp/widgets/action_dialogue.dart';
+import 'package:budgetapp/core/widgets/action_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';

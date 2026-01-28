@@ -1,7 +1,7 @@
-import 'package:budgetapp/pages/add_budget_plan.dart';
-import 'package:budgetapp/pages/add_wish.dart';
+import 'package:budgetapp/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class ExpenseType extends StatelessWidget {
   const ExpenseType({Key? key}) : super(key: key);
@@ -34,12 +34,7 @@ class ExpenseType extends StatelessWidget {
               subtitle: Text('A plan to spend an amount of money',style: TextStyle(fontSize: 30.sp),),
               onTap: () {
                 Navigator.pop(context);
-                showModalBottomSheet(
-                    isScrollControlled: true,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    context: context,
-                    builder: (context) => const AddBudgetPlan());
+                context.push(AppLinks.addBudget);
               },
             ),
             ListTile(
@@ -59,12 +54,8 @@ class ExpenseType extends StatelessWidget {
                   'Something that you plan to buy, will be added to your wishlist',style: TextStyle(fontSize: 30.sp),),
               onTap: () {
                 Navigator.pop(context);
-                showModalBottomSheet(
-                    isScrollControlled: true,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    context: context,
-                    builder: (context) => const AddWish());
+                context.push(AppLinks.addWish);
+                
               },
             ),
           ],

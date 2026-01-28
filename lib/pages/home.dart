@@ -1,20 +1,17 @@
-import 'package:budgetapp/constants/colors.dart';
-import 'package:budgetapp/constants/formatters.dart';
+import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
-import 'package:budgetapp/navigation/routes.dart';
 import 'package:budgetapp/pages/home_tabs/spending_list_tab.dart';
 import 'package:budgetapp/pages/home_tabs/wishlist_tab.dart';
 import 'package:budgetapp/pages/create_list.dart';
-import 'package:budgetapp/pages/info_screen.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
+import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
-import 'package:budgetapp/widgets/expense_type.dart';
+import 'package:budgetapp/core/widgets/expense_type.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:animations/animations.dart';
 
@@ -178,33 +175,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 
-
-  Widget _buildStatCircle(String label, Stream stream, Color color, ApplicationState appState) {
-    return StreamBuilder(
-      stream: stream,
-      builder: (context, snapshot) {
-        return Column(
-          children: [
-            CircularPercentIndicator(
-              radius: 42,
-              lineWidth: 6,
-              percent: 1.0,
-              progressColor: color,
-              backgroundColor: color.withOpacity(0.1),
-              circularStrokeCap: CircularStrokeCap.round,
-              center: Text(
-                snapshot.hasData ? _calculateTotal(snapshot.data) : '0',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-              animation: true,
-            ),
-            const SizedBox(height: 8),
-            Text(label, style: Theme.of(context).textTheme.bodySmall),
-          ],
-        );
-      },
-    );
-  }
   Widget _buildStatTile(String label, Stream stream, Color color, ApplicationState appState, IconData icon) {
   final theme = Theme.of(context);
   

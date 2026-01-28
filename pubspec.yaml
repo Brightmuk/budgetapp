@@ -28,7 +28,7 @@ dependencies:
   path_provider: ^2.0.9
   permission_handler: ^12.0.1
   flutter_native_splash: ^2.1.6
-  # package_info_plus: ^4.2.0
+  package_info_plus: ^8.3.0
   localstore: ^1.2.3
   flutter_screenutil: ^5.4.0+1
   url_launcher: ^6.1.0
@@ -43,6 +43,7 @@ dependencies:
   pay: ^3.2.1
   flutter_staggered_animations: "^1.0.0"
   animations: ^2.0.2
+  introduction_screen: ^4.0.0
 
 
 dev_dependencies:
@@ -57,8 +58,8 @@ flutter_launcher_icons:
   image_path: "assets/icons/icon.png"
   min_sdk_android: 21 
   adaptive_icon_background: "#48BF84" 
-  adaptive_icon_foreground: "assets/icons/logo-transparent-bg.png"
-  adaptive_icon_monochrome: "assets/icons/logo-transparent-bg.png"
+  adaptive_icon_foreground: "assets/icons/icon-monochrome.png"
+  adaptive_icon_monochrome: "assets/icons/icon-monochrome.png"
 
 flutter_native_splash:
   background_image: assets/images/splash.png

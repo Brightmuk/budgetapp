@@ -1,5 +1,5 @@
-import 'package:budgetapp/constants/colors.dart';
-import 'package:budgetapp/constants/sizes.dart';
+import 'package:budgetapp/core/colors.dart';
+import 'package:budgetapp/core/sizes.dart';
 import 'package:flutter/material.dart';
 
 class InfoScreen extends StatelessWidget {

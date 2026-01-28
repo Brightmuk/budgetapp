@@ -1,4 +1,4 @@
-import 'package:budgetapp/constants/colors.dart';
+import 'package:budgetapp/core/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

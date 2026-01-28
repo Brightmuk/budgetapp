@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class QuickListoptions extends StatelessWidget {
   const QuickListoptions({Key? key}) : super(key: key);
 

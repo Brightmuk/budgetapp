@@ -1,10 +1,10 @@
-import 'package:budgetapp/constants/formatters.dart';
+import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/wish_service.dart';
-import 'package:budgetapp/widgets/action_dialogue.dart';
+import 'package:budgetapp/core/widgets/action_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
