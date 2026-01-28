@@ -74,8 +74,7 @@ class _WishListTabState extends State<WishListTab> {
                         
                         },
                         child: const Text(
-                          'CREAT ONE',
-                          style: TextStyle(color: AppColors.themeColor),
+                          'CREAT ONE'
                         )),
                   ],
                 ),

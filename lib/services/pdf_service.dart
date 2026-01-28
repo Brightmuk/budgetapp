@@ -20,7 +20,7 @@ class PDFService {
 
     String? currency = await SharedPrefs().getCurrency();
 
-    final logo = await imageFromAssetBundle('assets/images/logo_alt.png');
+    final logo = await imageFromAssetBundle('assets/icons/icon-black.png');
 
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -85,7 +85,7 @@ class PDFService {
                 pw.SizedBox(height: 50),
                 pw.Footer(
                     title: pw.Text(
-                        'Made by Budget Buddy | BrightDesigns. All rights reserved',
+                        'Made by Spenditize',
                         style: const pw.TextStyle(color: PdfColors.grey300))),
               ]);
         }));

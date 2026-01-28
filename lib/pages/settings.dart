@@ -132,23 +132,25 @@ class _SettingsPageState extends State<SettingsPage> {
       final info = snapshot.data!;
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 32),
-        child: Column(
-          children: [
-            Text(
-              'App Version: ${info.version}',
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                letterSpacing: 0.5,
+        child: Center(
+          child: Column(
+            children: [
+              Text(
+                'App Version: ${info.version}',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                  letterSpacing: 0.5,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '© ${DateTime.now().year} Brimukon Labs',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+              const SizedBox(height: 4),
+              Text(
+                '© ${DateTime.now().year} Brimukon Labs',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     },

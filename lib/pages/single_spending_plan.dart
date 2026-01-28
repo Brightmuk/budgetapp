@@ -3,6 +3,7 @@ import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/pages/add_spending_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
+import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/pdf_service.dart';
@@ -241,12 +242,9 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
   }
 
   void _handleEdit(ApplicationState appState) async {
-    final plan = await snapshotData; // Helper to get latest data
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (context) => AddBudgetPlan(plan: plan),
-    ).then((_) => setState(() => _loadPlan())); // Refresh on return
+    final plan = await snapshotData; 
+    await context.push(AppLinks.addSpendingPlan, extra: plan);
+    setState(() => _loadPlan());
   }
 
   void _handleDelete(ApplicationState appState) {

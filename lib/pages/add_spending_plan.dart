@@ -19,8 +19,6 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:budgetapp/core/formatters.dart';
 
 class AddBudgetPlan extends StatefulWidget {
-  ///This is parsed when in edit mode
-  ///If not null then it means its an edit operation
   final SpendingPlan? plan;
   const AddBudgetPlan({Key? key, this.plan}) : super(key: key);
 
@@ -45,6 +43,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
   @override
   void initState() {
     super.initState();
+    print("List: ${widget.plan}");
     editMode = widget.plan != null;
     if (widget.plan != null) {
       _expenses = widget.plan!.expenses;
@@ -253,7 +252,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                   
                               context.pop();
                               context.push(
-                                AppLinks.singleBudgetPlan,
+                                AppLinks.singleSpendingPlan,
                                 extra: editMode ? widget.plan!.id : id,
                               );
                             }

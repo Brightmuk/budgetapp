@@ -81,12 +81,11 @@ class _SpendingListTabState extends State<SpendingListTab> {
                     FilledButton.tonal(
                        
                         onPressed: () {
-                          context.push(AppLinks.addBudget);
+                          context.push(AppLinks.addSpendingPlan);
                         
                         },
                         child: const Text(
-                          'CREAT ONE',
-                          style: TextStyle(color: AppColors.themeColor),
+                          'CREAT ONE'
                         )),
                   ],
                 ),
@@ -112,7 +111,7 @@ class SpendingListTile extends StatelessWidget {
               tileColor: AppColors.themeColor.withOpacity(0.03),
               onTap: () {
                 context.push(
-                  AppLinks.singleBudgetPlan,
+                  AppLinks.singleSpendingPlan,
                   extra: plan.id,
                 );
               },

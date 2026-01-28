@@ -1,8 +1,8 @@
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
-import 'package:budgetapp/pages/home_tabs/spending_list_tab.dart';
-import 'package:budgetapp/pages/home_tabs/wishlist_tab.dart';
+import 'package:budgetapp/pages/spending_list_tab.dart';
+import 'package:budgetapp/pages/wishlist_tab.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -156,11 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           FloatingActionButton.small(
             heroTag: 'QuickList',
-            onPressed: () => showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) => const CreateList(expenses: []),
-            ),
+            onPressed: () => context.push(AppLinks.createList),
             child: const Icon(Icons.bolt),
           ),
           const SizedBox(height: 12),

@@ -1,7 +1,9 @@
 
+import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/pages/add_spending_plan.dart';
 import 'package:budgetapp/pages/add_wish.dart';
+import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/pages/settings.dart';
 import 'package:budgetapp/pages/single_spending_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
@@ -12,11 +14,12 @@ import 'package:go_router/go_router.dart';
 
 class AppLinks {
   static const String home = '/';
-  static const String singleBudgetPlan = '/single-budget-plan';
+  static const String singleSpendingPlan = '/single-budget-plan';
   static const String singleWish = '/single-wish';
-  static const String addBudget = '/add-budget';
+  static const String addSpendingPlan = '/add-budget';
   static const String addWish = '/add-wish';
   static const String settings = '/settings';
+  static const String createList = '/create-list';
 }
 final getIt = GetIt.instance;
 NotificationPayload? payload;
@@ -30,7 +33,7 @@ final router = GoRouter(
     ),
 
     GoRoute(
-      path: AppLinks.singleBudgetPlan,
+      path: AppLinks.singleSpendingPlan,
       builder: (context, state) =>
           SingleBudgetPlan(budgetPlanId: state.extra as String),
     ),
@@ -40,12 +43,18 @@ final router = GoRouter(
           SingleWish(wishId: state.extra as String),
     ),
     GoRoute(
-      path: AppLinks.addBudget,
-      builder: (context, state) => const AddBudgetPlan(),
+      path: AppLinks.addSpendingPlan,
+      builder: (context, state) =>  AddBudgetPlan(
+        plan: state.extra as SpendingPlan?,
+      ),
     ),
     GoRoute(
       path: AppLinks.addWish,
       builder: (context, state) => const AddWish(),
+    ),
+    GoRoute(
+      path: AppLinks.createList,
+      builder: (context, state) => const CreateList(),
     ),
 
     GoRoute(

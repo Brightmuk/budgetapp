@@ -2,6 +2,7 @@ import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
+import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/core/widgets/action_dialogue.dart';
@@ -189,12 +190,11 @@ class _SingleWishState extends State<SingleWish> {
 
   void _handleEdit(ApplicationState appState) async {
     final wish = await _wishFuture;
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (context) => AddWish(wish: wish),
-    ).then((_) => setState(() => _loadWish()));
+    await context.push(AppLinks.addWish, extra: wish);
+    setState(() => _loadWish());
   }
+
+  
 
   void _handleDelete(ApplicationState appState) {
     showModalBottomSheet(

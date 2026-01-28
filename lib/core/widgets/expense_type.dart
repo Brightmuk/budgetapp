@@ -34,7 +34,7 @@ class ExpenseType extends StatelessWidget {
               subtitle: Text('A plan to spend an amount of money',style: TextStyle(fontSize: 30.sp),),
               onTap: () {
                 Navigator.pop(context);
-                context.push(AppLinks.addBudget);
+                context.push(AppLinks.addSpendingPlan);
               },
             ),
             ListTile(
