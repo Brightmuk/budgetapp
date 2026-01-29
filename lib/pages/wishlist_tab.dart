@@ -1,8 +1,8 @@
 
-import 'package:budgetapp/core/colors.dart';
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/core/sizes.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
+import 'package:budgetapp/core/widgets/app_item_tile.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -69,7 +69,9 @@ class _WishListTabState extends State<WishListTab> {
                       height: 30.sp,
                     ),
                     FilledButton.tonal(
-                        
+                      style: FilledButton.styleFrom(
+                        minimumSize: Size(100, 50)
+                      ),
                         onPressed: () {
                           context.push(AppLinks.addWish);
                         
@@ -89,45 +91,21 @@ class _WishListTabState extends State<WishListTab> {
 class WishTile extends StatelessWidget {
   final Wish wish;
   final int index;
-  const WishTile({Key? key, required this.index, required this.wish})
-      : super(key: key);
+  const WishTile({Key? key, required this.index, required this.wish}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final DateFormat dayDate = DateFormat('EEE dd, yyy');
-    final ApplicationState _appState = Provider.of<ApplicationState>(context);
+    final appState = Provider.of<ApplicationState>(context);
+    final dateStr = DateFormat('EEE dd, yyyy').format(wish.creationDate);
 
-
-    return ListTile(
-              tileColor: AppColors.themeColor.withOpacity(0.03),
-              onTap: () {
-            context.push(
-              AppLinks.singleWish,
-              extra: wish.id,
-            );
-              },
-          leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(
-              Icons.shopping_cart_outlined,
-              size: AppSizes.iconSize.sp,
-              color: Colors.orangeAccent,
-            ),
-          ),
-          title: Text(
-            wish.name.capitalize,
-            style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-          ),
-          subtitle: Text(dayDate.format(wish.creationDate),
-              style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
-          trailing: Text(
-            '${AppFormatters.moneyCommaStr(wish.price)} ${_appState.currentCurrency}',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: AppSizes.normalFontSize.sp,
-            ),
-          ),
-            );
-
+    return AppItemTile(
+      title: wish.name.capitalize,
+      subtitle: 'Added on $dateStr',
+      amount: '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(wish.price)}',
+      icon: Icons.auto_awesome_outlined,
+      iconColor: Colors.orangeAccent,
+      iconBgColor: Colors.orange.withOpacity(0.1),
+      onTap: () => context.push(AppLinks.singleWish, extra: wish.id),
+    );
   }
 }

@@ -1,17 +1,14 @@
-import 'dart:io';
+
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
-import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
-import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/core/widgets/share_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 class CreateList extends StatefulWidget {

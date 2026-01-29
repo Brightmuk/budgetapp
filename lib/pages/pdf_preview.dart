@@ -1,3 +1,4 @@
+import 'package:budgetapp/core/widgets/action_dialogue.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
 import 'package:budgetapp/services/pdf_service.dart';
@@ -19,7 +20,6 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final adsCubit = context.read<AdsCubit>();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Preview PDF"),
@@ -27,15 +27,11 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
           if (!_isWatermarkRemoved)
             TextButton.icon(
               onPressed: () async {
-                bool isRewarded = await adsCubit.showRewardAd();
-                if (isRewarded){
-                   setState(() {
-                  _isWatermarkRemoved = true;
-                });
-                }
+
+               _handleRemoveWatermark();
               },
-              icon: const Icon(Icons.ad_units, color: Colors.amber),
-              label: const Text("Remove Watermark", style: TextStyle(color: Colors.amber)),
+              icon: const Icon(Icons.remove_circle_outline),
+              label: const Text("Remove Watermark"),
             ),
         ],
       ),
@@ -53,6 +49,35 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
           adsCubit.showInterstitialAd();
 
         },
+      ),
+    );
+
+  }
+  void _handleRemoveWatermark() {
+    
+    final adsCubit = context.read<AdsCubit>();
+    final theme = Theme.of(context);
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => ActionDialogue(
+        infoText: 'Watch Ad to remove watermark?',
+        action: () async {
+           bool isRewarded = await adsCubit.showRewardAd();
+                if (isRewarded){
+                   setState(() {
+                  _isWatermarkRemoved = true;
+                });
+                }
+        },
+        actionBtnText: 'Watch',
+        actionWidget: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [ 
+            Icon(Icons.play_arrow_outlined),
+            SizedBox(width: 5,),
+            Text('Watch Ad')
+          ]
+        )
       ),
     );
   }

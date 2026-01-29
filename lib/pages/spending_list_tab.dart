@@ -1,7 +1,7 @@
-import 'package:budgetapp/core/colors.dart';
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/core/sizes.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
+import 'package:budgetapp/core/widgets/app_item_tile.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -72,6 +72,9 @@ class _SpendingListTabState extends State<SpendingListTab> {
                   ),
                   SizedBox(height: 30.sp),
                   FilledButton.tonal(
+                     style: FilledButton.styleFrom(
+                        minimumSize: Size(100, 50)
+                      ),
                     onPressed: () {
                       context.push(AppLinks.addSpendingPlan);
                     },
@@ -90,42 +93,23 @@ class _SpendingListTabState extends State<SpendingListTab> {
 class SpendingListTile extends StatelessWidget {
   final SpendingPlan plan;
   final int index;
-  const SpendingListTile({Key? key, required this.plan, required this.index})
-    : super(key: key);
+  const SpendingListTile({Key? key, required this.plan, required this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final DateFormat dayDate = DateFormat('EEE dd, yyy');
-    final ApplicationState appState = Provider.of<ApplicationState>(context);
+    final theme = Theme.of(context);
+    final appState = Provider.of<ApplicationState>(context);
+    final dateStr = DateFormat('EEE dd, yyyy').format(plan.creationDate);
 
-    return ListTile(
-      tileColor: AppColors.themeColor.withOpacity(0.03),
-      onTap: () {
-        context.push(AppLinks.singleSpendingPlan, extra: plan.id);
-      },
-      leading: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Icon(
-          Icons.receipt_long_outlined,
-          size: AppSizes.iconSize.sp,
-          color: Colors.pinkAccent,
-        ),
-      ),
-      title: Text(
-        plan.title.capitalize,
-        style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-      ),
-      subtitle: Text(
-        dayDate.format(plan.creationDate),
-        style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-      ),
-      trailing: Text(
-        '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(plan.total)}',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: AppSizes.normalFontSize.sp,
-        ),
-      ),
+    return AppItemTile(
+      title: plan.title.capitalize,
+      subtitle: 'Added on $dateStr',
+      amount: '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(plan.total)}',
+      icon: Icons.receipt_long_outlined,
+      iconColor: theme.colorScheme.primary,
+      iconBgColor: theme.colorScheme.primaryContainer.withOpacity(0.4),
+      useSurfaceVariant: true, // Specific look for plans
+      onTap: () => context.push(AppLinks.singleSpendingPlan, extra: plan.id),
     );
   }
 }
