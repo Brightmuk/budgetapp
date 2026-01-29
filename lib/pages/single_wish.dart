@@ -1,6 +1,5 @@
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/wish.dart';
-import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/date_services.dart';

@@ -2,6 +2,7 @@ import 'package:budgetapp/core/theme.dart';
 import 'package:budgetapp/cubit/app_setup_cubit.dart';
 import 'package:budgetapp/router.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
+import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
 import 'package:budgetapp/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +21,11 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => ApplicationState()), BlocProvider(create:  (c)=> AppSetupCubit())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => ApplicationState()), 
+        BlocProvider(create:  (c)=> AppSetupCubit()),
+         BlocProvider<AdsCubit>(create: (_) => AdsCubit()),
+        ],
       child: const MyApp(),
     ),
   );

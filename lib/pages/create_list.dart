@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/expense.dart';
-import 'package:budgetapp/pages/add_spending_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
+import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:budgetapp/core/widgets/share_type.dart';
@@ -266,6 +266,7 @@ class _CreateListState extends State<CreateList> {
   }
 
   Future<void> _onDone() async {
+    final adsCubit = context.read<AdsCubit>();
     if (widget.title != null) {
       context.pop({'expenses': expenses, 'total': _total});
     } else {
@@ -286,6 +287,8 @@ class _CreateListState extends State<CreateList> {
 
       if (share == true) {
         File pdf = await PDFService.createPdf(plan);
+        await Future.delayed(Duration(milliseconds: 300));
+        adsCubit.showInterstitialAd();
         await Printing.sharePdf(bytes: pdf.readAsBytesSync(), filename: '${plan.title}.pdf');
       } else {
         context.push(AppLinks.addSpendingPlan, extra: plan);

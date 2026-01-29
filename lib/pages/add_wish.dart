@@ -2,6 +2,7 @@ import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
+import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/notification_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
@@ -57,7 +58,7 @@ class _AddWishState extends State<AddWish> {
   @override
   Widget build(BuildContext context) {
     final _appState = Provider.of<ApplicationState>(context);
-
+   
     return Scaffold(
       appBar: AppBar(
         title: Text(editMode ? 'Edit Wish' : 'Add New Wish'),
@@ -171,7 +172,7 @@ class _AddWishState extends State<AddWish> {
 
   Future<void> _handleSave() async {
     final _appState = Provider.of<ApplicationState>(context, listen: false);
-    
+    final adsCubit = context.read<AdsCubit>();
     if (_formKey.currentState!.validate()) {
       // Validate Reminder Time
       if (reminder && _selectedDate.isBefore(DateTime.now().add(const Duration(minutes: 5)))) {
@@ -208,9 +209,12 @@ class _AddWishState extends State<AddWish> {
           }
 
           if (mounted) {
+        
+            adsCubit.showInterstitialAd();
             if (editMode) context.pop();
             context.pop();
             context.push(AppLinks.singleWish, extra: id);
+           
           }
         }
       } catch (e) {

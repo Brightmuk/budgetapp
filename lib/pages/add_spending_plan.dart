@@ -1,12 +1,12 @@
 import 'package:budgetapp/core/colors.dart';
 import 'package:budgetapp/core/sizes.dart';
-import 'package:budgetapp/core/style.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/pages/create_list.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
+import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:budgetapp/services/date_services.dart';
 import 'package:budgetapp/services/notification_service.dart';
@@ -187,6 +187,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     onPressed: () async {
+                      final adsCubit = context.read<AdsCubit>();
                       if (_expenses.isEmpty) {
                         setState(() {
                           expenseError = true;
@@ -257,6 +258,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                                 AppLinks.singleSpendingPlan,
                                 extra: editMode ? widget.plan!.id : id,
                               );
+                              await Future.delayed(Duration(milliseconds: 300));
+                              adsCubit.showInterstitialAd();
                             }
                           });
                         } catch (e) {

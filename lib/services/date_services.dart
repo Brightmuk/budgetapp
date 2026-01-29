@@ -1,4 +1,3 @@
-import 'package:budgetapp/core/colors.dart';
 import 'package:budgetapp/core/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
