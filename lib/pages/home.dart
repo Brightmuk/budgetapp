@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:budgetapp/core/events.dart';
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
@@ -24,11 +27,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   final DateFormat dayDate = DateFormat('EEE dd, MMM yyyy');
+  StreamSubscription? _wishCreationSub;
+  StreamSubscription? _planCreationSub;
 
-  final List<Widget> _tabs = [
-    const SpendingListTab(),
-    const WishListTab(),
-  ];
+  final List<Widget> _tabs = [const SpendingListTab(), const WishListTab()];
 
   String _calculateTotal(dynamic items) {
     int total = 0;
@@ -44,8 +46,32 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) => const ExpenseType(),
     );
+  }
 
-    // NotificationService().showNotification(10, 'Test notification', 'This is a test notification');
+  @override
+  void initState() {
+    super.initState();
+    _wishCreationSub = eventBus.on<WishCreatedEvent>().listen((event) {
+      if (mounted) {
+        setState(() {
+          _currentIndex = 1;
+        });
+      }
+    });
+    _planCreationSub = eventBus.on<SpendingPlanCreatedEvent>().listen((event) {
+      if (mounted) {
+        setState(() {
+          _currentIndex = 0;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _wishCreationSub?.cancel();
+    _planCreationSub?.cancel();
+    super.dispose();
   }
 
   @override
@@ -56,66 +82,67 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       // M3 App Bar: Clean and Simple
       appBar: AppBar(
-      // 1. Standard M3 Title & Actions
-      centerTitle: false,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Spenditize', 
-            style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)
+        // 1. Standard M3 Title & Actions
+        centerTitle: false,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Spenditize',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              dayDate.format(DateTime.now()).toUpperCase(),
+              style: theme.textTheme.labelSmall?.copyWith(
+                letterSpacing: 1.0,
+                color: theme.colorScheme.outline,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            onPressed: () => context.push(AppLinks.settings),
+            icon: const Icon(Icons.settings_outlined),
           ),
-          Text(
-            dayDate.format(DateTime.now()).toUpperCase(),
-            style: theme.textTheme.labelSmall?.copyWith(
-              letterSpacing: 1.0, 
-              color: theme.colorScheme.outline
+          const SizedBox(width: 8),
+        ],
+
+        // 2. The Integrated Totals Section
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(100), // Height for the stats row
+          child: Container(
+            padding: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildStatTile(
+                    'Spending Plans',
+                    BudgetPlanService(appState: appState).budgetPlansStream,
+                    theme.colorScheme.primary,
+                    appState,
+                    Icons.receipt_long_outlined,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatTile(
+                    'Wishlist',
+                    WishService(appState: appState).wishStream,
+                    theme.colorScheme.tertiary,
+                    appState,
+                    Icons.favorite_outline,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
-      actions: [
-        IconButton(
-          onPressed: () => context.push(AppLinks.settings),
-          icon: const Icon(Icons.settings_outlined),
-        ),
-        const SizedBox(width: 8),
-      ],
-      
-      // 2. The Integrated Totals Section
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(100), // Height for the stats row
-        child: Container(
-          padding: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
-          child: Row(
-            children: [
-              Expanded(
-                child: _buildStatTile(
-                  'Spending Plans',
-                  BudgetPlanService(appState: appState).budgetPlansStream,
-                  theme.colorScheme.primary,
-                  appState,
-                  Icons.receipt_long_outlined,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildStatTile(
-                  'Wishlist',
-                  WishService(appState: appState).wishStream,
-                  theme.colorScheme.tertiary,
-                  appState,
-                  Icons.favorite_outline,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
-    ),
       body: Column(
         children: [
-          
           // Tab Content
           Expanded(
             child: PageTransitionSwitcher(
@@ -131,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      
+
       // M3 Navigation Bar
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
@@ -171,49 +198,54 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Widget _buildStatTile(
+    String label,
+    Stream stream,
+    Color color,
+    ApplicationState appState,
+    IconData icon,
+  ) {
+    final theme = Theme.of(context);
 
-  Widget _buildStatTile(String label, Stream stream, Color color, ApplicationState appState, IconData icon) {
-  final theme = Theme.of(context);
-  
-  return StreamBuilder(
-    stream: stream,
-    builder: (context, snapshot) {
-      final total = snapshot.hasData ? _calculateTotal(snapshot.data) : '0';
-      
-      return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.2)),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: color),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  total,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
+    return StreamBuilder(
+      stream: stream,
+      builder: (context, snapshot) {
+        final total = snapshot.hasData ? _calculateTotal(snapshot.data) : '0';
+
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withOpacity(0.2)),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: color),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    total,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
                   ),
-                ),
-                Text(
-                  label,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                  Text(
+                    label,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

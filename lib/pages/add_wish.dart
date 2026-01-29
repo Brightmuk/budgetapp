@@ -1,3 +1,4 @@
+import 'package:budgetapp/core/events.dart';
 import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
@@ -214,7 +215,7 @@ class _AddWishState extends State<AddWish> {
             if (editMode) context.pop();
             context.pop();
             context.push(AppLinks.singleWish, extra: id);
-           
+            eventBus.fire(WishCreatedEvent());
           }
         }
       } catch (e) {

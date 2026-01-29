@@ -45,6 +45,7 @@ dependencies:
   animations: ^2.0.2
   introduction_screen: ^4.0.0
   equatable: ^2.0.7
+  event_bus: ^2.0.1
 
 
 dev_dependencies:

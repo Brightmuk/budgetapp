@@ -1,4 +1,5 @@
 import 'package:budgetapp/core/colors.dart';
+import 'package:budgetapp/core/events.dart';
 import 'package:budgetapp/core/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/notification_model.dart';
@@ -280,6 +281,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                           );
                           await Future.delayed(Duration(milliseconds: 300));
                           adsCubit.showInterstitialAd();
+                          eventBus.fire(SpendingPlanCreatedEvent());
                         }
                       });
                     } catch (e) {
