@@ -57,8 +57,10 @@ class AdsCubit extends Cubit<AdsState> {
 
   Future<bool> showRewardAd() async {
     if (_rewardedAdsService.isAdLoaded) {
+      bool shown = await _rewardedAdsService.showAd();
+       _showAdThisTime = !shown;
       
-      return _rewardedAdsService.showAd();
+      return shown;
     } else {
       emit(const AdsFailed('Ad not loaded'));
       return false;
