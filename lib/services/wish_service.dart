@@ -1,6 +1,5 @@
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
-import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:localstore/localstore.dart';
@@ -17,7 +16,7 @@ class WishService {
   ///or edit a wish
   Future<bool> saveWish({required Wish wish}) async {
     bool returnValue = true;
-    LoadService(context: context!).showLoader();
+    
     await db
         .collection(wishCollection)
         .doc(wish.id)
@@ -29,7 +28,7 @@ class WishService {
       ToastService(context: context!).showSuccessToast('An error occurred!');
       returnValue = false;
     });
-    LoadService(context: context!).hideLoader();
+   
     return returnValue;
   }
 
@@ -65,7 +64,7 @@ class WishService {
 
   ///Delete a wish
   Future<void> deleteWish({required String wishId}) async {
-    LoadService(context: context!).showLoader();
+   
     await db.collection(wishCollection).doc(wishId).delete().then((value) {
       appState.deleteWish(wishId);
       ToastService(context: context!).showSuccessToast('Wish deleted!');
@@ -73,7 +72,7 @@ class WishService {
       ToastService(context: context!).showSuccessToast('An error occurred!');
     });
     Navigator.pop(context!);
-    LoadService(context: context!).hideLoader();
+   
   }
 
 }

@@ -8,4 +8,8 @@ extension StringCasingExtension on String {
   String get capitalizeFirstofEach => split(" ")
       .map((str) => str.capitalize)
       .join(" ");
+
+        String sentenceCase() {
+      return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
+    }
 }

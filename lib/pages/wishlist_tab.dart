@@ -1,6 +1,5 @@
 
 import 'package:budgetapp/core/formatters.dart';
-import 'package:budgetapp/core/sizes.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/core/widgets/app_item_tile.dart';
 import 'package:budgetapp/models/wish.dart';
@@ -62,8 +61,7 @@ class _WishListTabState extends State<WishListTab> {
                     
                    
                     Text(
-                      'No wishes yet',
-                      style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                      'No wishes yet'
                     ),
                     SizedBox(
                       height: 30.sp,

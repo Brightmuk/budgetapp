@@ -1,6 +1,5 @@
 import 'package:budgetapp/core/colors.dart';
 import 'package:budgetapp/core/events.dart';
-import 'package:budgetapp/core/sizes.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/pages/create_list.dart';
@@ -99,7 +98,6 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 ' ${AppFormatters.moneyCommaStr(total)} ${appState.currentCurrency}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: AppSizes.normalFontSize.sp,
                 ),
               ),
               onTap: () async {

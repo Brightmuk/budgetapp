@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
-import 'package:budgetapp/services/load_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
 
@@ -20,19 +18,19 @@ class BudgetPlanService {
   ///or edit a budget plan
   Future<bool> saveBudgetPlan({required SpendingPlan budgetPlan}) async {
     bool returnValue = true;
-    LoadService(context: context!).showLoader();
+   
 
     await db
         .collection(budgetPlanCollection)
         .doc(budgetPlan.id)
         .set(budgetPlan.toMap())
         .then((value) {
-      LoadService(context: context!).hideLoader();
+     
       ToastService(context: context!).showSuccessToast('Spending plan saved!');
 
       returnValue = true;
     }).catchError((e) {
-      LoadService(context: context!).hideLoader();
+     
       ToastService(context: context!).showSuccessToast('An error occurred!');
       returnValue = false;
     });
@@ -76,7 +74,7 @@ class BudgetPlanService {
 
   ///Delete a budget plan
   Future<void> deleteBudgetPlan({required String budgetPlanId}) async {
-    LoadService(context: context!).showLoader();
+   
     await db
         .collection(budgetPlanCollection)
         .doc(budgetPlanId)
@@ -89,7 +87,7 @@ class BudgetPlanService {
       ToastService(context: context!).showSuccessToast('An error occurred!');
     });
     Navigator.pop(context!);
-    LoadService(context: context!).hideLoader();
+   
   }
 
 

@@ -1,5 +1,4 @@
 import 'package:budgetapp/core/formatters.dart';
-import 'package:budgetapp/core/sizes.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/core/widgets/app_item_tile.dart';
 import 'package:budgetapp/models/budget_plan.dart';
@@ -66,10 +65,8 @@ class _SpendingListTabState extends State<SpendingListTab> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'No Spending plans yet',
-                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                  ),
+                  Text('No Spending plans yet'),
+                  
                   SizedBox(height: 30.sp),
                   FilledButton.tonal(
                      style: FilledButton.styleFrom(
