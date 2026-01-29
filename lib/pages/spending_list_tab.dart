@@ -8,7 +8,6 @@ import 'package:budgetapp/services/budget_plan_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class SpendingListTab extends StatefulWidget {
@@ -31,6 +30,7 @@ class _SpendingListTabState extends State<SpendingListTab> {
   @override
   Widget build(BuildContext context) {
     final ApplicationState _appState = Provider.of<ApplicationState>(context);
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: StreamBuilder<List<SpendingPlan>>(
@@ -65,10 +65,10 @@ class _SpendingListTabState extends State<SpendingListTab> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('No Spending plans yet'),
+                  Text('No Spending plans yet',style: theme.textTheme.labelLarge!.copyWith(color: theme.colorScheme.outline),),
                   
-                  SizedBox(height: 30.sp),
-                  FilledButton.tonal(
+                  SizedBox(height: 10),
+                 TextButton(
                      style: FilledButton.styleFrom(
                         minimumSize: Size(100, 50)
                       ),

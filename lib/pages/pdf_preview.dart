@@ -56,7 +56,6 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
   void _handleRemoveWatermark() {
     
     final adsCubit = context.read<AdsCubit>();
-    final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
       builder: (context) => ActionDialogue(

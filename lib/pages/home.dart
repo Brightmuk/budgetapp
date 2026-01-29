@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:budgetapp/core/events.dart';
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/models/budget_plan.dart';
@@ -15,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:animations/animations.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -145,16 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           // Tab Content
           Expanded(
-            child: PageTransitionSwitcher(
-              transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
-                return FadeThroughTransition(
-                  animation: primaryAnimation,
-                  secondaryAnimation: secondaryAnimation,
-                  child: child,
-                );
-              },
-              child: _tabs[_currentIndex],
-            ),
+            child:  _tabs[_currentIndex]
           ),
         ],
       ),

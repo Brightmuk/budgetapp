@@ -1,6 +1,5 @@
 import 'package:budgetapp/router.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class ExpenseType extends StatelessWidget {
@@ -8,6 +7,7 @@ class ExpenseType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(20),
       child: SizedBox(
@@ -16,22 +16,24 @@ class ExpenseType extends StatelessWidget {
           children: [
             Text(
               'Select type',
-              style: TextStyle(fontSize: 35.sp, fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            
+            
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: Padding(
-                padding: EdgeInsets.only(top: 8.0.sp),
-                child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.pinkAccent,
-                    ),
-                    height: 10,
-                    width: 10),
+              leading:  Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer.withAlpha(100),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.receipt_long_outlined, size: 22, color: Colors.pinkAccent),
               ),
-              title: Text('Spending Plan',style: TextStyle(fontSize: 35.sp),),
-              subtitle: Text('A plan to spend an amount of money',style: TextStyle(fontSize: 30.sp),),
+              title: Text('Spending Plan'),
+              subtitle: Text('A plan to spend an amount of money',),
               onTap: () {
                 Navigator.pop(context);
                 context.push(AppLinks.addSpendingPlan);
@@ -39,19 +41,17 @@ class ExpenseType extends StatelessWidget {
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.orangeAccent,
-                    ),
-                    height: 10,
-                    width: 10),
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer.withAlpha(100),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.auto_awesome_outlined, size: 22, color: Colors.orangeAccent),
               ),
-              title: Text('Wish',style: TextStyle(fontSize: 35.sp),),
+              title: Text('Wish',),
               subtitle: Text(
-                  'Something that you plan to buy, will be added to your wishlist',style: TextStyle(fontSize: 30.sp),),
+                  'Something that you plan to buy, will be added to your wishlist'),
               onTap: () {
                 Navigator.pop(context);
                 context.push(AppLinks.addWish);

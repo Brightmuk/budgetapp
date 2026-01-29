@@ -1,4 +1,3 @@
-
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/core/widgets/app_item_tile.dart';
@@ -9,7 +8,6 @@ import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class WishListTab extends StatefulWidget {
@@ -27,6 +25,7 @@ class _WishListTabState extends State<WishListTab> {
   @override
   Widget build(BuildContext context) {
     final ApplicationState _appState = Provider.of<ApplicationState>(context);
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: StreamBuilder<List<Wish>>(
@@ -57,16 +56,11 @@ class _WishListTabState extends State<WishListTab> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    
-                    
-                   
-                    Text(
-                      'No wishes yet'
-                    ),
+                    Text('No Wishes yet',style: theme.textTheme.labelLarge!.copyWith(color: theme.colorScheme.outline),),
                     SizedBox(
-                      height: 30.sp,
+                      height: 10,
                     ),
-                    FilledButton.tonal(
+                    TextButton(
                       style: FilledButton.styleFrom(
                         minimumSize: Size(100, 50)
                       ),
@@ -77,7 +71,7 @@ class _WishListTabState extends State<WishListTab> {
                         child: const Text(
                           'CREAT ONE'
                         )),
-                  ],
+                  ]
                 ),
               );
             }

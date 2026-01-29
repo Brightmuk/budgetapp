@@ -14,7 +14,6 @@ import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -129,7 +128,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       'Add at least one expense',
                       style: TextStyle(
                         color: Colors.redAccent,
-                        fontSize: 25.sp,
+                        fontSize: 25,
                       ),
                     ),
                   ],
