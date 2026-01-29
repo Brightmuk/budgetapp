@@ -39,18 +39,18 @@ class DateUtil {
   }
 
   Widget dayDateTimeText(DateTime date) {
+    final theme = Theme.of(context);
     return RichText(
       text: TextSpan(children: [
         TextSpan(
           text: dayDate.format(date),
           style: TextStyle(
-            fontSize: AppSizes.normalFontSize.sp,
+            color: theme.textTheme.bodyMedium!.color,
           ),
         ),
         TextSpan(
           text: ' ${time.format(date)}',
-          style: TextStyle(
-              fontSize: AppSizes.normalFontSize.sp, color: Colors.grey),
+          style: TextStyle( color: theme.textTheme.labelLarge!.color!.withAlpha(100)),
         ),
       ]),
     );

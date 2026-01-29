@@ -2,6 +2,7 @@
 import 'package:budgetapp/core/colors.dart';
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/core/sizes.dart';
+import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -114,7 +115,7 @@ class WishTile extends StatelessWidget {
             ),
           ),
           title: Text(
-            wish.name,
+            wish.name.capitalize,
             style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
           ),
           subtitle: Text(dayDate.format(wish.creationDate),

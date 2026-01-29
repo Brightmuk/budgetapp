@@ -1,7 +1,7 @@
-
 import 'package:budgetapp/core/colors.dart';
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/core/sizes.dart';
+import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -35,63 +35,54 @@ class _SpendingListTabState extends State<SpendingListTab> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: StreamBuilder<List<SpendingPlan>>(
-          stream: BudgetPlanService(context: context, appState: _appState)
-              .budgetPlansStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(snapshot.error.toString()),
-              );
-            }
+        stream:
+            BudgetPlanService(
+              context: context,
+              appState: _appState,
+            ).budgetPlansStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()));
+          }
 
-            if (snapshot.hasData) {
-              List<SpendingPlan>? plans = snapshot.data;
-              return ListView.separated(
-                  physics: const BouncingScrollPhysics(
-                      parent: AlwaysScrollableScrollPhysics()),
-                  controller: _controller,
-                  itemCount: plans!.length,
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(
-                      height: 3,
-                    );
-                  },
-                  itemBuilder: (context, index) {
-                    return SpendingListTile(
-                      index: index,
-                      plan: plans[index],
-                    );
-                  });
-            } else {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                  
-                    
-                  
-                    Text(
-                      'No Spending plans yet',
-                      style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-                    ),
-                    SizedBox(
-                      height: 30.sp,
-                    ),
-                    FilledButton.tonal(
-                       
-                        onPressed: () {
-                          context.push(AppLinks.addSpendingPlan);
-                        
-                        },
-                        child: const Text(
-                          'CREAT ONE'
-                        )),
-                  ],
-                ),
-              );
-            }
-          }),
+          if (snapshot.hasData) {
+            List<SpendingPlan>? plans = snapshot.data;
+            return ListView.separated(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              controller: _controller,
+              itemCount: plans!.length,
+              separatorBuilder: (context, index) {
+                return const SizedBox(height: 3);
+              },
+              itemBuilder: (context, index) {
+                return SpendingListTile(index: index, plan: plans[index]);
+              },
+            );
+          } else {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'No Spending plans yet',
+                    style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+                  ),
+                  SizedBox(height: 30.sp),
+                  FilledButton.tonal(
+                    onPressed: () {
+                      context.push(AppLinks.addSpendingPlan);
+                    },
+                    child: const Text('CREAT ONE'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
@@ -100,45 +91,41 @@ class SpendingListTile extends StatelessWidget {
   final SpendingPlan plan;
   final int index;
   const SpendingListTile({Key? key, required this.plan, required this.index})
-      : super(key: key);
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final DateFormat dayDate = DateFormat('EEE dd, yyy');
-    final ApplicationState _appState = Provider.of<ApplicationState>(context);
+    final ApplicationState appState = Provider.of<ApplicationState>(context);
 
     return ListTile(
-              tileColor: AppColors.themeColor.withOpacity(0.03),
-              onTap: () {
-                context.push(
-                  AppLinks.singleSpendingPlan,
-                  extra: plan.id,
-                );
-              },
-              leading: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.receipt_long_outlined,
-                  size: AppSizes.iconSize.sp,
-                  color: Colors.pinkAccent,
-                ),
-              ),
-              title: Text(
-                plan.title,
-                style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
-              ),
-              subtitle: Text(
-                  dayDate.format(
-                    plan.creationDate,
-                  ),
-                  style: TextStyle(fontSize: AppSizes.normalFontSize.sp)),
-              trailing: Text(
-                '${_appState.currentCurrency} ${AppFormatters.moneyCommaStr(plan.total)}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppSizes.normalFontSize.sp,
-                ),
-              ),
-            );
+      tileColor: AppColors.themeColor.withOpacity(0.03),
+      onTap: () {
+        context.push(AppLinks.singleSpendingPlan, extra: plan.id);
+      },
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Icon(
+          Icons.receipt_long_outlined,
+          size: AppSizes.iconSize.sp,
+          color: Colors.pinkAccent,
+        ),
+      ),
+      title: Text(
+        plan.title.capitalize,
+        style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+      ),
+      subtitle: Text(
+        dayDate.format(plan.creationDate),
+        style: TextStyle(fontSize: AppSizes.normalFontSize.sp),
+      ),
+      trailing: Text(
+        '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(plan.total)}',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: AppSizes.normalFontSize.sp,
+        ),
+      ),
+    );
   }
 }

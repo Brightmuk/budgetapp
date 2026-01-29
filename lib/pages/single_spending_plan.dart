@@ -61,7 +61,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
             slivers: [
               // M3 App Bar with Action Buttons
               SliverAppBar.large(
-                title: Text(plan.title.capitalize, style: theme.textTheme.displayMedium,),
+                title: Text(plan.title.capitalize, style: theme.textTheme.displaySmall,),
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.print_outlined),

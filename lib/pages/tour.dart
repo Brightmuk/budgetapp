@@ -1,12 +1,32 @@
 import 'package:budgetapp/cubit/app_setup_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
 
-class TourScreen extends StatelessWidget {
+class TourScreen extends StatefulWidget {
   final bool isFirstTime;
   const TourScreen({Key? key, required this.isFirstTime}) : super(key: key);
 
+  @override
+  State<TourScreen> createState() => _TourScreenState();
+}
+
+class _TourScreenState extends State<TourScreen> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual, 
+      overlays: SystemUiOverlay.values,
+    );
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -14,6 +34,7 @@ class TourScreen extends StatelessWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
+      
       body: IntroductionScreen(
         pages: [
           PageViewModel(
