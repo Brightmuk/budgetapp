@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -12,7 +13,7 @@ import 'package:budgetapp/core/formatters.dart';
 
 class PDFService {
   ///Create a pdf from for sharing or printing
-  static Future<File> createPdf(SpendingPlan plan) async {
+  static Future<File> createPdf(SpendingPlan plan, {bool showWatermark = true}) async {
     final DateFormat dayDate = DateFormat('EEE dd, yyy');
     final pdf = pw.Document();
     String dir = (await pp.getTemporaryDirectory()).path;
@@ -21,17 +22,41 @@ class PDFService {
     String? currency = await SharedPrefs().getCurrency();
 
     final logo = await imageFromAssetBundle('assets/icons/icon-black.png');
-
+    final waterMark = await imageFromAssetBundle('assets/icons/icon-watermark.png');
+    pw.Widget buildTiledWatermark() {
+      return pw.Opacity(
+        opacity: 0.7, // Keep it subtle so the text is readable
+        child: pw.Container(
+          alignment: pw.Alignment.center,
+          child: pw.Wrap(
+            spacing: 40, // Horizontal space between watermarks
+            runSpacing: 40, // Vertical space between rows
+            children: List.generate(30, (index) {
+              return pw.Transform.rotate(
+                angle: -0.4, // Slight tilt for that professional "security" look
+                child: pw.Image(waterMark, height: 60), // Small and repeating
+              );
+            }),
+          ),
+        ),
+      );
+    }
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
         
         build: (pw.Context context) {
-          return pw.Column(
+
+          return pw.Stack(
+            alignment: pw.Alignment.center,
+            children: [
+              
+              if (showWatermark) buildTiledWatermark(),
+          pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Row(children: [
+               showWatermark? pw.Row(children: [
                   pw.Image(logo, height: 50),
-                ]),
+                ]):pw.SizedBox(height: 0),
                 pw.SizedBox(
                   height: 10,
                 ),
@@ -82,12 +107,9 @@ class PDFService {
                             fontWeight: pw.FontWeight.bold, fontSize: 14)),
                   ]),
                 ]),
-                pw.SizedBox(height: 50),
-                pw.Footer(
-                    title: pw.Text(
-                        'Made by Spenditize',
-                        style: const pw.TextStyle(color: PdfColors.grey300))),
-              ]);
+
+              ])]);
+              
         }));
 
     return await file.writeAsBytes(await pdf.save());

@@ -1,8 +1,9 @@
 import 'package:budgetapp/core/formatters.dart';
+import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
-import 'package:budgetapp/services/date_services.dart';
+import 'package:budgetapp/core/utils/date_util.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:budgetapp/core/widgets/action_dialogue.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class _SingleWishState extends State<SingleWish> {
             slivers: [
               // M3 Large App Bar
               SliverAppBar.large(
-                title: Text(wish.name),
+                title: Text(wish.name.capitalize ,style: theme.textTheme.displayMedium,),
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => context.pop(),
@@ -131,7 +132,7 @@ class _SingleWishState extends State<SingleWish> {
           ListTile(
             leading: const Icon(Icons.calendar_month_outlined, size: 20),
             title: const Text('Wish Created'),
-            trailing: DateServices(context: context).dayDateTimeText(wish.creationDate),
+            trailing: DateUtil(context: context).dayDateTimeText(wish.creationDate),
           ),
           ListTile(
             leading: Icon(
@@ -142,7 +143,7 @@ class _SingleWishState extends State<SingleWish> {
             title: const Text('Reminder Status'),
             subtitle: Text(wish.reminder ? 'Notification active' : 'Notifications disabled'),
             trailing: wish.reminder 
-              ? DateServices(context: context).dayDateTimeText(wish.reminderDate)
+              ? DateUtil(context: context).dayDateTimeText(wish.reminderDate)
               : null,
           ),
         ],

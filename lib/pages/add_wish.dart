@@ -3,7 +3,7 @@ import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
-import 'package:budgetapp/services/date_services.dart';
+import 'package:budgetapp/core/utils/date_util.dart';
 import 'package:budgetapp/services/notification_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:budgetapp/services/wish_service.dart';
@@ -135,9 +135,9 @@ class _AddWishState extends State<AddWish> {
                           ? ListTile(
                               leading: const Icon(Icons.calendar_month_outlined),
                               title: const Text('Target Purchase Date'),
-                              trailing: DateServices(context: context).dayDateTimeText(_selectedDate),
+                              trailing: DateUtil(context: context).dayDateTimeText(_selectedDate),
                               onTap: () async {
-                                final dateResult = await DateServices(context: context).getDateAndTime(_selectedDate);
+                                final dateResult = await DateUtil(context: context).getDateAndTime(_selectedDate);
                                 if (dateResult != null) {
                                   setState(() => _selectedDate = dateResult);
                                 }
@@ -171,7 +171,7 @@ class _AddWishState extends State<AddWish> {
   }
 
   Future<void> _handleSave() async {
-    final _appState = Provider.of<ApplicationState>(context, listen: false);
+    final appState = Provider.of<ApplicationState>(context, listen: false);
     final adsCubit = context.read<AdsCubit>();
     if (_formKey.currentState!.validate()) {
       // Validate Reminder Time
@@ -188,10 +188,10 @@ class _AddWishState extends State<AddWish> {
           reminderDate: _selectedDate,
           creationDate: DateTime.now(),
           name: _nameC.text,
-          reminder: !DateServices(context: context).isPastDate(_selectedDate) && reminder,
+          reminder: !DateUtil(context: context).isPastDate(_selectedDate) && reminder,
         );
 
-        bool success = await WishService(context: context, appState: _appState).saveWish(wish: wish);
+        bool success = await WishService(context: context, appState: appState).saveWish(wish: wish);
         
         if (success) {
           

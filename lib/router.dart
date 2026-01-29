@@ -4,6 +4,7 @@ import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/pages/add_spending_plan.dart';
 import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/pages/create_list.dart';
+import 'package:budgetapp/pages/pdf_preview.dart';
 import 'package:budgetapp/pages/settings.dart';
 import 'package:budgetapp/pages/single_spending_plan.dart';
 import 'package:budgetapp/pages/single_wish.dart';
@@ -20,6 +21,7 @@ class AppLinks {
   static const String addWish = '/add-wish';
   static const String settings = '/settings';
   static const String createList = '/create-list';
+  static const String pdfPreview = '/pdf-preview';
 }
 final getIt = GetIt.instance;
 NotificationPayload? payload;
@@ -60,6 +62,10 @@ final router = GoRouter(
     GoRoute(
       path: AppLinks.settings,
       builder: (context, state) => const SettingsPage(),
+    ),
+    GoRoute(
+      path: AppLinks.pdfPreview,
+      builder: (context, state) =>  PdfPreviewScreen(plan: state.extra as SpendingPlan),
     ),
   ],
 );

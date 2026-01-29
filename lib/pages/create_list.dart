@@ -266,7 +266,6 @@ class _CreateListState extends State<CreateList> {
   }
 
   Future<void> _onDone() async {
-    final adsCubit = context.read<AdsCubit>();
     if (widget.title != null) {
       context.pop({'expenses': expenses, 'total': _total});
     } else {
@@ -286,10 +285,8 @@ class _CreateListState extends State<CreateList> {
       );
 
       if (share == true) {
-        File pdf = await PDFService.createPdf(plan);
-        await Future.delayed(Duration(milliseconds: 300));
-        adsCubit.showInterstitialAd();
-        await Printing.sharePdf(bytes: pdf.readAsBytesSync(), filename: '${plan.title}.pdf');
+        context.push(AppLinks.pdfPreview, extra: plan);
+        
       } else {
         context.push(AppLinks.addSpendingPlan, extra: plan);
         

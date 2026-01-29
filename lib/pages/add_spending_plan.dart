@@ -8,7 +8,7 @@ import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
-import 'package:budgetapp/services/date_services.dart';
+import 'package:budgetapp/core/utils/date_util.dart';
 import 'package:budgetapp/services/notification_service.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
@@ -153,13 +153,13 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 'Reminder date',
                 style: TextStyle(fontSize: 35.sp),
               ),
-              trailing: DateServices(context: context)
+              trailing: DateUtil(context: context)
                   .dayDateTimeText(_selectedDate!),
               onTap: reminder
                   ? () async {
                       _focusNode.unfocus();
                       final dateResult =
-                          await DateServices(context: context)
+                          await DateUtil(context: context)
                               .getDateAndTime(_selectedDate!);
                       if (dateResult != null) {
                         setState(() {
@@ -212,7 +212,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                           reminderDate: _selectedDate!,
                           creationDate: DateTime.now(),
                           title: _titleC.value.text,
-                          reminder: DateServices(context: context)
+                          reminder: DateUtil(context: context)
                                   .isPastDate(_selectedDate!)
                               ? false
                               : reminder,
@@ -226,7 +226,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                             if (value) {
                               ///only set reminder if user sets so
                               if (plan.reminder &&
-                                  !DateServices(context: context)
+                                  !DateUtil(context: context)
                                       .isPastDate(_selectedDate!)) {
                                 await NotificationService().zonedScheduleNotification(
                                     id: int.parse(plan.id.substring(8)),

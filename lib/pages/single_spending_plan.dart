@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:budgetapp/core/formatters.dart';
+import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/budget_plan_service.dart';
-import 'package:budgetapp/services/date_services.dart';
+import 'package:budgetapp/core/utils/date_util.dart';
 import 'package:budgetapp/services/pdf_service.dart';
 import 'package:budgetapp/core/widgets/action_dialogue.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
             slivers: [
               // M3 App Bar with Action Buttons
               SliverAppBar.large(
-                title: Text(plan.title),
+                title: Text(plan.title.capitalize, style: theme.textTheme.displayMedium,),
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.print_outlined),
@@ -152,7 +153,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Total Spent', style: theme.textTheme.labelLarge),
+                Text('Total Cost', style: theme.textTheme.labelLarge),
                 Text(
                   '${AppFormatters.moneyCommaStr(plan.total)} ${appState.currentCurrency}',
                   style: theme.textTheme.headlineSmall?.copyWith(
@@ -180,13 +181,13 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
           ListTile(
             leading: const Icon(Icons.calendar_today_outlined, size: 20),
             title: const Text('Created'),
-            trailing: DateServices(context: context).dayDateTimeText(plan.creationDate),
+            trailing: DateUtil(context: context).dayDateTimeText(plan.creationDate),
           ),
           if (plan.reminder)
             ListTile(
               leading: const Icon(Icons.alarm_on_outlined, size: 20),
               title: const Text('Reminder Set'),
-              trailing: DateServices(context: context).dayDateTimeText(plan.reminderDate),
+              trailing: DateUtil(context: context).dayDateTimeText(plan.reminderDate),
             ),
         ],
       ),
@@ -230,14 +231,12 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
 
   // --- Logic Handlers ---
 
-  Future<void> _handlePrint(SpendingPlan plan) async {
-    File pdf = await PDFService.createPdf(plan);
-    await Printing.layoutPdf(name: '${plan.title}.pdf', onLayout: (_) => pdf.readAsBytes());
-  }
+Future<void> _handlePrint(SpendingPlan plan) async {
+ context.push(AppLinks.pdfPreview, extra: plan);
+}
 
   Future<void> _handleShare(SpendingPlan plan) async {
-    File pdf = await PDFService.createPdf(plan);
-    await Printing.sharePdf(bytes: pdf.readAsBytesSync(), filename: '${plan.title}.pdf');
+     context.push(AppLinks.pdfPreview, extra: plan);
   }
 
   void _handleEdit(ApplicationState appState) async {

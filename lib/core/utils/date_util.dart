@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class DateServices {
+class DateUtil {
   final BuildContext context;
 
-  DateServices({required this.context});
+  DateUtil({required this.context});
 
   static DateFormat dayDate = DateFormat('EEE dd, yyy');
   static DateFormat dayDateTime = DateFormat('EEE dd, yyy hh:mm');
