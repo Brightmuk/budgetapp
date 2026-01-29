@@ -1,24 +1,28 @@
 import 'dart:io';
 import 'package:budgetapp/core/utils/string_extension.dart';
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/budget_plan.dart';
-import 'package:budgetapp/services/shared_prefs.dart';
+import 'package:budgetapp/providers/app_state_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart' as pp;
 import 'package:budgetapp/core/formatters.dart';
+import 'package:provider/provider.dart';
 
 
 class PDFService {
   ///Create a pdf from for sharing or printing
-  static Future<File> createPdf(SpendingPlan plan, {bool showWatermark = true}) async {
+  static Future<File> createPdf(SpendingPlan plan, {bool showWatermark = true, required BuildContext ctx}) async {
     final DateFormat dayDate = DateFormat('EEE dd, yyy');
     final pdf = pw.Document();
     String dir = (await pp.getTemporaryDirectory()).path;
     File file = File('$dir/${plan.title}');
-
-    String? currency = await SharedPrefs().getCurrency();
+    final appState = Provider.of<ApplicationState>(ctx, listen: false);
+    String? currency = appState.currentCurrency;
+    
 
     final logo = await imageFromAssetBundle('assets/icons/icon-black.png');
     final waterMark = await imageFromAssetBundle('assets/icons/icon-watermark.png');
@@ -44,6 +48,7 @@ class PDFService {
         pageFormat: PdfPageFormat.a4,
         
         build: (pw.Context context) {
+          final l10n = AppLocalizations.of(ctx)!;
 
           return pw.Stack(
             alignment: pw.Alignment.center,
@@ -72,13 +77,13 @@ class PDFService {
                 pw.SizedBox(height: 30),
                 pw.Table(tableWidth: pw.TableWidth.max, children: [
                   pw.TableRow(children: [
-                    pw.Text('Item Name',
+                    pw.Text(l10n.item_name,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    pw.Text('Quantity',
+                    pw.Text(l10n.quantity,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    pw.Text('Unit Price($currency)',
+                    pw.Text(l10n.unit_price_currency(currency??''),
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    pw.Text('Subtotal($currency)',
+                    pw.Text(l10n.subtotal_currency(currency??''),
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                   ]),
                   pw.TableRow(children: [pw.SizedBox(height: 20)]),
@@ -96,7 +101,7 @@ class PDFService {
 
                   // const pw.TableRow(decoration: pw.BoxDecoration(border: pw.Border.fromBorderSide(pw.BorderSide(color: PdfColors.grey500))), children: []),
                   pw.TableRow(children: [
-                    pw.Text('Total',
+                    pw.Text(l10n.total,
                         style: pw.TextStyle(
                             fontWeight: pw.FontWeight.bold, fontSize: 14)),
                     pw.Text(''),

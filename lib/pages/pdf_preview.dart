@@ -1,4 +1,5 @@
 import 'package:budgetapp/core/widgets/action_dialogue.dart';
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
 import 'package:budgetapp/services/pdf_service.dart';
@@ -20,9 +21,10 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Preview PDF"),
+        title:  Text(l10n.preview_pdf),
         actions: [
           if (!_isWatermarkRemoved)
             TextButton.icon(
@@ -31,7 +33,7 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                _handleRemoveWatermark();
               },
               icon: const Icon(Icons.remove_circle_outline),
-              label: const Text("Remove Watermark"),
+              label:  Text(l10n.remove_watermark),
             ),
         ],
       ),
@@ -39,7 +41,8 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
         build: (format) async {
           final pdfFile = await PDFService.createPdf(
             widget.plan, 
-            showWatermark: !_isWatermarkRemoved
+            showWatermark: !_isWatermarkRemoved,
+            ctx: context
           );
           return pdfFile.readAsBytes();
         },
@@ -54,12 +57,12 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
 
   }
   void _handleRemoveWatermark() {
-    
+    final l10n = AppLocalizations.of(context)!;
     final adsCubit = context.read<AdsCubit>();
     showModalBottomSheet(
       context: context,
       builder: (context) => ActionDialogue(
-        infoText: 'Watch Ad to remove watermark?',
+        infoText: l10n.watch_ad_to_remove_watermark,
         action: () async {
            bool isRewarded = await adsCubit.showRewardAd();
                 if (isRewarded){
@@ -68,13 +71,13 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                 });
                 }
         },
-        actionBtnText: 'Watch',
+        actionBtnText: l10n.watch,
         actionWidget: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [ 
             Icon(Icons.play_arrow_outlined),
             SizedBox(width: 5,),
-            Text('Watch Ad')
+            Text(l10n.watch_ad)
           ]
         )
       ),

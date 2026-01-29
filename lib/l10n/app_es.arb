@@ -1,6 +1,172 @@
 {
-  "appTitle": "Spenditize",
-  "welcomeMessage": "Planifícalo. Deséalo. Spenditize.",
-  "addWish": "Añadir a la lista",
-  "spendingPlan": "Plan de gastos"
+  "cancel": "Cancelar",
+  "select_type": "Seleccionar tipo",
+  "@select_type": {
+    "description": "Seleccionar tipo de"
+  },
+  "spending_plan": "Plan de gastos",
+  "a_plan_to_spend_an_amount_of_money": "Un plan para gastar una cantidad de dinero",
+  "wish": "Deseo",
+  "something_that_you_plan_to_buy_will_be_added_to_your_wishlist": "Algo que planeas comprar, se añadirá a tu lista de deseos",
+  "select_option": "Seleccionar opción",
+  "export_pdf": "Exportar PDF",
+  "share_list_as_a_document": "Compartir lista como documento",
+  "save": "Guardar",
+  "save_as_spending_plan": "Guardar como plan de gastos",
+  "edit_spending_plan": "Editar plan de gastos",
+  "create_spending_plan": "Crear plan de gastos",
+  "title": "Título",
+  "john_s_birthday": "Cumpleaños de Juan",
+  "title_is_required": "El título es obligatorio",
+  "edit_list": "Editar lista",
+  "expense_s_in_list": "{length} gasto(s) en la lista",
+  "@expense_s_in_list": {
+    "placeholders": {
+      "length": {
+        "type": "String"
+      }
+    }
+  },
+  "add_at_least_one_expense": "Añade al menos un gasto",
+  "set_reminder": "Configurar recordatorio",
+  "get_notified_to_purchase_this_item": "Recibe una notificación para comprar este artículo",
+  "target_purchase_date": "Fecha prevista de compra",
+  "reminders_need_to_be_a_minimum_of_5_minutes_from_now": "Los recordatorios deben ser al menos dentro de 5 minutos",
+  "spending_list_fulfilment": "Cumplimiento de lista de gastos",
+  "remember_to_fulfil_buddy": "¡Recuerda cumplir {title}, amigo!",
+  "@remember_to_fulfil_buddy": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "sorry_there_was_an_error": "Lo sentimos, ¡hubo un error!",
+  "notifications_disabled": "Notificaciones desactivadas",
+  "please_enable_notifications_in_settings_to_use_reminders": "Por favor, activa las notificaciones en ajustes para usar recordatorios.",
+  "open_settings": "Abrir Ajustes",
+  "edit_wish": "Editar deseo",
+  "add_new_wish": "Añadir nuevo deseo",
+  "item_name": "Nombre del artículo",
+  "air_jordans": "Air Jordans",
+  "required": "Obligatorio",
+  "price": "Precio",
+  "save_wish": "Guardar deseo",
+  "reminder_must_be_at_least_5_minutes_from_now": "El recordatorio debe ser al menos dentro de 5 minutos",
+  "wish_fulfilment": "Cumplimiento de deseo",
+  "don_t_forget_your": "¡No olvides tu {name}!",
+  "@don_t_forget_your": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "error_saving_wish": "Error al guardar el deseo",
+  "quick_spending_plan": "Plan de gastos rápido",
+  "balance_remaining": "Saldo restante",
+  "estimated_total": "Total estimado",
+  "item": "Artículo",
+  "food": "Comida",
+  "quick_add_fill_fields_and_tap_or_press_enter": "Añadido rápido: rellena campos y pulsa + o Enter",
+  "quick_plan": "Plan rápido",
+  "set_budget_limit": "Establecer límite de presupuesto",
+  "amount": "Cantidad",
+  "reverse_mode": "Modo inverso",
+  "specify_a_budget_and_each_item_will_deduct_from_that_total": "Especifica un presupuesto y cada artículo se restará del total.",
+  "got_it": "Entendido",
+  "set": "Establecer",
+  "spending_plans": "Planes de gastos",
+  "wishlist": "Lista de deseos",
+  "plans": "Planes",
+  "quicklist": "ListaRápida",
+  "preview_pdf": "Vista previa PDF",
+  "remove_watermark": "Quitar marca de agua",
+  "watch_ad_to_remove_watermark": "¿Ver anuncio para quitar marca de agua?",
+  "watch": "Ver",
+  "watch_ad": "Ver anuncio",
+  "settings": "Ajustes",
+  "preferences": "Preferencias",
+  "change_currency": "Cambiar moneda",
+  "set_your_primary_spending_currency": "Establece tu moneda principal de gasto",
+  "support_info": "Soporte e Info",
+  "help_contact": "Ayuda y contacto",
+  "privacy_policy": "Política de privacidad",
+  "rate_app": "Calificar aplicación",
+  "love_the_app_let_us_know_on_the_play_store": "¿Te gusta la app? Cuéntanoslo en la Play Store",
+  "could_not_open_link": "No se pudo abrir el enlace",
+  "app_version": "Versión de la app: {version}",
+  "@app_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "delete_this_spending_plan_permanently": "¿Eliminar este plan de gastos permanentemente?",
+  "delete": "Eliminar",
+  "edit_plan": "Editar plan",
+  "reminder_set": "Recordatorio configurado",
+  "created": "Creado",
+  "total_cost": "Coste total",
+  "expenses": "Gastos",
+  "print": "Imprimir",
+  "share": "Compartir",
+  "plan_not_found": "Plan no encontrado",
+  "error": "Error: {error}",
+  "@error": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "delete_this_wish_from_your_list": "¿Eliminar este deseo de tu lista?",
+  "reminder_status": "Estado del recordatorio",
+  "notification_active": "Notificación activa",
+  "wish_created": "Deseo creado",
+  "estimated_price": "Precio estimado",
+  "wish_not_found": "Deseo no encontrado",
+  "no_spending_plans_yet": "Aún no hay planes de gastos",
+  "creat_one": "CREAR UNO",
+  "added_on_datestr": "Añadido el {dateStr}",
+  "@added_on_datestr": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String"
+      }
+    }
+  },
+  "welcome_to_spenditize": "Bienvenido a Spenditize",
+  "the_smart_way_to_track_your_spending_and_achieve_your_financial_goals": "La forma inteligente de rastrear tus gastos y alcanzar tus metas financieras.",
+  "quick_spending_lists": "Listas de gastos rápidas",
+  "create_lists_on_the_fly_while_shopping_to_stay_within_your_budget": "Crea listas sobre la marcha mientras compras para no salirte del presupuesto.",
+  "remember_for_life": "Recuérdalo siempre",
+  "we_will_remind_you_when_to_fulfil_your_purchase": "Te recordaremos cuándo realizar tu compra",
+  "skip": "Omitir",
+  "get_started": "Empezar",
+  "no_wishes_yet": "Aún no hay deseos",
+  "spending_plan_saved": "¡Plan de gastos guardado!",
+  "an_error_occurred": "¡Ocurrió un error!",
+  "spending_plan_deleted": "¡Plan de gastos eliminado!",
+  "quantity": "Cantidad",
+  "unit_price_currency": "Precio unitario({currency})",
+  "@unit_price_currency": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "subtotal_currency": "Subtotal({currency})",
+  "@subtotal_currency": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "total": "Total",
+  "wish_saved": "¡Deseo guardado!",
+  "wish_deleted": "¡Deseo eliminado!"
 }

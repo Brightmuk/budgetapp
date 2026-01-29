@@ -1,3 +1,4 @@
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +24,11 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final _appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title:  Text(l10n.settings),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -35,11 +37,11 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionHeader(theme, 'Preferences'),
+          _buildSectionHeader(theme, l10n.preferences),
           ListTile(
             leading: const Icon(Icons.currency_exchange),
-            title: const Text('Change Currency'),
-            subtitle: const Text('Set your primary spending currency'),
+            title:  Text(l10n.change_currency),
+            subtitle:  Text(l10n.set_your_primary_spending_currency),
             trailing: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
@@ -58,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           
           const Divider(indent: 16, endIndent: 16),
-          _buildSectionHeader(theme, 'Support & Info'),
+          _buildSectionHeader(theme, l10n.support_info),
           // ListTile(
           //   leading: const Icon(Icons.explore_outlined),
           //   title: const Text('Take a Tour'),
@@ -67,20 +69,20 @@ class _SettingsPageState extends State<SettingsPage> {
 
           ListTile(
             leading: const Icon(Icons.help_outline),
-            title: const Text('Help & Contact'),
+            title:  Text(l10n.help_contact),
             onTap: () => _launchUrl(_helpUrl),
           ),
           ListTile(
             leading: const Icon(Icons.policy_outlined),
-            title: const Text('Privacy Policy'),
+            title:  Text(l10n.privacy_policy),
             onTap: () => _launchUrl(_privacyUrl),
           ),
           
 
           ListTile(
             leading: const Icon(Icons.star_outline),
-            title: const Text('Rate Spenditize'),
-            subtitle: const Text('Love the app? Let us know on the Play Store'),
+            title:  Text(l10n.rate_app),
+            subtitle:  Text(l10n.love_the_app_let_us_know_on_the_play_store),
             onTap: () => _launchUrl(_playStoreUrl),
           ),
           
@@ -119,11 +121,13 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _launchUrl(Uri url) async {
+    final l10n = AppLocalizations.of(context)!;
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      ToastService(context: context).showSuccessToast('Could not open link');
+      ToastService(context: context).showSuccessToast(l10n.could_not_open_link);
     }
   }
   Widget _buildVersionFooter(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
   return FutureBuilder<PackageInfo>(
     future: PackageInfo.fromPlatform(),
     builder: (context, snapshot) {
@@ -136,7 +140,7 @@ class _SettingsPageState extends State<SettingsPage> {
           child: Column(
             children: [
               Text(
-                'App Version: ${info.version}',
+                l10n.app_version(info.version),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                   letterSpacing: 0.5,

@@ -3,7 +3,9 @@ import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/services/shared_prefs.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApplicationState extends ChangeNotifier {
   String? currentCurrency;
@@ -12,20 +14,24 @@ class ApplicationState extends ChangeNotifier {
   final List<SpendingPlan> budgetPlans = [];
   final List<Wish> wishes = [];
 
-  ApplicationState() {
-    init();
-  }
 
-  void init() async {
-    currentCurrency = await SharedPrefs().getCurrency();
+  void init(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String currency = getCurrencyCode(context);
+    currentCurrency = currency;
+    prefs.setString(SharedPrefs.currency, currency);
   }
 
   void changeAdView() {
     adShown = !adShown;
   }
 
-  void setCurrency(Currency currency) {
+  void setCurrency(Currency currency) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(SharedPrefs.currency, currency.code);
     currentCurrency = currency.code;
+
     notifyListeners();
   }
 
@@ -41,4 +47,9 @@ class ApplicationState extends ChangeNotifier {
     notifyListeners();
   }
 
+  String getCurrencyCode(BuildContext context) {
+    Locale locale = Localizations.localeOf(context);
+    var format = NumberFormat.simpleCurrency(locale: locale.toString());
+    return format.currencyName ?? 'USD';
+  }
 }

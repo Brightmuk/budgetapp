@@ -1,4 +1,6 @@
 import 'package:budgetapp/core/events.dart';
+import 'package:budgetapp/core/widgets/action_dialogue.dart';
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
@@ -59,10 +61,10 @@ class _AddWishState extends State<AddWish> {
   @override
   Widget build(BuildContext context) {
     final _appState = Provider.of<ApplicationState>(context);
-   
+   final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(editMode ? 'Edit Wish' : 'Add New Wish'),
+        title: Text(editMode ? l10n.edit_wish : l10n.add_new_wish),
       ),
       
       body: Padding(
@@ -86,12 +88,12 @@ class _AddWishState extends State<AddWish> {
                             focusNode: _nameNode,
                             controller: _nameC,
                             decoration: InputDecoration(
-                              labelText: 'Item Name',
-                              hintText: 'Air Jordans',
+                              labelText: l10n.item_name,
+                              hintText: l10n.air_jordans,
                               prefixIcon: const Icon(Icons.shopping_bag_outlined),
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                             ),
-                            validator: (val) => (val == null || val.isEmpty) ? 'Required' : null,
+                            validator: (val) => (val == null || val.isEmpty) ? l10n.required : null,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -104,12 +106,12 @@ class _AddWishState extends State<AddWish> {
                             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                              labelText: 'Price',
+                              labelText: l10n.price,
                               hintText: '300',
                               prefixText: '${_appState.currentCurrency} ',
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                             ),
-                            validator: (val) => (val == null || val.isEmpty) ? 'Required' : null,
+                            validator: (val) => (val == null || val.isEmpty) ? l10n.required : null,
                           ),
                         ),
                       ],
@@ -119,8 +121,8 @@ class _AddWishState extends State<AddWish> {
                     // M3 Toggle for Reminders
                     SwitchListTile(
                       secondary: Icon(reminder ? Icons.notifications_active : Icons.notifications_none),
-                      title: const Text('Set Reminder'),
-                      subtitle: const Text('Get notified to purchase this item'),
+                      title:  Text(l10n.set_reminder),
+                      subtitle:  Text(l10n.get_notified_to_purchase_this_item),
                       value: reminder,
                       onChanged: (val) {
                         _nameNode.unfocus();
@@ -135,7 +137,7 @@ class _AddWishState extends State<AddWish> {
                       child: reminder
                           ? ListTile(
                               leading: const Icon(Icons.calendar_month_outlined),
-                              title: const Text('Target Purchase Date'),
+                              title:  Text(l10n.target_purchase_date),
                               trailing: DateUtil(context: context).dayDateTimeText(_selectedDate),
                               onTap: () async {
                                 final dateResult = await DateUtil(context: context).getDateAndTime(_selectedDate);
@@ -161,7 +163,7 @@ class _AddWishState extends State<AddWish> {
                 ),
                 onPressed: _handleSave,
                 icon: const Icon(Icons.check_circle_outline),
-                label: const Text('Save Wish', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                label:  Text(l10n.save_wish, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
             SizedBox(height: 10,)
@@ -172,12 +174,13 @@ class _AddWishState extends State<AddWish> {
   }
 
   Future<void> _handleSave() async {
+    final l10n = AppLocalizations.of(context)!;
     final appState = Provider.of<ApplicationState>(context, listen: false);
     final adsCubit = context.read<AdsCubit>();
     if (_formKey.currentState!.validate()) {
       // Validate Reminder Time
       if (reminder && _selectedDate.isBefore(DateTime.now().add(const Duration(minutes: 5)))) {
-        ToastService(context: context).showSuccessToast('Reminder must be at least 5 minutes from now');
+        ToastService(context: context).showSuccessToast(l10n.reminder_must_be_at_least_5_minutes_from_now);
         return;
       }
 
@@ -201,8 +204,8 @@ class _AddWishState extends State<AddWish> {
             await NotificationService().zonedScheduleNotification(
               id: notificationId,
               payload: NotificationPayload(itemId: id, route: AppLinks.singleWish).toJson(),
-              title: 'Wish fulfilment',
-              description: 'Don\'t forget your ${wish.name}!',
+              title: l10n.wish_fulfilment,
+              description: l10n.don_t_forget_your(wish.name),
               scheduling: tz.TZDateTime.fromMillisecondsSinceEpoch(tz.local, wish.reminderDate.millisecondsSinceEpoch),
             );
           } else {
@@ -219,7 +222,7 @@ class _AddWishState extends State<AddWish> {
           }
         }
       } catch (e) {
-        ToastService(context: context).showSuccessToast('Error saving wish');
+        ToastService(context: context).showSuccessToast(l10n.error_saving_wish);
       }
     }
   }
@@ -243,7 +246,7 @@ class _AddWishState extends State<AddWish> {
       // User tapped "Never ask again" - must go to OS settings
       if (mounted) {
         setState(() => reminder = false);
-        _showSettingsDialog();
+        showSettingsDialog(context);
       }
     } else if (!status.isGranted) {
       // User tapped "Deny"
@@ -264,26 +267,5 @@ class _AddWishState extends State<AddWish> {
   }
 }
 
-void _showSettingsDialog() {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Notifications Disabled'),
-      content: const Text('Please enable notifications in settings to use reminders.'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () {
-            openAppSettings();
-            Navigator.pop(context);
-          },
-          child: const Text('Open Settings'),
-        ),
-      ],
-    ),
-  );
-}
+
 }

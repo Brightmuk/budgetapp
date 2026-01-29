@@ -1,5 +1,6 @@
 
 import 'package:budgetapp/core/formatters.dart';
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
@@ -66,10 +67,10 @@ class _CreateListState extends State<CreateList> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final appState = Provider.of<ApplicationState>(context);
-
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title ?? 'Quick Spending Plan'),
+        title: Text(widget.title ?? l10n.quick_spending_plan),
         actions: [
       FilledButton(
         onPressed: expenses.isEmpty ? null : _onDone,
@@ -98,7 +99,7 @@ class _CreateListState extends State<CreateList> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(reverseMode ? 'Balance Remaining' : 'Estimated Total',
+                          Text(reverseMode ? l10n.balance_remaining : l10n.estimated_total,
                               style: theme.textTheme.titleMedium),
                           Switch(
                             value: reverseMode,
@@ -178,6 +179,7 @@ class _CreateListState extends State<CreateList> {
   }
 
   Widget _buildAddItemForm(ThemeData theme, ApplicationState appState) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       decoration: BoxDecoration(
@@ -197,9 +199,9 @@ class _CreateListState extends State<CreateList> {
                     controller: _nameC,
                     focusNode: _nameNode,
                     
-                    decoration:  InputDecoration(labelText: 'Item', hintText: 'Food', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                    decoration:  InputDecoration(labelText: l10n.item, hintText: l10n.food, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
                     onFieldSubmitted: (_) => _priceNode.requestFocus(),
-                    validator: (val) => val!.isEmpty ? 'Required' : null,
+                    validator: (val) => val!.isEmpty ? l10n.required : null,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -209,7 +211,7 @@ class _CreateListState extends State<CreateList> {
                     controller: _quantityC,
                     focusNode: _quantityNode,
                     keyboardType: TextInputType.number,
-                    decoration:  InputDecoration(labelText: 'Qty',border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                    decoration:  InputDecoration(labelText: '',border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -219,9 +221,9 @@ class _CreateListState extends State<CreateList> {
                     controller: _priceC,
                     focusNode: _priceNode,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: 'Price',border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                    decoration: InputDecoration(labelText: l10n.price,border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
                     onFieldSubmitted: (_) => _addItem(),
-                    validator: (val) => val!.isEmpty ? 'Required' : null,
+                    validator: (val) => val!.isEmpty ? l10n.required : null,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -232,7 +234,7 @@ class _CreateListState extends State<CreateList> {
               ],
             ),
             const SizedBox(height: 8),
-            Text('Quick-add: fill fields and tap + or press enter', 
+            Text(l10n.quick_add_fill_fields_and_tap_or_press_enter, 
                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline)),
           ],
         ),
@@ -263,13 +265,14 @@ class _CreateListState extends State<CreateList> {
   }
 
   Future<void> _onDone() async {
+    final l10n = AppLocalizations.of(context)!;
     if (widget.title != null) {
       context.pop({'expenses': expenses, 'total': _total});
     } else {
       SpendingPlan plan = SpendingPlan(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         total: _total,
-        title: 'Quick Plan',
+        title: l10n.quick_plan,
         creationDate: DateTime.now(),
         reminderDate: DateTime.now(),
         reminder: false,
@@ -293,22 +296,23 @@ class _CreateListState extends State<CreateList> {
 
   // --- Utility Dialogs ---
   void showAmountInput() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Set Budget Limit'),
+        title:  Text(l10n.set_budget_limit),
         content: Form(
           key: _amountFormKey,
           child: TextFormField(
             controller: _amountToSpendC,
             keyboardType: TextInputType.number,
             autofocus: true,
-            decoration:  InputDecoration(labelText: 'Amount', hintText: 'e.g. 5000', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),),
-            validator: (val) => val!.isEmpty ? 'Required' : null,
+            decoration:  InputDecoration(labelText: l10n.amount, hintText: '', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),),
+            validator: (val) => val!.isEmpty ? l10n.required : null,
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context), child:  Text(l10n.cancel)),
           FilledButton(
             onPressed: () {
               if (_amountFormKey.currentState!.validate()) {
@@ -316,7 +320,7 @@ class _CreateListState extends State<CreateList> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Set'),
+            child:  Text(l10n.set),
           ),
         ],
       ),
@@ -324,20 +328,21 @@ class _CreateListState extends State<CreateList> {
   }
 
   void hasViewedReverse() async {
+    final l10n = AppLocalizations.of(context)!;
     bool? hasSeen = await SharedPrefs().seenReverseMode();
     if (hasSeen != true) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Reverse Mode'),
-          content: const Text('Specify a budget, and each item will deduct from that total.'),
+          title:  Text(l10n.reverse_mode),
+          content:  Text(l10n.specify_a_budget_and_each_item_will_deduct_from_that_total),
           actions: [
             TextButton(
               onPressed: () {
                 SharedPrefs().setSeenReverseMode();
                 Navigator.pop(context);
               },
-              child: const Text('Got it'),
+              child:  Text(l10n.got_it),
             )
           ],
         ),

@@ -25,13 +25,13 @@ class SharedPrefs {
     return prefs.setBool(seenReverseModeStr, true);
   }
 
-  Future<String?> getCurrency() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(currency) ?? 'KES';
-  }
+  // Future<String?> getCurrency() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   return prefs.getString(currency) ?? 'USD';
+  // }
 
-  Future<bool?> setCurrency(String currencyVal) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.setString(currency, currencyVal);
-  }
+  // Future<bool?> setCurrency(String currencyVal) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   return prefs.setString(currency, currencyVal);
+  // }
 }

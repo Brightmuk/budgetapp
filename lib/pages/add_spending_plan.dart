@@ -1,5 +1,7 @@
 import 'package:budgetapp/core/colors.dart';
 import 'package:budgetapp/core/events.dart';
+import 'package:budgetapp/core/widgets/action_dialogue.dart';
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/pages/create_list.dart';
@@ -44,7 +46,6 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
   @override
   void initState() {
     super.initState();
-    print("List: ${widget.plan}");
     editMode = widget.plan != null;
     if (widget.plan != null) {
       _expenses = widget.plan!.expenses;
@@ -58,9 +59,10 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
   @override
   Widget build(BuildContext context) {
     final ApplicationState appState = Provider.of<ApplicationState>(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(editMode ? 'Edit Spending Plan' : 'Create Spending plan'),
+        title: Text(editMode ? l10n.edit_spending_plan : l10n.create_spending_plan),
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -74,8 +76,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 controller: _titleC,
                 cursorColor: AppColors.themeColor,
                 decoration: InputDecoration(
-                  labelText: 'Title',
-                  hintText: "John's Birthday",
+                  labelText: l10n.title,
+                  hintText: l10n.john_s_birthday,
                   prefixIcon: const Icon(Icons.shopping_bag_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -83,7 +85,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 ),
                 validator: (val) {
                   if (val!.isEmpty) {
-                    return 'Title is required';
+                    return l10n.title_is_required;
                   }
                   return null;
                 },
@@ -91,8 +93,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
             ),
             const SizedBox(height: 20),
             ListTile(
-              title: const Text('Edit list'),
-              subtitle: Text('${_expenses.length} expense(s) in list'),
+              title:  Text(l10n.edit_list),
+              subtitle: Text(l10n.expense_s_in_list(_expenses.length.toString())),
               trailing: Text(
                 ' ${AppFormatters.moneyCommaStr(total)} ${appState.currentCurrency}',
                 style: TextStyle(
@@ -125,7 +127,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                 child: Row(
                   children: [
                     Text(
-                      'Add at least one expense',
+                      l10n.add_at_least_one_expense,
                       style: TextStyle(
                         color: Colors.redAccent,
                         fontSize: 25,
@@ -143,8 +145,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                     ? Icons.notifications_active
                     : Icons.notifications_none,
               ),
-              title: const Text('Set Reminder'),
-              subtitle: const Text('Get notified to purchase this item'),
+              title:  Text(l10n.set_reminder),
+              subtitle:  Text(l10n.get_notified_to_purchase_this_item),
               value: reminder,
               onChanged: (val) {
                 _focusNode.unfocus();
@@ -158,7 +160,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                   reminder
                       ? ListTile(
                         leading: const Icon(Icons.calendar_month_outlined),
-                        title: const Text('Target Purchase Date'),
+                        title:  Text(l10n.target_purchase_date),
                         trailing: DateUtil(
                           context: context,
                         ).dayDateTimeText(_selectedDate!),
@@ -193,8 +195,8 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                   ),
                 ),
 
-                label: const Text(
-                  'Save',
+                label:  Text(
+                  l10n.save,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 onPressed: () async {
@@ -211,7 +213,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                               .millisecondsSinceEpoch &&
                       reminder) {
                     ToastService(context: context).showSuccessToast(
-                      'Reminders need to be a minimum of 5 minutes from now',
+                     l10n.reminders_need_to_be_a_minimum_of_5_minutes_from_now,
                     );
                     return;
                   }
@@ -250,9 +252,9 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                                         itemId: plan.id,
                                         route: AppLinks.singleSpendingPlan,
                                       ).toJson(),
-                                  title: 'Spending list fulfilment',
+                                  title: l10n.spending_list_fulfilment,
                                   description:
-                                      'Remember to fulfil ${plan.title}  Buddy!',
+                                      l10n.remember_to_fulfil_buddy(plan.title),
                                   scheduling: tz
                                       .TZDateTime.fromMillisecondsSinceEpoch(
                                     tz.local,
@@ -285,7 +287,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       debugPrint(e.toString());
                       ToastService(
                         context: context,
-                      ).showSuccessToast('Sorry, there was an error!');
+                      ).showSuccessToast(l10n.sorry_there_was_an_error);
                     }
                   }
                 },
@@ -318,7 +320,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
         // User tapped "Never ask again" - must go to OS settings
         if (mounted) {
           setState(() => reminder = false);
-          _showSettingsDialog();
+          showSettingsDialog(context);
         }
       } else if (!status.isGranted) {
         // User tapped "Deny"
@@ -338,29 +340,5 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
     }
   }
 
-  void _showSettingsDialog() {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Notifications Disabled'),
-            content: const Text(
-              'Please enable notifications in settings to use reminders.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  openAppSettings();
-                  Navigator.pop(context);
-                },
-                child: const Text('Open Settings'),
-              ),
-            ],
-          ),
-    );
-  }
+
 }

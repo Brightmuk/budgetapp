@@ -1,3 +1,4 @@
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/toast_service.dart';
@@ -16,16 +17,16 @@ class WishService {
   ///or edit a wish
   Future<bool> saveWish({required Wish wish}) async {
     bool returnValue = true;
-    
+    final l10n = AppLocalizations.of(context!)!;
     await db
         .collection(wishCollection)
         .doc(wish.id)
         .set(wish.toMap())
         .then((value) {
-      ToastService(context: context!).showSuccessToast('Wish saved!');
+      ToastService(context: context!).showSuccessToast(l10n.wish_saved);
       returnValue = true;
     }).catchError((e) {
-      ToastService(context: context!).showSuccessToast('An error occurred!');
+      ToastService(context: context!).showSuccessToast(l10n.an_error_occurred);
       returnValue = false;
     });
    
@@ -64,12 +65,13 @@ class WishService {
 
   ///Delete a wish
   Future<void> deleteWish({required String wishId}) async {
+     final l10n = AppLocalizations.of(context!)!;
    
     await db.collection(wishCollection).doc(wishId).delete().then((value) {
       appState.deleteWish(wishId);
-      ToastService(context: context!).showSuccessToast('Wish deleted!');
+      ToastService(context: context!).showSuccessToast(l10n.wish_deleted);
     }).catchError((e) {
-      ToastService(context: context!).showSuccessToast('An error occurred!');
+      ToastService(context: context!).showSuccessToast(l10n.an_error_occurred);
     });
     Navigator.pop(context!);
    

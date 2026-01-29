@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/toast_service.dart';
@@ -19,19 +20,19 @@ class BudgetPlanService {
   Future<bool> saveBudgetPlan({required SpendingPlan budgetPlan}) async {
     bool returnValue = true;
    
-
+    final l10n = AppLocalizations.of(context!)!;
     await db
         .collection(budgetPlanCollection)
         .doc(budgetPlan.id)
         .set(budgetPlan.toMap())
         .then((value) {
      
-      ToastService(context: context!).showSuccessToast('Spending plan saved!');
+      ToastService(context: context!).showSuccessToast(l10n.spending_plan_saved);
 
       returnValue = true;
     }).catchError((e) {
      
-      ToastService(context: context!).showSuccessToast('An error occurred!');
+      ToastService(context: context!).showSuccessToast(l10n.an_error_occurred);
       returnValue = false;
     });
     return returnValue;
@@ -74,7 +75,7 @@ class BudgetPlanService {
 
   ///Delete a budget plan
   Future<void> deleteBudgetPlan({required String budgetPlanId}) async {
-   
+   final l10n = AppLocalizations.of(context!)!;
     await db
         .collection(budgetPlanCollection)
         .doc(budgetPlanId)
@@ -82,9 +83,9 @@ class BudgetPlanService {
         .then((value) {
       appState.deleteBudgetPlan(budgetPlanId);
       ToastService(context: context!)
-          .showSuccessToast('Spending plan deleted!');
+          .showSuccessToast(l10n.spending_plan_deleted);
     }).catchError((e) {
-      ToastService(context: context!).showSuccessToast('An error occurred!');
+      ToastService(context: context!).showSuccessToast(l10n.an_error_occurred);
     });
     Navigator.pop(context!);
    

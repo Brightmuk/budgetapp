@@ -1,6 +1,9 @@
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ActionDialogue extends StatelessWidget {
+  final bool isDelete;
   final String infoText;
   final Function action;
   final String actionBtnText;
@@ -11,12 +14,14 @@ class ActionDialogue extends StatelessWidget {
       required this.infoText,
       required this.action,
       this.actionWidget,
+      this.isDelete = false,
       required this.actionBtnText})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       height: 250,
       padding: const EdgeInsets.all(20),
@@ -51,8 +56,8 @@ class ActionDialogue extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text(
-                    'Cancel',
+                  child:  Text(
+                    l10n.cancel,
                   ),
                 ),
               ),
@@ -60,7 +65,7 @@ class ActionDialogue extends StatelessWidget {
               Expanded(
                 child: FilledButton(
                   style: FilledButton.styleFrom(
-                    backgroundColor: actionBtnText == "Delete"? theme.colorScheme.error : theme.colorScheme.primary,
+                    backgroundColor: isDelete? theme.colorScheme.error : theme.colorScheme.primary,
                   ),
                   onPressed: () {
                     Navigator.pop(context);
@@ -79,3 +84,29 @@ class ActionDialogue extends StatelessWidget {
     );
   }
 }
+  void showSettingsDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title:  Text(l10n.notifications_disabled),
+            content:  Text(
+              l10n.please_enable_notifications_in_settings_to_use_reminders,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child:  Text(l10n.cancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  openAppSettings();
+                  Navigator.pop(context);
+                },
+                child:  Text(l10n.open_settings),
+              ),
+            ],
+          ),
+    );
+  }

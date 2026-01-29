@@ -1,6 +1,7 @@
 
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -38,6 +39,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
   Widget build(BuildContext context) {
     final appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: FutureBuilder<SpendingPlan>(
@@ -47,10 +49,10 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text(l10n.error(snapshot.error.toString())));
           }
           if (!snapshot.hasData) {
-            return const Center(child: Text('Plan not found'));
+            return  Center(child: Text(l10n.plan_not_found));
           }
 
           final plan = snapshot.data!;
@@ -64,12 +66,12 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                   IconButton(
                     icon: const Icon(Icons.print_outlined),
                     onPressed: () => _handlePrint(plan),
-                    tooltip: 'Print',
+                    tooltip: l10n.print,
                   ),
                   IconButton(
                     icon: const Icon(Icons.share_outlined),
                     onPressed: () => _handleShare(plan),
-                    tooltip: 'Share',
+                    tooltip: l10n.share,
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -94,7 +96,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(24, 8, 16, 8),
                   child: Text(
-                    'Expenses',
+                   l10n.expenses,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.primary,
@@ -135,6 +137,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
   }
 
   Widget _buildSummaryCard(ThemeData theme, SpendingPlan plan, ApplicationState appState) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       elevation: 0,
       color: theme.colorScheme.primaryContainer,
@@ -151,7 +154,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Total Cost', style: theme.textTheme.labelLarge),
+                Text(l10n.total_cost, style: theme.textTheme.labelLarge),
                 Text(
                   '${AppFormatters.moneyCommaStr(plan.total)} ${appState.currentCurrency}',
                   style: theme.textTheme.headlineSmall?.copyWith(
@@ -168,6 +171,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
   }
 
   Widget _buildDetailsCard(ThemeData theme, SpendingPlan plan) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -178,13 +182,13 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
         children: [
           ListTile(
             leading: const Icon(Icons.calendar_today_outlined, size: 20),
-            title: const Text('Created'),
+            title:  Text(l10n.created),
             trailing: DateUtil(context: context).dayDateTimeText(plan.creationDate),
           ),
           if (plan.reminder)
             ListTile(
               leading: const Icon(Icons.alarm_on_outlined, size: 20),
-              title: const Text('Reminder Set'),
+              title:  Text(l10n.reminder_set),
               trailing: DateUtil(context: context).dayDateTimeText(plan.reminderDate),
             ),
         ],
@@ -193,6 +197,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
   }
 
   Widget _buildBottomActions(ThemeData theme, ApplicationState appState) {
+    final l10n = AppLocalizations.of(context)!;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -206,7 +211,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                 ),
                 onPressed: () => _handleDelete(appState),
                 icon: const Icon(Icons.delete_outline),
-                label: const Text('Delete'),
+                label:  Text(l10n.delete),
               ),
             ),
             const SizedBox(width: 12),
@@ -218,7 +223,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                 ),
                 onPressed: () => _handleEdit(appState),
                 icon: const Icon(Icons.edit_outlined),
-                label: const Text('Edit Plan'),
+                label:  Text(l10n.edit_plan),
               ),
             ),
           ],
@@ -244,16 +249,18 @@ Future<void> _handlePrint(SpendingPlan plan) async {
   }
 
   void _handleDelete(ApplicationState appState) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => ActionDialogue(
-        infoText: 'Delete this Spending plan permanently?',
+        isDelete: true,
+        infoText: l10n.delete_this_spending_plan_permanently,
         action: () async {
           await BudgetPlanService(context: context, appState: appState)
               .deleteBudgetPlan(budgetPlanId: widget.budgetPlanId);
           if (mounted) context.pop();
         },
-        actionBtnText: 'Delete',
+        actionBtnText: l10n.delete,
       ),
     );
   }

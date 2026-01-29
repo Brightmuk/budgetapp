@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:budgetapp/core/events.dart';
 import 'package:budgetapp/core/formatters.dart';
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/spending_list_tab.dart';
@@ -76,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       // M3 App Bar: Clean and Simple
@@ -117,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 Expanded(
                   child: _buildStatTile(
-                    'Spending Plans',
+                    l10n.spending_plans,
                     BudgetPlanService(appState: appState).budgetPlansStream,
                     theme.colorScheme.primary,
                     appState,
@@ -127,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildStatTile(
-                    'Wishlist',
+                    l10n.wishlist,
                     WishService(appState: appState).wishStream,
                     theme.colorScheme.tertiary,
                     appState,
@@ -152,16 +154,16 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) => setState(() => _currentIndex = index),
-        destinations: const [
+        destinations:  [
           NavigationDestination(
             icon: Icon(Icons.receipt_long_outlined),
             selectedIcon: Icon(Icons.receipt_long),
-            label: 'Plans',
+            label: l10n.plans,
           ),
           NavigationDestination(
             icon: Icon(Icons.favorite_outline),
             selectedIcon: Icon(Icons.favorite),
-            label: 'Wishlist',
+            label: l10n.wishlist,
           ),
         ],
       ),

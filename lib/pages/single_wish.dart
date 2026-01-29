@@ -1,5 +1,6 @@
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -36,6 +37,7 @@ class _SingleWishState extends State<SingleWish> {
   Widget build(BuildContext context) {
     final appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: FutureBuilder<Wish>(
@@ -45,10 +47,10 @@ class _SingleWishState extends State<SingleWish> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text(l10n.error(snapshot.error.toString())));
           }
           if (!snapshot.hasData) {
-            return const Center(child: Text('Wish not found'));
+            return  Center(child: Text(l10n.wish_not_found));
           }
 
           final wish = snapshot.data!;
@@ -88,6 +90,7 @@ class _SingleWishState extends State<SingleWish> {
   }
 
   Widget _buildPriceCard(ThemeData theme, Wish wish, ApplicationState appState) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       elevation: 0,
       color: theme.colorScheme.tertiaryContainer,
@@ -104,7 +107,7 @@ class _SingleWishState extends State<SingleWish> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Estimated Price', style: theme.textTheme.labelLarge),
+                Text(l10n.estimated_price, style: theme.textTheme.labelLarge),
                 Text(
                   '${AppFormatters.moneyCommaStr(wish.price)} ${appState.currentCurrency}',
                   style: theme.textTheme.headlineSmall?.copyWith(
@@ -121,6 +124,7 @@ class _SingleWishState extends State<SingleWish> {
   }
 
   Widget _buildDetailsCard(ThemeData theme, Wish wish) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -131,7 +135,7 @@ class _SingleWishState extends State<SingleWish> {
         children: [
           ListTile(
             leading: const Icon(Icons.calendar_month_outlined, size: 20),
-            title: const Text('Wish Created'),
+            title:  Text(l10n.wish_created),
             trailing: DateUtil(context: context).dayDateTimeText(wish.creationDate),
           ),
           ListTile(
@@ -140,8 +144,8 @@ class _SingleWishState extends State<SingleWish> {
               size: 20,
               color: wish.reminder ? theme.colorScheme.primary : theme.colorScheme.outline,
             ),
-            title: const Text('Reminder Status'),
-            subtitle: Text(wish.reminder ? 'Notification active' : 'Notifications disabled'),
+            title:  Text(l10n.reminder_status),
+            subtitle: Text(wish.reminder ? l10n.notification_active : l10n.notifications_disabled),
             trailing: wish.reminder 
               ? DateUtil(context: context).dayDateTimeText(wish.reminderDate)
               : null,
@@ -152,6 +156,7 @@ class _SingleWishState extends State<SingleWish> {
   }
 
   Widget _buildBottomActions(ThemeData theme, ApplicationState appState) {
+    final l10n = AppLocalizations.of(context)!;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -161,7 +166,7 @@ class _SingleWishState extends State<SingleWish> {
               child: OutlinedButton.icon(
                 onPressed: () => _handleDelete(appState),
                 icon: const Icon(Icons.delete_outline),
-                label: const Text('Delete'),
+                label:  Text(l10n.delete),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -173,7 +178,7 @@ class _SingleWishState extends State<SingleWish> {
               child: FilledButton.icon(
                 onPressed: () => _handleEdit(appState),
                 icon: const Icon(Icons.edit_outlined),
-                label: const Text('Edit Wish'),
+                label:  Text(l10n.edit_wish),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -197,15 +202,17 @@ class _SingleWishState extends State<SingleWish> {
   
 
   void _handleDelete(ApplicationState appState) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => ActionDialogue(
-        infoText: 'Delete this wish from your list?',
+        isDelete: true,
+        infoText: l10n.delete_this_wish_from_your_list,
         action: () async {
           await WishService(context: context, appState: appState).deleteWish(wishId: widget.wishId);
           if (mounted) context.pop();
         },
-        actionBtnText: 'Delete',
+        actionBtnText: l10n.delete,
       ),
     );
   }

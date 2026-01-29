@@ -1,6 +1,7 @@
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/core/widgets/app_item_tile.dart';
+import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -31,6 +32,7 @@ class _SpendingListTabState extends State<SpendingListTab> {
   Widget build(BuildContext context) {
     final ApplicationState _appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: StreamBuilder<List<SpendingPlan>>(
@@ -65,7 +67,7 @@ class _SpendingListTabState extends State<SpendingListTab> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('No Spending plans yet',style: theme.textTheme.labelLarge!.copyWith(color: theme.colorScheme.outline),),
+                  Text(l10n.no_spending_plans_yet,style: theme.textTheme.labelLarge!.copyWith(color: theme.colorScheme.outline),),
                   
                   SizedBox(height: 10),
                  TextButton(
@@ -75,7 +77,7 @@ class _SpendingListTabState extends State<SpendingListTab> {
                     onPressed: () {
                       context.push(AppLinks.addSpendingPlan);
                     },
-                    child: const Text('CREAT ONE'),
+                    child:  Text(l10n.creat_one),
                   ),
                 ],
               ),
@@ -97,10 +99,11 @@ class SpendingListTile extends StatelessWidget {
     final theme = Theme.of(context);
     final appState = Provider.of<ApplicationState>(context);
     final dateStr = DateFormat('EEE dd, yyyy').format(plan.creationDate);
+    final l10n = AppLocalizations.of(context)!;
 
     return AppItemTile(
       title: plan.title.capitalize,
-      subtitle: 'Added on $dateStr',
+      subtitle: l10n.added_on_datestr(dateStr),
       amount: '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(plan.total)}',
       icon: Icons.receipt_long_outlined,
       iconColor: theme.colorScheme.primary,

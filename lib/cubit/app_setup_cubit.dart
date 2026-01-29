@@ -16,6 +16,7 @@ class AppSetupCubit extends Cubit<AppSetupState> {
   }
   void viewTour(){
      SharedPrefs().setSeenTour();
+     
     emit(AppSetupDone());
   }
 }

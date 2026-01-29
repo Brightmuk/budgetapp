@@ -1,6 +1,172 @@
 {
-  "appTitle": "Spenditize",
-  "welcomeMessage": "Plan it. Wish it. Spenditize it.",
-  "addWish": "Add to Wishlist",
-  "spendingPlan": "Spending Plan"
+  "cancel": "Cancel",
+  "select_type": "Select type",
+  "@select_type": {
+    "description": "Select type of"
+  },
+  "spending_plan": "Spending Plan",
+  "a_plan_to_spend_an_amount_of_money": "A plan to spend an amount of money",
+  "wish": "Wish",
+  "something_that_you_plan_to_buy_will_be_added_to_your_wishlist": "Something that you plan to buy, will be added to your wishlist",
+  "select_option": "Select option",
+  "export_pdf": "Export PDF",
+  "share_list_as_a_document": "Share list as a document",
+  "save": "Save",
+  "save_as_spending_plan": "Save as Spending plan",
+  "edit_spending_plan": "Edit Spending Plan",
+  "create_spending_plan": "Create Spending plan",
+  "title": "Title",
+  "john_s_birthday": "John's Birthday",
+  "title_is_required": "Title is required",
+  "edit_list": "Edit list",
+  "expense_s_in_list": "{length} expense(s) in list",
+  "@expense_s_in_list": {
+    "placeholders": {
+      "length": {
+        "type": "String"
+      }
+    }
+  },
+  "add_at_least_one_expense": "Add at least one expense",
+  "set_reminder": "Set Reminder",
+  "get_notified_to_purchase_this_item": "Get notified to purchase this item",
+  "target_purchase_date": "Target Purchase Date",
+  "reminders_need_to_be_a_minimum_of_5_minutes_from_now": "Reminders need to be a minimum of 5 minutes from now",
+  "spending_list_fulfilment": "Spending list fulfilment",
+  "remember_to_fulfil_buddy": "Remember to fulfil {title}  Buddy!",
+  "@remember_to_fulfil_buddy": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "sorry_there_was_an_error": "Sorry, there was an error!",
+  "notifications_disabled": "Notifications disabled",
+  "please_enable_notifications_in_settings_to_use_reminders": "Please enable notifications in settings to use reminders.",
+  "open_settings": "Open Settings",
+  "edit_wish": "Edit Wish",
+  "add_new_wish": "Add New Wish",
+  "item_name": "Item Name",
+  "air_jordans": "Air Jordans",
+  "required": "Required",
+  "price": "Price",
+  "save_wish": "Save Wish",
+  "reminder_must_be_at_least_5_minutes_from_now": "Reminder must be at least 5 minutes from now",
+  "wish_fulfilment": "Wish fulfilment",
+  "don_t_forget_your": "Don\\'t forget your {name}!",
+  "@don_t_forget_your": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "error_saving_wish": "Error saving wish",
+  "quick_spending_plan": "Quick Spending Plan",
+  "balance_remaining": "Balance Remaining",
+  "estimated_total": "Estimated Total",
+  "item": "Item",
+  "food": "Food",
+  "quick_add_fill_fields_and_tap_or_press_enter": "Quick-add: fill fields and tap + or press enter",
+  "quick_plan": "Quick Plan",
+  "set_budget_limit": "Set Budget Limit",
+  "amount": "Amount",
+  "reverse_mode": "Reverse Mode",
+  "specify_a_budget_and_each_item_will_deduct_from_that_total": "Specify a budget, and each item will deduct from that total.",
+  "got_it": "Got it",
+  "set": "Set",
+  "spending_plans": "Spending Plans",
+  "wishlist": "Wishlist",
+  "plans": "Plans",
+  "quicklist": "QuickList",
+  "preview_pdf": "Preview PDF",
+  "remove_watermark": "Remove Watermark",
+  "watch_ad_to_remove_watermark": "Watch Ad to remove watermark?",
+  "watch": "Watch",
+  "watch_ad": "Watch Ad",
+  "settings": "Settings",
+  "preferences": "Preferences",
+  "change_currency": "Change Currency",
+  "set_your_primary_spending_currency": "Set your primary spending currency",
+  "support_info": "Support & Info",
+  "help_contact": "Help & Contact",
+  "privacy_policy": "Privacy Policy",
+  "rate_app": "Rate App",
+  "love_the_app_let_us_know_on_the_play_store": "Love the app? Let us know on the Play Store",
+  "could_not_open_link": "Could not open link",
+  "app_version": "App Version: {version}",
+  "@app_version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "delete_this_spending_plan_permanently": "Delete this Spending plan permanently?",
+  "delete": "Delete",
+  "edit_plan": "Edit Plan",
+  "reminder_set": "Reminder Set",
+  "created": "Created",
+  "total_cost": "Total Cost",
+  "expenses": "Expenses",
+  "print": "Print",
+  "share": "Share",
+  "plan_not_found": "Plan not found",
+  "error": "Error: {error}",
+  "@error": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "delete_this_wish_from_your_list": "Delete this wish from your list?",
+  "reminder_status": "Reminder Status",
+  "notification_active": "Notification active",
+  "wish_created": "Wish Created",
+  "estimated_price": "Estimated Price",
+  "wish_not_found": "Wish not found",
+  "no_spending_plans_yet": "No Spending plans yet",
+  "creat_one": "CREAT ONE",
+  "added_on_datestr": "Added on {dateStr}",
+  "@added_on_datestr": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String"
+      }
+    }
+  },
+  "welcome_to_spenditize": "Welcome to Spenditize",
+  "the_smart_way_to_track_your_spending_and_achieve_your_financial_goals": "The smart way to track your spending and achieve your financial goals.",
+  "quick_spending_lists": "Quick Spending Lists",
+  "create_lists_on_the_fly_while_shopping_to_stay_within_your_budget": "Create lists on the fly while shopping to stay within your budget.",
+  "remember_for_life": "Remember for Life",
+  "we_will_remind_you_when_to_fulfil_your_purchase": "We will remind you when to fulfil your purchase",
+  "skip": "Skip",
+  "get_started": "Get Started",
+  "no_wishes_yet": "No Wishes yet",
+  "spending_plan_saved": "Spending plan saved!",
+  "an_error_occurred": "An error occurred!",
+  "spending_plan_deleted": "Spending plan deleted!",
+  "quantity": "Quantity",
+  "unit_price_currency": "Unit Price({currency})",
+  "@unit_price_currency": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "subtotal_currency": "Subtotal({currency})",
+  "@subtotal_currency": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "total": "Total",
+  "wish_saved": "Wish saved!",
+  "wish_deleted": "Wish deleted!"
 }
