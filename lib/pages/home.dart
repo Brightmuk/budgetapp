@@ -80,11 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
-    Locale myLocale = Localizations.localeOf(context);
 
-print(myLocale.languageCode); // e.g., 'en'
-print(myLocale.countryCode);  // e.g., 'US'
-print(myLocale.toString());
 
     return Scaffold(
       // M3 App Bar: Clean and Simple
@@ -196,7 +192,7 @@ print(myLocale.toString());
     );
   }
 
-  Widget _buildStatTile(
+Widget _buildStatTile(
     String label,
     Stream stream,
     Color color,
@@ -204,7 +200,6 @@ print(myLocale.toString());
     IconData icon,
   ) {
     final theme = Theme.of(context);
-     final appState = Provider.of<ApplicationState>(context);
     return StreamBuilder(
       stream: stream,
       builder: (context, snapshot) {
@@ -221,24 +216,34 @@ print(myLocale.toString());
             children: [
               Icon(icon, size: 20, color: color),
               const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "${appState.currentCurrency} $total ",
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: color,
+              // Use Expanded to tell the column to take the remaining space
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // This wraps the text and shrinks it if it overflows
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "${appState.currentCurrency} $total",
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: color,
+                        ),
+                      ),
                     ),
-                  ),
-                  Text(
-                    label,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                    Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
