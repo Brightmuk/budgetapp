@@ -3,20 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DateUtil {
-  final BuildContext context;
 
-  DateUtil({required this.context});
-
-  static DateFormat dayDate = DateFormat('EEE dd, yyy');
-  static DateFormat dayDateTime = DateFormat('EEE dd, yyy hh:mm');
-  static DateFormat time = DateFormat('hh:mm');
-
-  bool isPastDate(DateTime date) {
+  static bool isPastDate(DateTime date) {
     return date.millisecondsSinceEpoch < DateTime.now().millisecondsSinceEpoch;
   }
 
 
-  Future<DateTime?> getDateAndTime(DateTime selectedDate) async {
+  static Future<DateTime?> getDateAndTime(DateTime selectedDate, BuildContext context) async {
     DateTime? dateResult;
     TimeOfDay? timeResult;
     dateResult = await showDatePicker(
@@ -37,21 +30,27 @@ class DateUtil {
         timeResult.hour, timeResult.minute);
   }
 
-  Widget dayDateTimeText(DateTime date) {
+  static Widget dayDateTimeText(DateTime date, BuildContext context) {
     final theme = Theme.of(context);
+    String locale = Localizations.localeOf(context).languageCode;
     return RichText(
       text: TextSpan(children: [
         TextSpan(
-          text: dayDate.format(date),
+          text: DateFormat.yMMMEd(locale).format(date),
           style: TextStyle(
             color: theme.textTheme.bodyMedium!.color,
           ),
         ),
         TextSpan(
-          text: ' ${time.format(date)}',
+          text: ' ${DateFormat.jm(locale).format(date)}',
           style: TextStyle( color: theme.textTheme.labelLarge!.color!.withAlpha(100)),
         ),
       ]),
     );
   }
+  static String formatMyDate(DateTime date, BuildContext context) {
+  String locale = Localizations.localeOf(context).languageCode;
+
+  return DateFormat.yMMMd(locale).format(date);
+}
 }

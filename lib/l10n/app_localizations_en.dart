@@ -356,4 +356,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wish_deleted => 'Wish deleted!';
+
+  @override
+  String get search => 'Search';
 }

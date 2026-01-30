@@ -109,5 +109,6 @@
   "subtotal_currency": "उप-योग ({currency})",
   "total": "कुल",
   "wish_saved": "विश सहेजी गई!",
-  "wish_deleted": "विश हटा दी गई!"
+  "wish_deleted": "विश हटा दी गई!",
+  "search": "खोजें"
 }

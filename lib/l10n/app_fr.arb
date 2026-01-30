@@ -109,5 +109,6 @@
   "subtotal_currency": "Sous-total ({currency})",
   "total": "Total",
   "wish_saved": "Souhait enregistré !",
-  "wish_deleted": "Souhait supprimé !"
+  "wish_deleted": "Souhait supprimé !",
+  "search": "Rechercher"
 }

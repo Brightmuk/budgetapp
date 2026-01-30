@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:budgetapp/core/events.dart';
 import 'package:budgetapp/core/formatters.dart';
+import 'package:budgetapp/core/utils/date_util.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
@@ -94,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Text(
-              dayDate.format(DateTime.now()).toUpperCase(),
+              DateUtil.formatMyDate(DateTime.now(), context).toUpperCase(),
               style: theme.textTheme.labelSmall?.copyWith(
                 letterSpacing: 1.0,
                 color: theme.colorScheme.outline,

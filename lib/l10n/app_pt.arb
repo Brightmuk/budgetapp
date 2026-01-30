@@ -109,5 +109,6 @@
   "subtotal_currency": "Subtotal ({currency})",
   "total": "Total",
   "wish_saved": "Desejo salvo!",
-  "wish_deleted": "Desejo excluído!"
+  "wish_deleted": "Desejo excluído!",
+  "search": "Pesquisar"
 }

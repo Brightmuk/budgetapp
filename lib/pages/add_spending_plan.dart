@@ -161,16 +161,12 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       ? ListTile(
                         leading: const Icon(Icons.calendar_month_outlined),
                         title:  Text(l10n.target_purchase_date),
-                        trailing: DateUtil(
-                          context: context,
-                        ).dayDateTimeText(_selectedDate!),
+                        trailing: DateUtil.dayDateTimeText(_selectedDate!, context),
                         onTap:
                             reminder
                                 ? () async {
                                   _focusNode.unfocus();
-                                  final dateResult = await DateUtil(
-                                    context: context,
-                                  ).getDateAndTime(_selectedDate!);
+                                  final dateResult = await DateUtil.getDateAndTime(_selectedDate!, context);
                                   if (dateResult != null) {
                                     setState(() {
                                       _selectedDate = dateResult;
@@ -228,7 +224,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                       creationDate: DateTime.now(),
                       title: _titleC.value.text,
                       reminder:
-                          DateUtil(context: context).isPastDate(_selectedDate!)
+                          DateUtil.isPastDate(_selectedDate!)
                               ? false
                               : reminder,
                       expenses: _expenses,
@@ -241,9 +237,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
                         if (value) {
                           ///only set reminder if user sets so
                           if (plan.reminder &&
-                              !DateUtil(
-                                context: context,
-                              ).isPastDate(_selectedDate!)) {
+                              !DateUtil.isPastDate(_selectedDate!)) {
                             await NotificationService()
                                 .zonedScheduleNotification(
                                   id: int.parse(plan.id.substring(8)),

@@ -136,7 +136,7 @@ class _SingleWishState extends State<SingleWish> {
           ListTile(
             leading: const Icon(Icons.calendar_month_outlined, size: 20),
             title:  Text(l10n.wish_created),
-            trailing: DateUtil(context: context).dayDateTimeText(wish.creationDate),
+            trailing: DateUtil.dayDateTimeText(wish.creationDate, context),
           ),
           ListTile(
             leading: Icon(
@@ -147,7 +147,7 @@ class _SingleWishState extends State<SingleWish> {
             title:  Text(l10n.reminder_status),
             subtitle: Text(wish.reminder ? l10n.notification_active : l10n.notifications_disabled),
             trailing: wish.reminder 
-              ? DateUtil(context: context).dayDateTimeText(wish.reminderDate)
+              ? DateUtil.dayDateTimeText(wish.reminderDate, context)
               : null,
           ),
         ],

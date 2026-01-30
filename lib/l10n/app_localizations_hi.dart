@@ -356,4 +356,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get wish_deleted => 'विश हटा दी गई!';
+
+  @override
+  String get search => 'खोजें';
 }

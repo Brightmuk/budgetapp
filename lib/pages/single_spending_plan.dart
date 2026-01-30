@@ -183,13 +183,13 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
           ListTile(
             leading: const Icon(Icons.calendar_today_outlined, size: 20),
             title:  Text(l10n.created),
-            trailing: DateUtil(context: context).dayDateTimeText(plan.creationDate),
+            trailing: DateUtil.dayDateTimeText(plan.creationDate, context),
           ),
           if (plan.reminder)
             ListTile(
               leading: const Icon(Icons.alarm_on_outlined, size: 20),
               title:  Text(l10n.reminder_set),
-              trailing: DateUtil(context: context).dayDateTimeText(plan.reminderDate),
+              trailing: DateUtil.dayDateTimeText(plan.reminderDate, context),
             ),
         ],
       ),

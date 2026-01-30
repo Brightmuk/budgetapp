@@ -356,4 +356,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get wish_deleted => '¡Deseo eliminado!';
+
+  @override
+  String get search => 'Buscar';
 }

@@ -108,15 +108,21 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _showCurrencyPicker(BuildContext context, ApplicationState appState) {
+    final l10n = AppLocalizations.of(context)!;
     showCurrencyPicker(
       theme: CurrencyPickerThemeData(
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
         ),
+        inputDecoration: InputDecoration(
+            hintText: l10n.search,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
       ),
       context: context,
       showFlag: true,
       onSelect: (Currency currency) => appState.setCurrency(currency),
+      
     );
   }
 

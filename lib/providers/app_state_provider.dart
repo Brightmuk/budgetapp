@@ -14,30 +14,51 @@ class ApplicationState extends ChangeNotifier {
   final List<SpendingPlan> budgetPlans = [];
   final List<Wish> wishes = [];
 
-
   void init(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String currency = getCurrencyCode(context);
-    currentCurrency = currency;
-    prefs.setString(SharedPrefs.currency, currency);
-  }
+    String? savedCurrency = prefs.getString(SharedPrefs.currency);
 
-  void changeAdView() {
-    adShown = !adShown;
-  }
+    if (savedCurrency != null) {
+      currentCurrency = savedCurrency;
+    } else {
+      String detectedCurrency = getCurrencyCode(context);
+      currentCurrency = detectedCurrency;
 
-  void setCurrency(Currency currency) async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(SharedPrefs.currency, currency.code);
-    currentCurrency = currency.code;
+      await prefs.setString(SharedPrefs.currency, detectedCurrency);
+    }
 
     notifyListeners();
   }
 
-  ///Remove from Ui
+  // Updated to handle the Currency object from currency_picker
+  void setCurrency(Currency currency) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String newCurrency = currency.symbol;
+
+    await prefs.setString(SharedPrefs.currency, newCurrency);
+    currentCurrency = newCurrency;
+
+    notifyListeners();
+  }
+
+String getCurrencyCode(BuildContext context) {
+  try {
+    // This gets the full identifier like 'en_US', 'fr_FR', or 'hi_IN'
+    final String localeIdentifier = Localizations.localeOf(context).toString();
+    
+    var format = NumberFormat.simpleCurrency(locale: localeIdentifier);
+    
+    return format.currencySymbol; 
+  } catch (e) {
+    return '\$'; 
+  }
+}
+
   void deleteWish(String wishId) {
     wishes.removeWhere((wish) => wish.id == wishId);
+
     notifyListeners();
   }
 
@@ -45,11 +66,5 @@ class ApplicationState extends ChangeNotifier {
   void deleteBudgetPlan(String planId) {
     budgetPlans.removeWhere((plan) => plan.id == planId);
     notifyListeners();
-  }
-
-  String getCurrencyCode(BuildContext context) {
-    Locale locale = Localizations.localeOf(context);
-    var format = NumberFormat.simpleCurrency(locale: locale.toString());
-    return format.currencyName ?? 'USD';
   }
 }

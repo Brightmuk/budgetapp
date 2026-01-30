@@ -138,9 +138,9 @@ class _AddWishState extends State<AddWish> {
                           ? ListTile(
                               leading: const Icon(Icons.calendar_month_outlined),
                               title:  Text(l10n.target_purchase_date),
-                              trailing: DateUtil(context: context).dayDateTimeText(_selectedDate),
+                              trailing: DateUtil.dayDateTimeText(_selectedDate, context),
                               onTap: () async {
-                                final dateResult = await DateUtil(context: context).getDateAndTime(_selectedDate);
+                                final dateResult = await DateUtil.getDateAndTime(_selectedDate, context);
                                 if (dateResult != null) {
                                   setState(() => _selectedDate = dateResult);
                                 }
@@ -192,7 +192,7 @@ class _AddWishState extends State<AddWish> {
           reminderDate: _selectedDate,
           creationDate: DateTime.now(),
           name: _nameC.text,
-          reminder: !DateUtil(context: context).isPastDate(_selectedDate) && reminder,
+          reminder: !DateUtil.isPastDate(_selectedDate) && reminder,
         );
 
         bool success = await WishService(context: context, appState: appState).saveWish(wish: wish);

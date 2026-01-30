@@ -356,4 +356,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get wish_deleted => 'Desejo excluído!';
+
+  @override
+  String get search => 'Pesquisar';
 }

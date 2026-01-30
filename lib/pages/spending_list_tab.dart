@@ -1,4 +1,5 @@
 import 'package:budgetapp/core/formatters.dart';
+import 'package:budgetapp/core/utils/date_util.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/core/widgets/app_item_tile.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
@@ -98,12 +99,11 @@ class SpendingListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final appState = Provider.of<ApplicationState>(context);
-    final dateStr = DateFormat('EEE dd, yyyy').format(plan.creationDate);
     final l10n = AppLocalizations.of(context)!;
 
     return AppItemTile(
       title: plan.title.capitalize,
-      subtitle: l10n.added_on_datestr(dateStr),
+      subtitle: l10n.added_on_datestr(DateUtil.formatMyDate(plan.creationDate, context)),
       amount: '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(plan.total)}',
       icon: Icons.receipt_long_outlined,
       iconColor: theme.colorScheme.primary,

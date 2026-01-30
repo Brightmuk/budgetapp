@@ -1,4 +1,5 @@
 import 'package:budgetapp/core/formatters.dart';
+import 'package:budgetapp/core/utils/date_util.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/core/widgets/app_item_tile.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
@@ -8,7 +9,6 @@ import 'package:budgetapp/router.dart';
 import 'package:budgetapp/services/wish_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class WishListTab extends StatefulWidget {
@@ -90,11 +90,10 @@ class WishTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<ApplicationState>(context);
-    final dateStr = DateFormat('EEE dd, yyyy').format(wish.creationDate);
     final l10n = AppLocalizations.of(context)!;
     return AppItemTile(
       title: wish.name.capitalize,
-      subtitle: l10n.added_on_datestr(dateStr),
+      subtitle: l10n.added_on_datestr(DateUtil.formatMyDate(wish.creationDate, context)),
       amount: '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(wish.price)}',
       icon: Icons.auto_awesome_outlined,
       iconColor: Colors.orangeAccent,
