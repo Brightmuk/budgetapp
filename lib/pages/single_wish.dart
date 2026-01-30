@@ -1,6 +1,7 @@
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -37,7 +38,7 @@ class _SingleWishState extends State<SingleWish> {
   Widget build(BuildContext context) {
     final appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
 
     return Scaffold(
       body: FutureBuilder<Wish>(
@@ -90,7 +91,7 @@ class _SingleWishState extends State<SingleWish> {
   }
 
   Widget _buildPriceCard(ThemeData theme, Wish wish, ApplicationState appState) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Card(
       elevation: 0,
       color: theme.colorScheme.tertiaryContainer,
@@ -124,7 +125,7 @@ class _SingleWishState extends State<SingleWish> {
   }
 
   Widget _buildDetailsCard(ThemeData theme, Wish wish) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -156,7 +157,7 @@ class _SingleWishState extends State<SingleWish> {
   }
 
   Widget _buildBottomActions(ThemeData theme, ApplicationState appState) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -202,7 +203,7 @@ class _SingleWishState extends State<SingleWish> {
   
 
   void _handleDelete(ApplicationState appState) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     showModalBottomSheet(
       context: context,
       builder: (context) => ActionDialogue(

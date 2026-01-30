@@ -1,6 +1,7 @@
 import 'package:budgetapp/core/events.dart';
 import 'package:budgetapp/core/widgets/action_dialogue.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
@@ -61,7 +62,7 @@ class _AddWishState extends State<AddWish> {
   @override
   Widget build(BuildContext context) {
     final _appState = Provider.of<ApplicationState>(context);
-   final l10n = AppLocalizations.of(context)!;
+   final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Scaffold(
       appBar: AppBar(
         title: Text(editMode ? l10n.edit_wish : l10n.add_new_wish),
@@ -174,7 +175,7 @@ class _AddWishState extends State<AddWish> {
   }
 
   Future<void> _handleSave() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     final appState = Provider.of<ApplicationState>(context, listen: false);
     final adsCubit = context.read<AdsCubit>();
     if (_formKey.currentState!.validate()) {

@@ -1,11 +1,12 @@
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:flutter/material.dart';
 class QuickListoptions extends StatelessWidget {
   const QuickListoptions({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Padding(
       padding: const EdgeInsets.all(20),
       child: SizedBox(

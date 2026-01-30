@@ -2,6 +2,7 @@ import 'package:budgetapp/core/colors.dart';
 import 'package:budgetapp/core/events.dart';
 import 'package:budgetapp/core/widgets/action_dialogue.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/notification_model.dart';
 import 'package:budgetapp/pages/create_list.dart';
@@ -59,7 +60,7 @@ class _AddBudgetPlanState extends State<AddBudgetPlan> {
   @override
   Widget build(BuildContext context) {
     final ApplicationState appState = Provider.of<ApplicationState>(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Scaffold(
       appBar: AppBar(
         title: Text(editMode ? l10n.edit_spending_plan : l10n.create_spending_plan),

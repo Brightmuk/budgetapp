@@ -1,6 +1,7 @@
 import 'package:budgetapp/core/theme.dart';
 import 'package:budgetapp/cubit/app_setup_cubit.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/supported_locales.dart';
 import 'package:budgetapp/router.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
@@ -47,7 +48,15 @@ class _MyAppState extends State<MyApp> {
     return OverlaySupport.global(
       child: MaterialApp.router(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
+        supportedLocales: supportedLocales,
+        localeResolutionCallback: (locale, supportedLocales) {
+          for (var supportedLocale in supportedLocales) {
+            if (supportedLocale.languageCode == locale?.languageCode) {
+              return supportedLocale;
+            }
+          }
+          return supportedLocales.first;
+        },
         debugShowCheckedModeBanner: false,
         title: 'Spenditize',
         themeMode: ThemeMode.system,

@@ -19,14 +19,14 @@ class ApplicationState extends ChangeNotifier {
 
     String? savedCurrency = prefs.getString(SharedPrefs.currency);
 
-    if (savedCurrency != null) {
-      currentCurrency = savedCurrency;
-    } else {
+    // if (savedCurrency != null) {
+    //   currentCurrency = savedCurrency;
+    // } else {
       String detectedCurrency = getCurrencyCode(context);
       currentCurrency = detectedCurrency;
 
       await prefs.setString(SharedPrefs.currency, detectedCurrency);
-    }
+    // }
 
     notifyListeners();
   }
@@ -45,11 +45,12 @@ class ApplicationState extends ChangeNotifier {
 
 String getCurrencyCode(BuildContext context) {
   try {
-    // This gets the full identifier like 'en_US', 'fr_FR', or 'hi_IN'
     final String localeIdentifier = Localizations.localeOf(context).toString();
-    
+   
     var format = NumberFormat.simpleCurrency(locale: localeIdentifier);
-    
+    debugPrint('Full Locale: $localeIdentifier');
+    debugPrint('Detected Symbol: ${format.currencySymbol}'); 
+    debugPrint('Currency Name: ${format.currencyName}');
     return format.currencySymbol; 
   } catch (e) {
     return '\$'; 

@@ -3,6 +3,7 @@ import 'package:budgetapp/core/utils/date_util.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/core/widgets/app_item_tile.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -32,7 +33,7 @@ class _SpendingListTabState extends State<SpendingListTab> {
   Widget build(BuildContext context) {
     final ApplicationState _appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: StreamBuilder<List<SpendingPlan>>(
@@ -98,7 +99,7 @@ class SpendingListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final appState = Provider.of<ApplicationState>(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
 
     return AppItemTile(
       title: plan.title.capitalize,

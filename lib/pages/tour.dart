@@ -1,5 +1,6 @@
 import 'package:budgetapp/cubit/app_setup_cubit.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,7 +34,7 @@ class _TourScreenState extends State<TourScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cubit = Provider.of<AppSetupCubit>(context, listen: false);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
         final _appState = Provider.of<ApplicationState>(context);
     
     return Scaffold(
@@ -62,11 +63,9 @@ class _TourScreenState extends State<TourScreen> {
           ),
         ],
         onDone: () {
-          _appState.init(context);
           cubit.viewTour();
         },
         onSkip: (){
-          _appState.init(context);
           cubit.viewTour();
         },
         showSkipButton: true,

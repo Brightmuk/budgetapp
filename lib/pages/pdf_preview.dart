@@ -1,5 +1,6 @@
 import 'package:budgetapp/core/widgets/action_dialogue.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/services/ads/cubit/ads_cubit.dart';
 import 'package:budgetapp/services/pdf_service.dart';
@@ -21,7 +22,7 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Scaffold(
       appBar: AppBar(
         title:  Text(l10n.preview_pdf),
@@ -57,7 +58,7 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
 
   }
   void _handleRemoveWatermark() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     final adsCubit = context.read<AdsCubit>();
     showModalBottomSheet(
       context: context,

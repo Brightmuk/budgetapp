@@ -1,4 +1,5 @@
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/toast_service.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final _appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
 
     return Scaffold(
       appBar: AppBar(
@@ -108,7 +109,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _showCurrencyPicker(BuildContext context, ApplicationState appState) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     showCurrencyPicker(
       theme: CurrencyPickerThemeData(
         shape: const RoundedRectangleBorder(
@@ -127,13 +128,13 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _launchUrl(Uri url) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       ToastService(context: context).showSuccessToast(l10n.could_not_open_link);
     }
   }
   Widget _buildVersionFooter(ThemeData theme) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
   return FutureBuilder<PackageInfo>(
     future: PackageInfo.fromPlatform(),
     builder: (context, snapshot) {

@@ -3,6 +3,7 @@ import 'package:budgetapp/core/events.dart';
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/core/utils/date_util.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/spending_list_tab.dart';
@@ -78,7 +79,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
+    Locale myLocale = Localizations.localeOf(context);
+
+print(myLocale.languageCode); // e.g., 'en'
+print(myLocale.countryCode);  // e.g., 'US'
+print(myLocale.toString());
 
     return Scaffold(
       // M3 App Bar: Clean and Simple

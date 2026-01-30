@@ -3,6 +3,7 @@ import 'package:budgetapp/core/utils/date_util.dart';
 import 'package:budgetapp/core/utils/string_extension.dart';
 import 'package:budgetapp/core/widgets/app_item_tile.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/router.dart';
@@ -27,7 +28,7 @@ class _WishListTabState extends State<WishListTab> {
   Widget build(BuildContext context) {
     final ApplicationState _appState = Provider.of<ApplicationState>(context);
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: StreamBuilder<List<Wish>>(
@@ -90,7 +91,7 @@ class WishTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<ApplicationState>(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return AppItemTile(
       title: wish.name.capitalize,
       subtitle: l10n.added_on_datestr(DateUtil.formatMyDate(wish.creationDate, context)),

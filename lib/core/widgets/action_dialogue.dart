@@ -1,4 +1,5 @@
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -21,7 +22,7 @@ class ActionDialogue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Container(
       height: 250,
       padding: const EdgeInsets.all(20),
@@ -85,7 +86,7 @@ class ActionDialogue extends StatelessWidget {
   }
 }
   void showSettingsDialog(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     showDialog(
       context: context,
       builder:

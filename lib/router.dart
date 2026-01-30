@@ -1,6 +1,7 @@
 
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/notification_model.dart';
+import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/pages/add_spending_plan.dart';
 import 'package:budgetapp/pages/add_wish.dart';
 import 'package:budgetapp/pages/create_list.dart';
@@ -52,7 +53,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: AppLinks.addWish,
-      builder: (context, state) => const AddWish(),
+      builder: (context, state) =>  AddWish(wish: state.extra as Wish?,),
     ),
     GoRoute(
       path: AppLinks.createList,

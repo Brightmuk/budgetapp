@@ -1,6 +1,7 @@
 
 import 'package:budgetapp/core/formatters.dart';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/models/expense.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
@@ -67,7 +68,7 @@ class _CreateListState extends State<CreateList> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final appState = Provider.of<ApplicationState>(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title ?? l10n.quick_spending_plan),
@@ -179,7 +180,7 @@ class _CreateListState extends State<CreateList> {
   }
 
   Widget _buildAddItemForm(ThemeData theme, ApplicationState appState) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       decoration: BoxDecoration(
@@ -265,7 +266,7 @@ class _CreateListState extends State<CreateList> {
   }
 
   Future<void> _onDone() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     if (widget.title != null) {
       context.pop({'expenses': expenses, 'total': _total});
     } else {
@@ -296,7 +297,7 @@ class _CreateListState extends State<CreateList> {
 
   // --- Utility Dialogs ---
   void showAmountInput() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -328,7 +329,7 @@ class _CreateListState extends State<CreateList> {
   }
 
   void hasViewedReverse() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context) ?? AppLocalizationsEn();
     bool? hasSeen = await SharedPrefs().seenReverseMode();
     if (hasSeen != true) {
       showDialog(
