@@ -106,7 +106,7 @@ class PDFService {
                             fontWeight: pw.FontWeight.bold, fontSize: 14)),
                     pw.Text(''),
                     pw.Text(''),
-                    pw.Text('${AppFormatters.moneyCommaStr(plan.total)} $currency',
+                    pw.Text('$currency ${AppFormatters.moneyCommaStr(plan.total)} ',
                         style: pw.TextStyle(
                             fontWeight: pw.FontWeight.bold, fontSize: 14)),
                   ]),

@@ -49,7 +49,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
-                _appState.currentCurrency ?? 'USD',
+                _appState.currentCurrency ?? '\$',
                 style: TextStyle(
                   color: theme.colorScheme.onPrimaryContainer,
                   fontWeight: FontWeight.bold,

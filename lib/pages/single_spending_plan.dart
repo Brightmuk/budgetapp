@@ -115,9 +115,9 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
                         title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                        subtitle: Text('${item.quantity} units × ${item.price} ${appState.currentCurrency}'),
+                        subtitle: Text('${item.quantity} units × ${appState.currentCurrency} ${item.price}'),
                         trailing: Text(
-                          '${AppFormatters.moneyCommaStr(item.quantity * item.price)} ${appState.currentCurrency}',
+                          '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(item.quantity * item.price)}',
                           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       );
@@ -156,7 +156,7 @@ class _SingleBudgetPlanState extends State<SingleBudgetPlan> {
               children: [
                 Text(l10n.total_cost, style: theme.textTheme.labelLarge),
                 Text(
-                  '${AppFormatters.moneyCommaStr(plan.total)} ${appState.currentCurrency}',
+                  '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(plan.total)}',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.onPrimaryContainer,

@@ -198,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
     IconData icon,
   ) {
     final theme = Theme.of(context);
-
+     final appState = Provider.of<ApplicationState>(context);
     return StreamBuilder(
       stream: stream,
       builder: (context, snapshot) {
@@ -220,7 +220,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    total,
+                    "${appState.currentCurrency} $total ",
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: color,

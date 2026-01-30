@@ -109,7 +109,7 @@ class _SingleWishState extends State<SingleWish> {
               children: [
                 Text(l10n.estimated_price, style: theme.textTheme.labelLarge),
                 Text(
-                  '${AppFormatters.moneyCommaStr(wish.price)} ${appState.currentCurrency}',
+                  '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(wish.price)}',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.onTertiaryContainer,

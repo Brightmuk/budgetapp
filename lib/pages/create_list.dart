@@ -115,7 +115,7 @@ class _CreateListState extends State<CreateList> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${AppFormatters.moneyCommaStr(reverseMode ? _balance : _total)} ${appState.currentCurrency}',
+                            '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(reverseMode ? _balance : _total)}',
                             style: theme.textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: reverseMode && _balance < 0 ? theme.colorScheme.error : theme.colorScheme.onSecondaryContainer,
@@ -156,9 +156,9 @@ class _CreateListState extends State<CreateList> {
                     },
                     child: ListTile(
                       title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                      subtitle: Text('${item.quantity} × ${AppFormatters.moneyCommaStr(item.price)} ${appState.currentCurrency}'),
+                      subtitle: Text('${item.quantity} × ${appState.currentCurrency} ${AppFormatters.moneyCommaStr(item.price)}'),
                       trailing: Text(
-                        '${AppFormatters.moneyCommaStr(item.quantity * item.price)} ${appState.currentCurrency}',
+                        '${appState.currentCurrency} ${AppFormatters.moneyCommaStr(item.quantity * item.price)}',
                         style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),

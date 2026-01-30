@@ -49,7 +49,6 @@ class _MyAppState extends State<MyApp> {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         debugShowCheckedModeBanner: false,
-        locale: Locale('es'),
         title: 'Spenditize',
         themeMode: ThemeMode.system,
         theme: lightTheme,
