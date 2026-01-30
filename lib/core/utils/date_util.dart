@@ -33,19 +33,20 @@ class DateUtil {
   static Widget dayDateTimeText(DateTime date, BuildContext context) {
     final theme = Theme.of(context);
     String locale = Localizations.localeOf(context).languageCode;
-    return RichText(
-      text: TextSpan(children: [
-        TextSpan(
-          text: DateFormat.yMMMEd(locale).format(date),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end, 
+      children: [
+        Text(
+          DateFormat.yMMMd(locale).format(date),style: theme.textTheme.labelLarge,),
+        Text(
+          DateFormat.jm(locale).format(date),
           style: TextStyle(
-            color: theme.textTheme.bodyMedium!.color,
+            color: theme.textTheme.labelLarge!.color!.withAlpha(100),
+            fontSize: theme.textTheme.labelSmall!.fontSize,
           ),
         ),
-        TextSpan(
-          text: ' ${DateFormat.jm(locale).format(date)}',
-          style: TextStyle( color: theme.textTheme.labelLarge!.color!.withAlpha(100)),
-        ),
-      ]),
+      ],
     );
   }
   static String formatMyDate(DateTime date, BuildContext context) {
