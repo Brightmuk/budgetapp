@@ -223,6 +223,9 @@ class _AddWishState extends State<AddWish> {
           }
         }
       } catch (e) {
+        debugPrint("Error saving wish: $e");
+       
+          
         ToastService(context: context).showSuccessToast(l10n.error_saving_wish);
       }
     }

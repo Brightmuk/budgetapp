@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/models/budget_plan.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/toast_service.dart';
@@ -20,7 +21,7 @@ class BudgetPlanService {
   Future<bool> saveBudgetPlan({required SpendingPlan budgetPlan}) async {
     bool returnValue = true;
    
-    final l10n = AppLocalizations.of(context!)!;
+    final l10n = AppLocalizations.of(context!) ?? AppLocalizationsEn();;
     await db
         .collection(budgetPlanCollection)
         .doc(budgetPlan.id)
@@ -75,7 +76,7 @@ class BudgetPlanService {
 
   ///Delete a budget plan
   Future<void> deleteBudgetPlan({required String budgetPlanId}) async {
-   final l10n = AppLocalizations.of(context!)!;
+   final l10n = AppLocalizations.of(context!) ?? AppLocalizationsEn();
     await db
         .collection(budgetPlanCollection)
         .doc(budgetPlanId)

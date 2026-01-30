@@ -1,4 +1,5 @@
 import 'package:budgetapp/l10n/app_localizations.dart';
+import 'package:budgetapp/l10n/app_localizations_en.dart';
 import 'package:budgetapp/models/wish.dart';
 import 'package:budgetapp/providers/app_state_provider.dart';
 import 'package:budgetapp/services/toast_service.dart';
@@ -17,7 +18,7 @@ class WishService {
   ///or edit a wish
   Future<bool> saveWish({required Wish wish}) async {
     bool returnValue = true;
-    final l10n = AppLocalizations.of(context!)!;
+    final l10n = AppLocalizations.of(context!) ?? AppLocalizationsEn();
     await db
         .collection(wishCollection)
         .doc(wish.id)
@@ -65,7 +66,7 @@ class WishService {
 
   ///Delete a wish
   Future<void> deleteWish({required String wishId}) async {
-     final l10n = AppLocalizations.of(context!)!;
+     final l10n = AppLocalizations.of(context!) ?? AppLocalizationsEn();;
    
     await db.collection(wishCollection).doc(wishId).delete().then((value) {
       appState.deleteWish(wishId);
