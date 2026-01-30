@@ -121,13 +121,12 @@ class NotificationService {
           channelDescription: 'Scheduled notifications channel',
           importance: Importance.high,
           priority: Priority.high,
-          sound: RawResourceAndroidNotificationSound('marimba'),
           showWhen: false,
         );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
-      iOS: DarwinNotificationDetails(sound: 'marimba.aiff'),
+      iOS: DarwinNotificationDetails(),
     );
     debugPrint('Scheduling notification for $scheduling with id $id');
 
